@@ -144,6 +144,11 @@ func _on_echo_collected(_echo_id: String, emotion: String) -> void:
 	play_sfx(name if _exists("color", name) else "color_restore_longing")
 
 
+## "<분류>_<이름>" 효과음 파일이 있는가
+func has_sfx(name: String) -> bool:
+	return _exists(name.get_slice("_", 0), name)
+
+
 func _exists(category: String, name: String) -> bool:
 	return ResourceLoader.exists("%s/%s/sfx_%s.wav" % [SFX_DIR, category, name])
 

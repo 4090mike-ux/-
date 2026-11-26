@@ -13,11 +13,12 @@ const OPTIONS := {
 	"accessibility/echo_sense_mode": [["hold", "toggle"], 0],
 	"accessibility/puzzle_timer": [["soft", "off"], 0],
 	"accessibility/reduced_motion": [[false, true], 0],
+	"accessibility/rumble": [[true, false], 0],
 	"display/scale": [[2, 3, 4, 5, 6], 1],
 }
 const LABELS := {
 	"text/speed": "글자 속도", "accessibility/echo_sense_mode": "감지 방식", "accessibility/puzzle_timer": "퍼즐 자동 힌트",
-	"accessibility/reduced_motion": "움직임 줄이기", "display/scale": "화면 배율",
+	"accessibility/reduced_motion": "움직임 줄이기", "accessibility/rumble": "진동", "display/scale": "화면 배율",
 }
 const VALUE_LABELS := {
 	"slow": "느림", "normal": "보통", "fast": "빠름", "instant": "즉시", "hold": "누르고 있기", "toggle": "눌러서 켜고 끄기",
