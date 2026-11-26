@@ -239,7 +239,10 @@ func collect_echo(echo_id: String) -> bool:
 	if _echoes.has(echo_id):
 		return false
 	_echoes.append(echo_id)
-	EchoBus.echo_collected.emit(echo_id, str(GameData.echo_def(echo_id).get("emotion", "")))
+	var def := GameData.echo_def(echo_id)
+	if str(def.get("sensed_by", "")) == "both":
+		GardenModel.resonance(str(def.get("emotion", "")))  # 공명 잔향 → 같은 감정 칸 +1 (garden.md §4-3)
+	EchoBus.echo_collected.emit(echo_id, str(def.get("emotion", "")))
 	return true
 
 

@@ -364,7 +364,7 @@ def main() -> int:
     parser.add_argument("--generated", type=Path, help="게임이 만든 세이브 파일 폴더 (예: tests/out)")
     args = parser.parse_args()
     schemas = load_schemas()
-    for required in ("flags", "echo", "save", "persist", "emotions", "scene", "puzzle"):
+    for required in ("flags", "echo", "save", "persist", "emotions", "scene", "puzzle", "garden"):
         if required not in schemas:
             err("docs/schemas", f"{required}.schema.json 이 없거나 잘못됨")
     if errors:
@@ -398,6 +398,14 @@ def main() -> int:
             if f not in flag_ids:
                 err("docs/schemas/examples/save.example.json", f"플래그 {f} 가 flags.json 에 없음")
     validate(EXAMPLES / "persist.example.json", schemas["persist"])
+    garden = validate(DATA / "garden.json", schemas["garden"])
+    if isinstance(garden, dict):
+        ids = [x["id"] for x in garden["plots"]]
+        if len(ids) != len(set(ids)):
+            err("game/data/garden.json", "칸 id 중복")
+        for spec in garden.get("special", {}).values():
+            if isinstance(spec, dict) and spec.get("flag") and spec["flag"] not in flag_ids:
+                err("game/data/garden.json", f"특별 꽃 플래그 {spec['flag']} 가 flags.json 에 없음")
     echo_ids = load_echo_ids()
     check_scenes(schemas, flag_ids, echo_ids)
     check_puzzles(schemas, echo_ids)

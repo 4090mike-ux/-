@@ -1,0 +1,199 @@
+{
+  "$schema": "../../docs/schemas/garden.schema.json",
+  "schema_version": 1,
+  "plots": [
+    {
+      "id": "plot_01",
+      "owner": "haneul",
+      "col": 1
+    },
+    {
+      "id": "plot_02",
+      "owner": "haneul",
+      "col": 2
+    },
+    {
+      "id": "plot_03",
+      "owner": "haneul",
+      "col": 3
+    },
+    {
+      "id": "plot_04",
+      "owner": "haneul",
+      "col": 4
+    },
+    {
+      "id": "plot_05",
+      "owner": "haneul",
+      "col": 5
+    },
+    {
+      "id": "plot_06",
+      "owner": "byeol",
+      "col": 1
+    },
+    {
+      "id": "plot_07",
+      "owner": "byeol",
+      "col": 2
+    },
+    {
+      "id": "plot_08",
+      "owner": "byeol",
+      "col": 3
+    },
+    {
+      "id": "plot_09",
+      "owner": "byeol",
+      "col": 4
+    },
+    {
+      "id": "plot_10",
+      "owner": "byeol",
+      "col": 5
+    }
+  ],
+  "growth": {
+    "max": 5,
+    "combo_min": 3,
+    "resonance_step": 1,
+    "tick_scenes": [
+      "ch1_garden_02",
+      "ch2_garden",
+      "ch2_garden_02",
+      "ch3_garden",
+      "ch3_garden_02",
+      "ch4_garden",
+      "ch5_garden"
+    ],
+    "resonance_all_event": "ev_ch3_garden_resonance"
+  },
+  "combos": [
+    {
+      "id": "sprout_together",
+      "a": "longing",
+      "b": "warmth",
+      "mvp": true,
+      "name_key": "garden.combo.sprout_together"
+    },
+    {
+      "id": "night_wave",
+      "a": "longing",
+      "b": "dream",
+      "mvp": false,
+      "name_key": "garden.combo.night_wave"
+    },
+    {
+      "id": "lighthouse",
+      "a": "longing",
+      "b": "courage",
+      "mvp": false,
+      "name_key": "garden.combo.lighthouse"
+    },
+    {
+      "id": "sea_leaf",
+      "a": "longing",
+      "b": "healing",
+      "mvp": true,
+      "name_key": "garden.combo.sea_leaf"
+    },
+    {
+      "id": "daydream",
+      "a": "warmth",
+      "b": "dream",
+      "mvp": true,
+      "name_key": "garden.combo.daydream"
+    },
+    {
+      "id": "sunset",
+      "a": "warmth",
+      "b": "courage",
+      "mvp": true,
+      "name_key": "garden.combo.sunset"
+    },
+    {
+      "id": "sunlit_vine",
+      "a": "warmth",
+      "b": "healing",
+      "mvp": false,
+      "name_key": "garden.combo.sunlit_vine"
+    },
+    {
+      "id": "flame_star",
+      "a": "dream",
+      "b": "courage",
+      "mvp": false,
+      "name_key": "garden.combo.flame_star"
+    },
+    {
+      "id": "forest_star",
+      "a": "dream",
+      "b": "healing",
+      "mvp": false,
+      "name_key": "garden.combo.forest_star"
+    },
+    {
+      "id": "new_spring",
+      "a": "courage",
+      "b": "healing",
+      "mvp": true,
+      "name_key": "garden.combo.new_spring"
+    },
+    {
+      "id": "twin_longing",
+      "a": "longing",
+      "b": "longing",
+      "mvp": false,
+      "name_key": "garden.combo.twin_longing"
+    },
+    {
+      "id": "twin_warmth",
+      "a": "warmth",
+      "b": "warmth",
+      "mvp": false,
+      "name_key": "garden.combo.twin_warmth"
+    },
+    {
+      "id": "twin_dream",
+      "a": "dream",
+      "b": "dream",
+      "mvp": false,
+      "name_key": "garden.combo.twin_dream"
+    },
+    {
+      "id": "twin_courage",
+      "a": "courage",
+      "b": "courage",
+      "mvp": false,
+      "name_key": "garden.combo.twin_courage"
+    },
+    {
+      "id": "twin_healing",
+      "a": "healing",
+      "b": "healing",
+      "mvp": false,
+      "name_key": "garden.combo.twin_healing"
+    }
+  ],
+  "special": {
+    "family_flower": {
+      "scene": "ch4_garden",
+      "min_growth": 2,
+      "flag": "flag.ch4.family_flower_bloomed",
+      "event": "ev_ch4_family_flower"
+    },
+    "rainbow_flower": {
+      "scene": "ch5_garden",
+      "requires": "family_flower",
+      "hidden_echoes": 12,
+      "flag": "flag.ch5.rainbow_flower_bloomed",
+      "event": "ev_ch5_rainbow_flower"
+    }
+  },
+  "auto_plant_scene": "ch3_garden_02",
+  "heart_bed": {
+    "cells": 12,
+    "first_scene": "ch2_garden",
+    "method": "ratio"
+  }
+}

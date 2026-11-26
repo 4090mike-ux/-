@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://void-painter.local/schemas/garden.schema.json",
+  "title": "색의 정원 규칙 (game/data/garden.json)",
+  "description": "docs/gdd/garden.md. 칸 배치·성장 틱 장면·조합표·특별 꽃·마음 화단. GardenModel 이 읽는다.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plots",
+    "growth",
+    "combos",
+    "special",
+    "heart_bed"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "plots": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "owner",
+          "col"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^plot_[0-9]{2}$"
+          },
+          "owner": {
+            "enum": [
+              "haneul",
+              "byeol"
+            ]
+          },
+          "col": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "growth": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max",
+        "combo_min",
+        "tick_scenes"
+      ],
+      "properties": {
+        "max": {
+          "type": "integer"
+        },
+        "combo_min": {
+          "type": "integer"
+        },
+        "resonance_step": {
+          "type": "integer"
+        },
+        "tick_scenes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(prologue|ch[1-5])_[a-z0-9_]+$"
+          },
+          "uniqueItems": true
+        },
+        "resonance_all_event": {
+          "type": "string",
+          "pattern": "^ev_[a-z0-9_]+$"
+        }
+      }
+    },
+    "combos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "a",
+          "b"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "a": {
+            "enum": [
+              "longing",
+              "warmth",
+              "dream",
+              "courage",
+              "healing"
+            ]
+          },
+          "b": {
+            "enum": [
+              "longing",
+              "warmth",
+              "dream",
+              "courage",
+              "healing"
+            ]
+          },
+          "mvp": {
+            "type": "boolean"
+          },
+          "name_key": {
+            "type": "string",
+            "pattern": "^garden\\.combo\\.[a-z0-9_]+$"
+          }
+        }
+      }
+    },
+    "special": {
+      "type": "object"
+    },
+    "auto_plant_scene": {
+      "type": "string",
+      "pattern": "^(prologue|ch[1-5])_[a-z0-9_]+$"
+    },
+    "heart_bed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cells"
+      ],
+      "properties": {
+        "cells": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "first_scene": {
+          "type": "string",
+          "pattern": "^(prologue|ch[1-5])_[a-z0-9_]+$"
+        },
+        "method": {
+          "enum": [
+            "ratio",
+            "difference"
+          ]
+        }
+      }
+    }
+  }
+}

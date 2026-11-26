@@ -160,9 +160,9 @@ func _spawn_characters() -> void:
 		col.shape = shape
 		col.position = Vector2(0, -4)
 		c.add_child(col)
-		var sprite := SiblingSprite.new()
 		var sheet_path := "%s/%s_walk.png" % [CHAR_DIR, key]
 		if ResourceLoader.exists(sheet_path):
+			var sprite := SiblingSprite.new()
 			sprite.sheet = load(sheet_path) as Texture2D
 			c.add_child(sprite)
 		else:
