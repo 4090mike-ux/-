@@ -24,6 +24,7 @@ var puzzle_host: PuzzleHost
 var switcher: SiblingSwitcher = null
 var garden_bed: GardenBed = null
 var plant_menu: PlantMenu = null
+var mechanisms: SiblingMechanisms = null
 
 var _busy: bool = false
 var _banner: Label
@@ -53,6 +54,7 @@ func _ready() -> void:
 	_build_exits()
 	_build_layers()
 	_build_garden()
+	_build_mechanisms()
 	_enter.call_deferred()
 
 
@@ -327,6 +329,16 @@ func _build_garden() -> void:
 	add_child(plant_menu)
 
 
+func _build_mechanisms() -> void:
+	if not definition.has("mechanisms"):
+		return
+	mechanisms = SiblingMechanisms.new()
+	mechanisms.name = "Mechanisms"
+	add_child(mechanisms)
+	mechanisms.setup(scene_id, definition.get("gates", []), definition.get("mechanisms", []))
+	mechanisms.solved.connect(func(id: String) -> void: play_cue("mech_%s_solved" % id))
+
+
 func show_message(text: String) -> void:
 	_banner.text = text
 	_banner.modulate.a = 0.0
@@ -355,6 +367,8 @@ func _on_echo_requested(echo: EchoObject) -> void:
 
 func _on_interactable_requested(target: Interactable) -> void:
 	if _busy:
+		return
+	if mechanisms != null and mechanisms.handle(target, active_character()):
 		return
 	if plant_menu != null and target.interact_id.begins_with("plot_"):
 		_busy = true
