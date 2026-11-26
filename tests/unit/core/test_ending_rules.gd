@@ -26,8 +26,10 @@ func test_balanced_without_full_bond_falls_back_to_protect() -> void:
 
 func test_heal_lean_without_reunions_falls_back_to_protect() -> void:
 	# canon §10-2 빈틈 2
-	var state := {"protect": 2, "heal": 9, "bond": 4, "families_reunited": 1}
+	var state := {"protect": 2, "heal": 9, "bond": 4, "families_reunited": 0}
 	assert_dict(EndingRules.explain(state)).is_equal({"ending": "protect", "rule": 6})
+	state["families_reunited"] = 1  # canon D7: 재결합 1이면 치유
+	assert_dict(EndingRules.explain(state)).is_equal({"ending": "heal", "rule": 4})
 
 
 func test_sacrifice_needs_previous_family_or_miracle() -> void:

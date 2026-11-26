@@ -16,7 +16,7 @@
 | 1 | `sacrifice` | 💔 희생(트루) | `persist.seen_endings`에 `family` 또는 `miracle` 있음 + `echo_found == 30` + 최종 선택에서 숨은 선택지 "내 색을 바친다" 선택 | [확정] |
 | 2 | `miracle` | 🌈 기적(히든) | 가족 조건 충족 + `hidden_echo_found == 12` + `flag.ch5.rainbow_flower_bloomed` | [확정] |
 | 3 | `family` | 💜 가족(균형) | `abs(protect - heal) <= 2` 그리고 `bond == 4` 그리고 `families_reunited >= 3` | [확정] |
-| 4 | `heal` | 💚 치유 | `heal - protect >= 3` 그리고 `families_reunited >= 2` | [확정] |
+| 4 | `heal` | 💚 치유 | `heal - protect >= 3` 그리고 `families_reunited >= 1` | [확정] |
 | 5 | `protect` | 💙 보호 | `protect - heal >= 3` | [확정] |
 | 6 | `protect` | 💙 보호 (폴백) | 위 어느 것에도 해당하지 않을 때 | **[제안] 서명 필요** |
 
@@ -39,7 +39,7 @@ func resolve_ending() -> String:
 		return "miracle"
 	if family_ok:
 		return "family"
-	if -diff >= 3 and families_reunited >= 2:
+	if -diff >= 3 and families_reunited >= 1:
 		return "heal"
 	if diff >= 3:
 		return "protect"

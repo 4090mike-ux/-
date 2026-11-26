@@ -29,8 +29,8 @@
       "symbol": "star",
       "hue_band": { "center_deg": 280, "half_width_deg": 15, "softness_deg": 5 },
       "ramp": ["#46235c", "#7d4599", "#b070cc", "#d07ff0"],
-      "status": "proposed",
-      "note": "TODO-확인: 보라가 상징하는 감정 이름은 원작 설정에서 확정해야 함. 임시로 '꿈'."
+      "status": "confirmed",
+      "note": "꿈 — 앞날을 그리는 마음 (canon D8 확정)."
     },
     {
       "id": "courage",
@@ -39,8 +39,8 @@
       "symbol": "flame",
       "hue_band": { "center_deg": 22, "half_width_deg": 10, "softness_deg": 4 },
       "ramp": ["#803817", "#cc6529", "#f2985c", "#ffbd8a"],
-      "status": "proposed",
-      "note": "TODO-확인: 주황이 상징하는 감정 이름은 원작 설정에서 확정해야 함. 임시로 '용기'."
+      "status": "confirmed",
+      "note": "용기 — 두려워도 한 걸음 내딛는 마음 (canon D8 확정)."
     },
     {
       "id": "healing",
@@ -49,8 +49,8 @@
       "symbol": "leaf",
       "hue_band": { "center_deg": 125, "half_width_deg": 20, "softness_deg": 5 },
       "ramp": ["#1b591c", "#389440", "#63c771", "#7ceb8f"],
-      "status": "proposed",
-      "note": "TODO-확인: 초록이 상징하는 감정 이름은 원작 설정에서 확정해야 함. 임시로 '치유'(heal 성향과 연결)."
+      "status": "confirmed",
+      "note": "치유 — 아픈 것을 돌보는 마음, heal 성향과 연결 (canon D8 확정)."
     }
   ]
 }

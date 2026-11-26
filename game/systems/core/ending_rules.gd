@@ -20,7 +20,7 @@ const BALANCE_THRESHOLD := 2
 const LEAN_THRESHOLD := 3
 const MAX_BOND := 4
 const FAMILY_MIN_REUNITED := 3
-const HEAL_MIN_REUNITED := 2
+const HEAL_MIN_REUNITED := 1  # canon D7: 2 → 1
 const TOTAL_ECHOES := 30
 const HIDDEN_ECHOES := 12
 

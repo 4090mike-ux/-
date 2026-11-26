@@ -35,7 +35,7 @@ BALANCE_THRESHOLD = 2
 LEAN_THRESHOLD = 3
 MAX_BOND = 4
 FAMILY_MIN_REUNITED = 3
-HEAL_MIN_REUNITED = 2
+HEAL_MIN_REUNITED = 1  # canon D7: 2 → 1
 REQUIRED_ECHOES = 18
 HIDDEN_ECHOES = 12
 TOTAL_ECHOES = REQUIRED_ECHOES + HIDDEN_ECHOES
@@ -321,7 +321,7 @@ def self_test() -> int:
     ok &= len(menus) == 1 and menus[0].options == [(2, 0), (0, 1), (0, 0), (0, 0)]
     ok &= len(problems) == 1 and "태그가 없음" in problems[0]
     ok &= evaluate({"protect": 10, "heal": 10, "bond": 3, "families_reunited": 6}) == PROTECT
-    ok &= explain({"protect": 2, "heal": 9, "bond": 4, "families_reunited": 2}) == (HEAL, 4)
+    ok &= explain({"protect": 2, "heal": 9, "bond": 4, "families_reunited": 1}) == (HEAL, 4)
     ok &= reachable_pairs(menus) == {(2, 0), (0, 1), (0, 0)}
     print("self-test:", "통과" if ok else f"실패 menus={menus} problems={problems}")
     return 0 if ok else 1
