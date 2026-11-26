@@ -5,9 +5,12 @@ extends Node2D
 ##       Q/W = 전역 채도 -/+, N = 중립색 보호 켜기/끄기, R = 마스크 지우기
 ## 성능 측정: godot --path . res://game/scenes/dev/color_demo.tscn -- --bench
 ##   (vsync 끄고 최악 조건(전 화면 마스크 + 5대역)으로 600프레임 측정 후 결과를 출력하고 종료)
+## 스크린샷: godot --path . res://game/scenes/dev/color_demo.tscn -- --shot=user://color_demo.png
+##   (가운데 원형 마스크 + 그리움·온기 대역으로 찍고 종료. 시각 확인·회귀 비교용)
 
 const BENCH_WARMUP_FRAMES := 60
 const BENCH_FRAMES := 600
+const SHOT_FRAMES := 45
 
 @onready var _painter: ColorMaskPainter = $MaskViewport/MaskPainter
 @onready var _mask_viewport: SubViewport = $MaskViewport
@@ -22,6 +25,8 @@ var _neutral_guard := true
 var _bench := false
 var _bench_frame := 0
 var _bench_start_usec := 0
+var _shot_path := ""
+var _shot_frame := 0
 
 
 func _ready() -> void:
@@ -29,9 +34,15 @@ func _ready() -> void:
 	_material = _rect.material as ShaderMaterial
 	_material.set_shader_parameter("color_mask", _mask_viewport.get_texture())
 	EmotionBands.apply(_material, _active)
-	_bench = OS.get_cmdline_user_args().has("--bench")
+	var args := OS.get_cmdline_user_args()
+	_bench = args.has("--bench")
+	for arg in args:
+		if arg.begins_with("--shot="):
+			_shot_path = arg.trim_prefix("--shot=")
 	if _bench:
 		_start_bench()
+	elif not _shot_path.is_empty():
+		_start_shot()
 	_update_hud()
 
 
@@ -85,8 +96,27 @@ func _handle_key(code: Key) -> void:
 func _process(_delta: float) -> void:
 	if _bench:
 		_tick_bench()
+	elif not _shot_path.is_empty():
+		_tick_shot()
 	elif Engine.get_process_frames() % 15 == 0:
 		_update_hud()
+
+
+func _start_shot() -> void:
+	_active.assign(["longing", "warmth"] as Array[String])
+	EmotionBands.apply(_material, _active)
+	var center := get_viewport().get_visible_rect().size * 0.5
+	_painter.stamp(center + Vector2(0, 20), 110.0)
+
+
+func _tick_shot() -> void:
+	_shot_frame += 1
+	if _shot_frame < SHOT_FRAMES:
+		return
+	var img := get_viewport().get_texture().get_image()
+	var err := img.save_png(_shot_path)
+	print("SHOT color_demo: %s (%s)" % [ProjectSettings.globalize_path(_shot_path), error_string(err)])
+	get_tree().quit(0 if err == OK else 1)
 
 
 func _update_hud() -> void:
