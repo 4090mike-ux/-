@@ -1,6 +1,6 @@
 # 에셋 목록 — 버티컬 슬라이스 (프롤로그 + 챕터 1)
 
-- 상태: **초안 (WP-18).** 아트 스타일 승인(사람, 위임 금지) 전이다. 승인 전까지 모든 그림은 바뀔 수 있다.
+- 상태: **초안 (WP-18, WP-18b 슬라이스 소품 보강).** 아트 스타일 승인(사람, 위임 금지) 전이다. 승인 전까지 모든 그림은 바뀔 수 있다.
 - 만든 방법: Claude 가 **코드로** 그렸다(`tools/pixelart/`). 이미지 생성 AI 는 쓰지 않았다. 원본 = 파이썬 코드(ASCII 격자 + 도형). `.aseprite` 원본은 없다.
 - 공개: [docs/ai_usage.md](../ai_usage.md)에 기록(출시물 포함, 공개 대상 예).
 
@@ -10,8 +10,8 @@
 pip install -r tools/requirements.txt          # Pillow>=11
 python tools/pixelart/build_all.py             # 아래 PNG·JSON 전부 (결정적: 몇 번을 돌려도 같은 파일)
 python tools/pixelart/build_all.py --only bg   # 묶음만: char, portrait, npc, props, bg
-python tools/pixelart/check_art.py             # 팔레트·감정 색 배치·배경 메타데이터 검사 (오류면 종료 코드 1)
-python tools/pixelart/preview.py               # 6배 확대·흑백 미리보기 + 배경 목업 → tools/pixelart/_preview/ (커밋 안 함)
+python tools/pixelart/check_art.py             # 팔레트·감정 색 배치·배경 메타데이터·슬라이스 조사 지점·철문 퍼즐 검사 (오류면 종료 코드 1)
+python tools/pixelart/preview.py               # 6배 확대·흑백 미리보기 + 배경 목업(디버그 판: 조사 지점·반경·이름 표시) → tools/pixelart/_preview/ (커밋 안 함)
 ```
 
 PNG 를 손으로 고치지 않는다. 고칠 때는 코드를 고치고 다시 만든다(손으로 고친 PNG 는 다음 빌드 때 덮어써진다).
@@ -68,27 +68,28 @@ PNG 를 손으로 고치지 않는다. 고칠 때는 코드를 고치고 다시 
 
 ## 3. 잔향 소품 (`game/art/props/`)
 
-기준점 = 스프라이트의 **바닥 중앙**. 배경 json 의 `props.<slug>` 좌표에 이 점을 맞춘다(`offset = (-w/2, -h)`).
+기준점 = 스프라이트의 **바닥 중앙**. 배경 json 의 `props.<slug>` 좌표에 이 점을 맞춘다. 엔진(`chapter_scene.gd`)은 `EchoObject.position = props[slug]`, 스프라이트 `offset = (0, -h/2)` 로 그린다 → 같은 뜻이다.
 
 | 파일 | 크기 | 감정 | 잔향 id | 배경 |
 |---|---|---|---|---|
 | `atelier_brush.png` | 17×24 | 그리움 | `echo.prologue.atelier_brush` | atelier — 붓 세 자루가 꽂힌 유리병(파란 헹굼물), 바닥의 파란 물감 |
 | `garden_pot.png` | 23×21 | 온기 | `echo.prologue.garden_pot` | garden — 별 모양 화분(canon '별 화분') + 회색 새싹 |
-| `atelier_easel.png` | 24×36 | 그리움 | `echo.ch1.atelier_easel` | atelier — 이젤 위 파란 바다·하늘 그림 |
+| `atelier_easel.png` | 24×36 | 그리움 | `echo.ch1.atelier_easel` | atelier — 창가 이젤 위 파란 바다·하늘 그림 |
 | `garden_sprinkler.png` | 22×17 | 온기 | `echo.ch1.garden_sprinkler` | garden — 노란 물뿌리개 |
-| `lane_poster.png` | 19×24 | 그리움 | `echo.ch1.lane_poster` (숨김) | lane — 벽에 붙은 파란 포스터(물결 + 달). **벽면 좌표** |
+| `lane_poster.png` | 19×24 | 그리움 | `echo.ch1.lane_poster` (숨김) | lane — 벽에 붙은 파란 포스터(물결 + 달). 벽 아래쪽 눈높이 |
 | `path_lamp.png` | 13×43 | 온기 | `echo.ch1.path_lamp` | path — 노란 유리 가로등 |
-| `square_clock.png` | 21×49 | 그리움 | `echo.ch1.square_clock` | square — 파란 테 기둥 시계 |
-| `square_bench.png` | 34×24 | 온기 | `echo.ch1.square_bench` (숨김) | square — 노랗게 칠한 벤치 |
+| `square_clock.png` | 21×49 | 그리움 | `echo.ch1.square_clock` | square_gate — 시계탑 발치의 파란 테 기둥 시계(시계 장치) |
+| `square_bench.png` | 34×24 | 온기 | `echo.ch1.square_bench` (숨김) | square_gate — 노랗게 칠한 벤치 |
 
-- 각 소품은 그 감정의 4단계 램프(`dark/mid/light/highlight`) + 중립색만 쓴다. 흑백에서도 바깥 외곽선이 또렷하고, 같은 모양의 중립 물건(광장의 중립 벤치 등)보다 한 단계 밝다(art_style §2-3 감지 전 힌트).
-- 소품의 충돌 영역은 배경 json `blockers` 에 **넣지 않았다**(소품이 없는 챕터도 있으므로). 엔진이 소품을 놓을 때 발밑에 작은 충돌을 붙인다(권장: 이젤·벤치·시계·가로등).
+- 각 소품은 그 감정의 4단계 램프(`dark/mid/light/highlight`) + 중립색만 쓴다. 흑백에서도 바깥 외곽선이 또렷하고, 같은 모양의 중립 물건보다 한 단계 밝다(art_style §2-3 감지 전 힌트).
+- 소품의 충돌 영역은 배경 json `blockers` 에 **넣지 않았다**(소품이 없는 장면도 있으므로). 필요하면 장면 정의에서 붙인다.
+- 잔향 상호작용 거리는 감지기(발 위 8px)에서 20px 이다. 모든 잔향 기준점은 캐릭터가 설 수 있는 자리에서 20px 안에 있다. `lane_poster` 만 벽에 붙는데, 기준점 y 124 는 바닥 맨 위에 선 캐릭터의 감지기 높이와 같다(WP-18b 에서 y 102 → 124 로 내림).
 
 ## 4. 배경 (`game/art/bg/`)
 
 ### 4-1. 목록과 장면
 
-| 파일 | 장소 | 쓰는 장면 ([progression.md](../gdd/progression.md) §3-1·3-2) | 잔향 자리 | 출구 → |
+| 파일 | 장소 | 쓰는 장면 ([progression.md](../gdd/progression.md) §3-1·3-2, [slice_beats.md](../narrative/slice_beats.md) §1) | 잔향 자리 | 출구 → |
 |---|---|---|---|---|
 | `atelier.png` | 화실 | `prologue_atelier`, `ch1_atelier` (+ `ch5_atelier`) | `atelier_brush`, `atelier_easel` | `atelier_door` |
 | `garden.png` | 정원 | `prologue_garden`, `ch1_garden`, `ch1_garden_02` (+ 이후 `*_garden*` 공용 허브) | `garden_pot`, `garden_sprinkler` | `garden_gate` |
@@ -98,12 +99,13 @@ PNG 를 손으로 고치지 않는다. 고칠 때는 코드를 고치고 다시 
 | `path.png` | 오솔길† | `ch1_path` | `path_lamp` | `garden_gate`, `market` |
 | `stairs.png` | 계단길† | `ch1_stairs` | — | `lane`, `square` |
 | `market.png` | 시장† | `ch1_market` | — | `path`, `square` |
-| `square.png` | 광장 | `ch1_square`, `ch1_square_02` (+ `ch5_square`) | `square_clock`, `square_bench` | `stairs`, `market` |
-| `square_night.png` | 광장(밤)† | `ch1_night` | (square 와 같은 자리) | `stairs`, `market` |
+| `square.png` | 광장 | `ch1_square` (+ `ch5_square`) | (보여 주기만: `square_clock`·`square_bench` 같은 자리) | `stairs`, `market` |
+| `square_gate.png` | 광장 시계탑 아래 | `ch1_square_02` | `square_clock`, `square_bench` | `garden` |
+| `square_night.png` | 광장(밤)† | `ch1_night` | (보여 주기만: 같은 자리) | `stairs`, `market` |
 
-† = progression.md 의 자리표시 장소 이름(원작 확인 전, **TODO-확인**).
+† = progression.md 의 자리표시 장소 이름(원작 확인 전, **TODO-확인**). ch1 아침 화실은 `atelier` 를 그대로 쓴다(별도 `atelier_morning` 없음).
 
-마을 동선 **[제안]**: 하늘 길 = 화실 → 화실 앞 → 골목 → 계단길 → 광장 / 별 길 = 정원 → 정원 문 → 오솔길 → 시장 → 광장. 두 길이 광장에서 만난다(첫 만남). 교대 파트에서는 출구가 '장면 끝' 트리거로 쓰일 것이다.
+마을 동선 **[제안]**: 하늘 길 = 화실 → 화실 앞 → 골목 → 계단길 → 광장 / 별 길 = 정원 → 정원 문 → 오솔길 → 시장 → 광장. 두 길이 광장에서 만난다(첫 만남). 마을 한가운데 = 광장의 **시계탑**(정원 담 너머·정원 문 원경에서도 보인다).
 
 ### 4-2. 메타데이터 형식 (`<이름>.json`)
 
@@ -116,32 +118,72 @@ PNG 를 손으로 고치지 않는다. 고칠 때는 코드를 고치고 다시 
   "blockers": [[x, y, w, h], ...],
   "spawns": {"default": [x, y], "from_<배경>": [x, y]},
   "exits": [{"name": "<이어지는 배경 이름>", "rect": [x, y, w, h]}],
-  "props": {"<잔향 slug 또는 소품 이름>": [x, y]},
+  "props": {"<id>": [x, y]},
+  "gate_rect": [x, y, w, h],
   "notes": "설명"
 }
 ```
 
 | 키 | 뜻 |
 |---|---|
-| `walkable` | 다각형 하나. 캐릭터 **발**이 있을 수 있는 영역 (벽·건물 정면 아래선까지) |
-| `blockers` | walkable 안의 가구·물건 **발밑** 충돌 사각형 |
-| `spawns` | 발 위치. `default` 는 항상 있다. `from_<배경>` = 그 배경에서 들어올 때 |
-| `exits` | `name` = 이어지는 배경 이름. rect 는 walkable 과 겹친다 |
-| `props` | 소품 스프라이트의 **바닥 중앙**. 잔향 slug 는 `echo.<구간>.<slug>` 의 slug 와 같다. 그 밖의 이름은 조사 지점·NPC 자리 후보 |
+| `walkable` | 다각형 하나. 캐릭터 **발**이 있을 수 있는 영역 (엔진이 외곽선 충돌로 만든다) |
+| `blockers` | walkable 안의 가구·물건·난간 **발밑** 충돌 사각형 |
+| `spawns` | 발 위치. `default` 는 항상 있다. `from_<배경>` = 그 배경에서 들어올 때. 두 사람이면 두 번째는 +26px 오른쪽 |
+| `exits` | `name` = 이어지는 배경 이름. rect 는 walkable 과 겹친다. 장면 정의의 출구 이름(slice_beats 의 `door`, `gate`, `lane_end` …)과 다르면 장면 정의에서 `rect` 를 직접 주거나 이 이름을 가리킨다 |
+| `props` | 두 종류. **잔향 slug**(`atelier_brush` 등) = 잔향 스프라이트 **바닥 중앙**. **조사 id**(`sofa`, `window` …) = 그 물건 **바로 앞 바닥**의 상호작용 지점(캐릭터가 서서 E 를 누르는 자리, 반경 24px). NPC id(`passerby`, `sweeper`, `vendor`) = NPC 의 발 위치. 장치 id(`gate_hold`, `gate_latch`) = 장치 위치(반경 20px) |
+| `gate_rect` | (square_gate 만) 철문 통로. 장면 정의의 `gates[].rect` 에 그대로 쓴다. 엔진이 이 사각형에 창살과 충돌을 그리고, 열리면 위쪽 3px 만 남긴다 |
 | `notes` | 장소 설명과 주의할 점 |
 
-`check_art.py` 가 필수 키, 화면 범위, spawn 이 walkable 안·blocker 밖인지, 출구가 walkable 과 겹치는지 검사한다.
+### 4-3. 슬라이스 조사 지점 (slice_beats.md §2 의 id = props 키)
 
-### 4-3. 배경별 메모 (엔진 쪽이 알아야 할 것)
+장면 정의(`game/data/scenes/*.json`)가 `inspectables[].at` 을 주지 않으면 엔진이 `props[<id>]` 에 둔다. ★ = 잔향 기준점.
 
-- **atelier**: `hs_signature` = 벽 풍경화 오른쪽 아래의 작은 'H.S' 서명(벽면 좌표, 조사 지점). canon §5 의 첫 등장 위치는 **TODO-확인**이라 그림 속에 작게만 넣었다. `atelier_window` = ch5 잔향 자리 — 창이 배경에 그려져 있으므로 ch5 에는 별도 커튼/창틀 스프라이트가 필요(범위 밖).
-- **garden**: garden.md §2 배치 그대로. `plot_01`~`plot_05` = 하늘 줄(위), `plot_06`~`plot_10` = 별 줄(아래), 짝 칸은 세로. `special_pot` = 가운데 둥근 판석. `heart_bed_01`~`12` = 담 밑 마음 화단. 좌표 = 식물 스프라이트 바닥 중앙. 칸(흙 두둑)은 blocker. 별 화분(`garden_pot`)과 가운데 특별 화분을 같은 물건으로 볼지는 **TODO-확인**(지금은 따로 둠).
-- **lane**: `lane_poster` 는 벽에 붙는다(좌표 = 포스터 바닥 중앙, 벽면 y 102). 상호작용 거리는 바닥 (254, 136) 기준을 권장. 양옆에 낡은 중립 포스터 두 장이 있어 흑백에서는 섞여 보인다(숨김 잔향).
-- **path**: `path_lamp` 는 높이 43px. 흙길 위쪽 가장자리에 선다.
-- **stairs**: 계단 단차 8px. 가운데 층계참(`landing`)이 넓다 — '닮은 습관(하늘 쪽)' 연출 자리 후보.
-- **market**: `stall_*` = 상인 NPC 자리 후보. 과일도 모두 회색이다(색을 잃은 세계).
-- **square / square_night**: 두 json 은 같은 좌표다. 시청 정면의 둥근 장식은 **빈 장식**(시계는 잔향 소품 `square_clock`). `square_fountain` = ch5 잔향 자리(범위 밖, 가운데 원형 무늬 위). 같은 장면의 두 잔향은 복원 반경(48px)이 겹치지 않게 200px 떨어져 있다. 밤 배경에서 소품은 엔진이 같은 좌표에 그린다(밤 톤은 엔진 쪽 modulate 로 맞추는 것을 권장).
-- 같은 장면에 잔향이 둘인 배경(atelier, garden, square)은 두 앵커가 96px 이상 떨어져 있다 → 하나를 모았을 때 다른 잔향의 색이 같이 돌아오지 않는다.
+| 배경 | id (x, y) |
+|---|---|
+| `atelier` | `sofa` (70,190), `window` (88,134), `palette` (130,234), `canvas` (281,136), `sketchbook` (186,234), `brushes` (224,236), `coat` (452,136), `atelier_brush` (224,236) ★, `atelier_easel` (152,162) ★ |
+| `garden` | `flowers` (52,228), `shed` (404,130), `swing` (431,206), `can` (70,168), `pot` (292,190), `fence` (250,128), `garden_pot` (292,190) ★, `garden_sprinkler` (70,168) ★ |
+| `atelier_door` | `mailbox` (320,144), `lamp` (72,212), `sign` (262,144), `passerby` (360,186) |
+| `garden_gate` | `gate` (240,144), `signpost` (154,162), `town` (400,146), `bird` (120,146) |
+| `lane` | `sweeper` (240,166), `laundry` (96,140), `cat` (382,186), `puddle` (140,176) |
+| `path` | `tree` (64,164), `sign` (426,164), `butterfly` (252,140), `wildflowers` (184,238), `path_lamp` (300,166) ★ |
+| `stairs` | `railing` (186,200), `pots` (282,216), `chalk` (240,156), `view` (210,64) |
+| `market` | `vendor` (96,130), `apples` (42,130), `cloth` (245,130), `bakery` (400,130) |
+| `square` | `fountain` (240,218), `board` (36,124), `pigeons` (312,232), `clock` (112,162) |
+| `square_night` | `clock` (112,162), `board` (36,124), `fountain` (240,218), `bench` (376,158) |
+| `square_gate` | `square_clock` (112,150) ★, `square_bench` (280,250) ★, `gate_hold` (190,208), `gate_latch` (152,174), `clockface` (136,140), `lamp` (40,162), `plaque` (91,138) · `gate_rect` [142,180,28,18] |
+
+- 같은 자리 쌍(의도): `brushes` = `atelier_brush`, `can` = `garden_sprinkler`, `pot` = `garden_pot`. 이 조사 대상들은 잔향을 이미 모은 장면(§0-9, 상호작용 없는 보여 주기 잔향)에서 쓰인다.
+- 조사 지점끼리는 모두 24px 넘게 떨어져 있다(가장 가까운 대상이 선택되므로 헷갈리지 않게).
+- `check_art.py` 가 위 표 전체를 검사한다: id 존재, 바닥 위·blocker 밖, 서로 간격.
+
+### 4-4. square_gate — 철문 퍼즐 배치 (ch1_square_02, sibling.md §4-1 붙잡기-이동)
+
+| 항목 | 값 |
+|---|---|
+| 막힌 구역 | 왼쪽 시계탑 발치 x 16~182, y 120~198 (둥근 돌 포장) |
+| 난간 blockers | 앞쪽(동서) `[16,192,126,8]`, 철문 오른쪽 기둥~모서리 `[170,192,12,8]`, 오른쪽(남북) `[176,114,6,86]` |
+| `gate_rect` | `[142,180,28,18]` — 앞쪽 난간 오른쪽 끝의 통로. 배경에는 기둥 두 개·아치·문턱만 그렸다(창살은 엔진) |
+| `gate_hold` | (190, 208) — 철문 바깥 오른쪽 앞. 붙잡는 사람이 서도 통로를 막지 않는다 |
+| `gate_latch` | (152, 174) — 철문 바로 안쪽 |
+| 안쪽 | `square_clock` ★ (112,150) 탑 발치 시계 장치, `clockface` (136,140) 높은 시계판을 올려다보는 자리, `plaque` (91,138) 닳은 머릿돌, `lamp` (40,162) 탑 옆 가로등 |
+| 바깥 | `square_bench` ★ (280,250) — 탑 발치에서 195px. 배경에는 벤치를 그리지 않았다(엔진이 잔향 스프라이트를 그린다) |
+| 스폰 | `default` (380,200), `from_square` (120,220) — 둘 다 철문 밖 |
+| 출구 | `garden` `[472,152,8,60]` 오른쪽 끝 (정원 가는 길) |
+
+`check_art.py` 가 바닥 채우기로 확인한다: 문이 닫히면 `gate_latch`·`square_clock` 에 갈 수 없고, 열면 갈 수 있다. `gate_hold`·`from_square` 는 문 밖에서 닿는다.
+
+### 4-5. 배경별 메모 (엔진 쪽이 알아야 할 것)
+
+- **atelier**: 왼쪽 벽에 낡은 소파(담요가 바닥으로 흘러내림) — 기본 스폰 = 소파 옆. 창가에 이젤(`atelier_easel`), 가운데 아래 작업대 위에 팔레트(`palette`)·빈 스케치북(`sketchbook`), 작업대 오른쪽 바닥에 붓통(`atelier_brush` = `brushes`). 벽 풍경화 오른쪽 아래 'H.S' 서명 — `canvas` 는 그 아래 바닥, `hs_signature` 는 벽면 좌표(참고). 문 옆 옷걸이의 낡은 외투(`coat`). `atelier_window` = ch5 잔향 자리(범위 밖, 별도 커튼/창틀 스프라이트 필요).
+- **garden**: garden.md §2 배치 그대로(`plot_01`~`10`, `special_pot`, `heart_bed_01`~`12`). 별 화분(`garden_pot` = `pot`)은 별이 깨어나는 가운데 풀밭(기본 스폰) 발치로 옮겼다(WP-18b, slice_beats §2-2). 왼쪽 회색 꽃밭, 헛간 아래 2인용 그네, 뒷담 위로 마을 시계탑 꼭대기(`fence`). 별 화분과 특별 화분이 같은 물건인지는 **TODO-확인**.
+- **atelier_door**: 글자가 지워진 간판(`sign`), 이름표가 닳은 우편함(`mailbox`), 낮에도 켜진 아래 왼쪽 가로등(`lamp`), 말 없는 행인 자리(`passerby`).
+- **garden_gate**: 원경에 굴뚝 연기와 마을 한가운데 시계탑. 담 위 회색 새(`bird`, 나무 틈으로 하늘이 보이는 자리), 화살표만 시계탑 쪽을 가리키는 이정표(`signpost`), 마을 전망(`town`).
+- **lane**: 청소부 NPC 자리(`sweeper`, 골목 한가운데), 처마(담) 위 고양이(`cat`), 웅덩이(`puddle`), 빨랫줄(`laundry`). 숨김 잔향 포스터 양옆에 낡은 중립 포스터 두 장.
+- **path**: 연필 빗금 껍질의 나무(`tree`), 화살표만 시장 쪽을 가리키는 표지판(`sign`), 회색 나비(`butterfly`), 들꽃 무리(`wildflowers`). `path_lamp` 높이 43px.
+- **stairs**: 반질반질 닳은 손잡이(`railing`), 계단 화분(`pots`), 층계참의 희미한 사방치기(`chalk`), 계단 꼭대기 전망(`view`). 계단 단차 8px.
+- **market**: 과일(회색 사과 — `apples`) / 꽃무늬 천(`cloth`) / 빵(바구니·김 — `bakery`) 가게. `vendor` = 과일 가게 진열대 바로 앞의 상인 발 위치. 진열대 뒤에 세우면 NPC 가 배경 위에 그려져 진열대 앞에 선 것처럼 보이므로 이 자리를 권장.
+- **square / square_night / square_gate**: 같은 광장, 같은 좌표. 왼쪽 위 **시계탑**(화면 위로 솟음, 높은 곳에 숫자가 반쯤 지워진 멈춘 시계판), 가운데 회색 물이 흐르는 **분수**(배경에 그림 — ch5 잔향 `square_fountain` 은 덧그림 스프라이트가 필요), 왼쪽 건물 벽의 **'사람을 찾습니다' 게시판**(전단의 얼굴 칸이 흐릿), 분수 앞 비둘기. 기둥 시계(잔향 `square_clock`)는 탑 발치 `(112,150)` 에 엔진이 그린다 — `square`(ch1_square)에서는 그리지 않고, `clock` 조사는 탑 발치에서 높은 시계판을 올려다보는 자리다. `square_night` 은 시계판 분침이 낮보다 한 칸(5분) 앞이다(slice_beats §2-12 "바늘이 한 칸 앞으로"). `bench`(밤) = 오른쪽 위 중립 벤치 앞.
+- 같은 장면에 잔향이 둘인 배경(atelier, garden, square_gate)은 두 기준점이 96px 넘게 떨어져 있다 → 하나를 모았을 때 다른 잔향의 색이 같이 돌아오지 않는다.
 
 ## 5. 문서 사이 차이 (art_style.md 를 따름)
 
@@ -152,8 +194,11 @@ PNG 를 손으로 고치지 않는다. 고칠 때는 코드를 고치고 다시 
 | 소품 폴더 | ownership.md T4 쓰기 경로는 `game/art/{bg,char,ui}/` | WP-18 지시에 따라 `game/art/props/` 를 새로 만들었다. ownership 표에 추가 필요(개발자) |
 | 중립색 채도 | art_style §3 은 셰이더 하한 0.30, 셰이더(`band_min_saturation`) 기본값은 0.35 | 중립색 팔레트는 전부 0.28 이하라 둘 다 만족 |
 | 별 화분 | 화분 모양 '별'은 꿈(보라)의 기호 '별'과 겹친다 | 화분은 온기(노랑)이고 UI 기호는 해(☀)를 쓴다. 색각 이상 모드에서 헷갈리지 않는지 WP-14/36 에서 확인 |
+| 시계탑 | slice_beats 는 '시계탑'(높은 시계판, 기단의 시계 장치), 잔향 스프라이트는 기둥 시계 | 광장에 시계탑을 그리고, 기둥 시계 스프라이트를 탑 발치의 '시계 장치'로 둔다 |
+| 분수 | WP-18 에서는 ch5 잔향 자리라 비워 두었다 | slice_beats §2-11 이 분수를 요구해 배경에 그렸다. ch5 잔향은 분수 위에 덧그리는 스프라이트로 처리 |
 
 ## 6. 아직 없는 것 (다음 WP 후보)
 
-- 초상 표정 8종, 보호 컷인 그림 2장(sibling.md §7), 감정 기호 UI 7×7(art_style §4), 정원 식물 성장 6단계 스프라이트, ch5 잔향 소품(`atelier_window`, `square_fountain`).
-- 주인공의 상호작용·대기 애니메이션, 감지 중 걷기(×0.6 속도) 전용 프레임.
+- 초상 표정 8종, 보호 컷인 그림 2장(sibling.md §7), 감정 기호 UI 7×7(art_style §4), 정원 식물 성장 6단계 스프라이트, ch5 잔향 소품(`atelier_window`, `square_fountain` 덧그림).
+- 주인공의 상호작용·대기·`habit_circle`(허공에 동그라미 두 번) 애니메이션, 감지 중 걷기 전용 프레임. NPC 청소부·상인 전용 시트(지금은 `npc_a`/`npc_b` 공용).
+- 철문을 붙잡는 손잡이·고정 장치 스프라이트(지금은 엔진이 사각형으로 그린다), `square_clock` 을 모은 뒤 바늘이 한 칸 움직인 기둥 시계 그림.

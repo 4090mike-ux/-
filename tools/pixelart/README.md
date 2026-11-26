@@ -7,7 +7,7 @@
 pip install -r tools/requirements.txt        # Pillow>=11
 python tools/pixelart/build_all.py           # game/art/ 의 PNG·JSON 전부 다시 만들기 (결정적)
 python tools/pixelart/build_all.py --only char --only props   # 일부만 (char, portrait, npc, props, bg)
-python tools/pixelart/check_art.py           # 팔레트 밖 색·반투명·감정 색 배치·배경 메타데이터 검사
+python tools/pixelart/check_art.py           # 팔레트 밖 색·반투명·감정 색 배치·배경 메타데이터·슬라이스 조사 지점·철문 퍼즐 검사
 python tools/pixelart/preview.py             # 6배·흑백 미리보기 + 배경 목업 → tools/pixelart/_preview/ (커밋 안 함)
 ```
 
