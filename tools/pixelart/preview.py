@@ -113,9 +113,25 @@ def mock(bg_png: Path, meta: dict) -> tuple[Image.Image, Image.Image]:
         d.rectangle([x, y, x + w - 1, y + h - 1], outline=(240, 220, 40, 255))
     for name, (x, y) in meta.get("spawns", {}).items():
         d.rectangle([x - 1, y - 1, x + 1, y + 1], fill=(40, 200, 240, 255))
-    for name, (x, y) in meta.get("props", {}).items():
-        d.point((x, y), fill=(255, 0, 255, 255))
+    if "gate_rect" in meta:
+        x, y, w, h = meta["gate_rect"]
+        d.rectangle([x, y, x + w - 1, y + h - 1], outline=(255, 140, 0, 255))
     return scene, dbg
+
+
+def label_props(img: Image.Image, meta: dict, k: int) -> Image.Image:
+    """확대한 디버그 그림 위에 소품 좌표(+ 반경 24px 원)와 이름을 적는다."""
+    d = ImageDraw.Draw(img)
+    for name, (x, y) in meta.get("props", {}).items():
+        if name.startswith(("plot_", "heart_bed_")):
+            continue
+        cx, cy = x * k + k // 2, y * k + k // 2
+        r = 24 * k
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=(255, 120, 255, 255))
+        d.line([cx - 6, cy, cx + 6, cy], fill=(255, 0, 255, 255), width=2)
+        d.line([cx, cy - 6, cx, cy + 6], fill=(255, 0, 255, 255), width=2)
+        d.text((cx + 6, cy - 14), name, fill=(255, 255, 0, 255), stroke_width=2, stroke_fill=(0, 0, 0, 255))
+    return img
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -154,7 +170,7 @@ def main(argv: list[str] | None = None) -> int:
         k = args.mock_scale
         up(scene, k).save(out / f"mock_{png.stem}.png")
         up(to_gray(scene), k).save(out / f"mock_{png.stem}_gray.png")
-        up(dbg, k).save(out / f"mock_{png.stem}_debug.png")
+        label_props(up(dbg, k), meta, k).save(out / f"mock_{png.stem}_debug.png")
 
     print(f"preview: PNG {len(pngs)}개 → {out}")
     return 0

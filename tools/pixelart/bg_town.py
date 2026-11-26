@@ -6,6 +6,7 @@
 """
 from __future__ import annotations
 
+import math
 import random
 
 import bgkit as K
@@ -149,7 +150,6 @@ def bunting(c: Canvas, x0: int, x1: int, y: int, sag: int = 6) -> None:
 
 def umbrella(c: Canvas, cx: int, cy: int, r: int, *, a: str = K.PAPER, b: str = K.ASH) -> None:
     """위에서 본 둥근 파라솔 (줄무늬 8조각)."""
-    import math
     c.shade_ellipse(cx + 4, cy + 6, r, r * 0.6)
     c.ellipse(cx, cy, r + 1, r * 0.62 + 1, K.INK)
     for yy in range(int(cy - r), int(cy + r) + 1):
@@ -176,6 +176,47 @@ def produce_crate(c: Canvas, x: int, y: int, *, seed: int, fruit: str = K.FOG, w
         c.ellipse(fx + 1.5, fy + 1.5, 1.6, 1.4, fruit)
         c.set(fx + 1, fy + 1, P.lighter(fruit))
     return b
+
+
+def worn_marks(c: Canvas, x: int, y: int, w: int, *, seed: int, col: str = K.MIST) -> None:
+    """지워진 글자 흔적: 글자 모양 획을 듬성듬성 남긴다(읽을 수 없게)."""
+    rng = random.Random(seed)
+    xx = x
+    while xx < x + w - 2:
+        for dy in range(5):
+            for dx in range(3):
+                if rng.random() < 0.32:
+                    c.set(xx + dx, y + dy, col)
+        xx += 4
+
+
+def sprite_at(c: Canvas, text: str, legend: dict, x: int, y: int, flip: bool = False) -> None:
+    c.stamp(text, legend, x, y, flip=flip)
+
+
+BIRD = """
+    ..KK....
+    .KSSK...
+    KSSSSKKK
+    .KSaaSK.
+    ..KKKK..
+    ...K.K..
+"""
+PIGEON = """
+    .KK....
+    KMSK...
+    .KSSKK.
+    .KSaaSK
+    ..KKKK.
+"""
+BUTTERFLY = """
+    .K...K.
+    KfK.KfK
+    KffKffK
+    .KfKfK.
+    .KfKfK.
+    ..K.K..
+"""
 
 
 # ====================================================================== 3. 화실 앞
@@ -205,11 +246,11 @@ def atelier_door() -> tuple:
         c.vline(sx, 44, 47, K.INK)
     K.box(c, 246, 47, 28, 18, K.SKIN_L)
     c.frame(247, 48, 26, 16, K.WOOD)
-    c.ellipse(260, 56, 9, 5, K.INK)
-    c.ellipse(260, 56, 8, 4, K.SKIN_M)
-    c.ellipse(265, 57, 1.6, 1.4, K.SKIN_L)
-    for i, col in enumerate((K.SHADOW, K.ASH, K.MIST, K.STONE)):
-        c.rect(254 + i * 3, 54 + (i % 2), 2, 2, col)
+    worn_marks(c, 249, 50, 22, seed=301, col=K.SKIN_M)           # 지워진 간판 글자
+    c.ellipse(260, 60, 5, 2.6, K.INK)                             # 작은 팔레트 그림
+    c.ellipse(260, 60, 4, 1.8, K.SKIN_M)
+    for i, col in enumerate((K.SHADOW, K.ASH, K.STONE)):
+        c.set(257 + i * 2, 60, col)
     # 벽등
     c.rect(193, 74, 6, 9, K.INK)
     c.rect(194, 75, 4, 6, K.FOG)
@@ -251,17 +292,22 @@ def atelier_door() -> tuple:
     low = []
     for px in (40, 96, 360, 430):                          # 아래 보도의 화분 줄
         low.append(K.potted_plant(c, px, 228, size=10, seed=px))
-    low.append(K.lamp_post(c, 70, 226, h=42))
+    c.glow(70, 177, 9, 8, rings=((1.0, 4), (0.6, 8)))             # 낮에도 켜진 가로등의 옅은 빛
+    low.append(K.lamp_post(c, 70, 226, h=42, lit=True))
     low.append(K.lamp_post(c, 390, 226, h=42))
     # 소품: 화분, 우편함, 자전거, 상자·통, 왼쪽 울타리
     b1 = K.potted_plant(c, 192, 134, size=10, seed=5)
     b2 = K.potted_plant(c, 255, 134, size=10, seed=6)
-    c.rect(282, 112, 3, 22, K.INK)                       # 우편함
-    c.vline(283, 113, 133, K.STONE)
-    K.box(c, 276, 100, 15, 12, K.ASH)
-    c.hline(277, 289, 101, K.MIST)
-    c.hline(279, 287, 105, K.SHADOW)
-    c.shade_ellipse(285, 134, 7, 2)
+    c.rect(318, 112, 3, 22, K.INK)                       # 우편함 (이름표 자리가 닳음)
+    c.vline(319, 113, 133, K.STONE)
+    K.box(c, 312, 98, 15, 14, K.ASH)
+    c.hline(313, 325, 99, K.MIST)
+    c.hline(315, 323, 102, K.SHADOW)
+    c.rect(314, 105, 11, 5, K.INK)
+    c.rect(315, 106, 9, 3, K.FOG)
+    for x, y in ((316, 107), (319, 106), (322, 108), (317, 108)):
+        c.set(x, y, K.MIST)
+    c.shade_ellipse(321, 134, 7, 2)
     # 자전거 (벽에 기댄)
     for wx in (420, 446):
         c.ellipse(wx, 124, 8, 8, K.INK)
@@ -275,8 +321,8 @@ def atelier_door() -> tuple:
         c.line(x0, y0, x1, y1, K.SHADOW)
     c.hline(427, 433, 105, K.INK)
     c.hline(441, 447, 107, K.INK)
-    b3 = K.barrel(c, 334, 120, w=13, h=16)
-    b4 = K.crate(c, 348, 124, 16, 9, 5)
+    b3 = K.barrel(c, 340, 120, w=13, h=16)
+    b4 = K.crate(c, 356, 124, 16, 9, 5)
     # 왼쪽 끝: 나무 울타리
     c.rect(0, 128, 12, 110, K.WOOD)
     for yy in range(128, 238, 8):
@@ -286,12 +332,18 @@ def atelier_door() -> tuple:
 
     m = meta(
         walkable=[(14, 130), (480, 130), (480, 228), (14, 228)],
-        blockers=[b1, b2, (278, 128, 12, 6), b3, b4, (410, 126, 46, 6)] + low,
+        blockers=[b1, b2, (314, 128, 12, 6), b3, b4, (410, 126, 46, 6)] + low,
         spawns={"default": (223, 140), "from_atelier": (223, 140), "from_lane": (452, 190)},
         exits=[("atelier", (206, 124, 34, 10)), ("lane", (472, 136, 8, 92))],
-        props={"door": (223, 119), "sign": (260, 66)},
+        props={
+            # 조사 지점 (그 물건 바로 앞 바닥) / NPC 자리
+            "mailbox": (320, 144), "lamp": (72, 212), "sign": (262, 144), "passerby": (360, 186),
+            "door": (223, 119),
+        },
         notes=("화실 앞 거리 (prologue_door). 무채색 바깥 세계를 처음 보는 장면: 반목조 화실 건물(왼쪽)과 셔터 내린 벽돌 가게(오른쪽), "
-               "돌길, 아래쪽 낮은 돌담. 문(door) 앞 계단 위가 화실로 돌아가는 출구, 오른쪽 끝이 골목(lane)으로 이어진다. 잔향 없음."),
+               "돌길, 아래쪽 낮은 돌담. 글자가 지워진 화실 간판(sign), 이름표 자리가 닳은 우편함(mailbox), "
+               "낮에도 켜진 아래 왼쪽 가로등(lamp), 말 없는 행인 NPC 자리(passerby = 길 한가운데 발 위치). "
+               "문(door) 앞 계단 위가 화실로 돌아가는 출구, 오른쪽 끝이 골목(lane)으로 이어진다. 잔향 없음."),
     )
     return c.to_image(), m
 
@@ -312,13 +364,23 @@ def garden_gate() -> tuple:
         c.rect(hx + 3, hy + 3, 3, 3, K.MIST)
         if hw > 17:
             c.rect(hx + hw - 7, hy + 3, 3, 3, K.MIST)
+        if i in (1, 4, 9, 13):                                   # 굴뚝 + 연기
+            chx = hx + hw - 6
+            c.rect(chx, hy - 9, 3, 6, K.MIST)
+            c.hline(chx - 1, chx + 3, hy - 9, K.ASH)
+            for k in range(16):
+                sx = chx + 1 + round(2.2 * math.sin(k / 2.5 + i)) + k // 4
+                sy = hy - 11 - k
+                c.set(sx, sy, K.FOG if k < 10 else K.MIST)
+                if k % 3 == 0:
+                    c.set(sx + 1, sy, K.FOG)
     # 먼 시계탑 실루엣
     c.rect(300, 22, 16, 50, K.MIST)
     c.poly([(298, 22), (308, 8), (318, 22)], K.ASH)
     c.ellipse(308, 32, 4, 4, K.FOG)
     c.set(308, 31, K.ASH)
     c.set(309, 32, K.ASH)
-    canopy_band(c, -10, W + 10, 82, seed=43, r=12)
+    canopy_band(c, -10, W + 10, 82, seed=43, r=12, gap=(106, 134))   # 새가 앉은 자리 위는 나무 틈
     # 담 + 문
     stone_wall(c, 0, 92, W, 36, seed=44)
     c.rect(0, 88, W, 5, K.MIST)
@@ -341,7 +403,6 @@ def garden_gate() -> tuple:
         c.ellipse(px + 5, 54, 4, 4, K.INK)
         c.ellipse(px + 5, 54, 3, 3, K.FOG)
     for i in range(53):
-        import math
         t = i / 52
         ax = 214 + i
         ay = int(66 - 10 * math.sin(math.pi * t))
@@ -389,6 +450,17 @@ def garden_gate() -> tuple:
             K.foliage(c, xx, 130 + fr.randint(-1, 1), 3.5, 3, seed=fr.randint(0, 99), base=K.ASH, dark=K.STONE,
                       light=K.MIST, hi=None, edge=K.SHADOW)
             c.set(xx + fr.randint(-1, 1), 128 + fr.randint(0, 2), fr.choice((K.PAPERC, K.FOG, K.PAPER)))
+    # 담 위의 회색 새
+    sprite_at(c, BIRD, {"K": K.INK, "S": K.ASH, "a": K.STONE}, 116, 82)
+    # 이정표: 글씨는 지워지고 화살표만 시계탑 쪽(오른쪽 위)을 가리킨다
+    c.shade_ellipse(152, 151, 6, 2)
+    c.rect(149, 124, 4, 27, K.INK)
+    c.vline(150, 125, 150, K.WOOD)
+    arrow = [(134, 130), (160, 122), (159, 119), (170, 121), (163, 130), (162, 127), (136, 135)]
+    c.poly([(x + 1, y + 1) for x, y in arrow], K.INK)
+    c.poly(arrow, K.SKIN_S)
+    c.line(138, 131, 158, 125, K.WOOD)
+    worn_marks(c, 140, 126, 12, seed=302, col=K.SKIN_M)
     hedge_row(c, -8, W, 246, seed=49)
     t1 = K.tree(c, 420, 216, r=22, seed=50)
     t2 = K.potted_plant(c, 186, 150, size=12, seed=51)
@@ -396,12 +468,17 @@ def garden_gate() -> tuple:
 
     m = meta(
         walkable=[(8, 140), (222, 140), (222, 126), (258, 126), (258, 140), (470, 140), (470, 240), (8, 240)],
-        blockers=[t1, t2, t3, (334, 152, 34, 8)],
+        blockers=[t1, t2, t3, (334, 152, 34, 8), (147, 146, 7, 5)],
         spawns={"default": (40, 200), "from_garden": (24, 200), "from_path": (240, 138)},
         exits=[("path", (222, 126, 36, 6)), ("garden", (0, 170, 8, 60))],
-        props={"gate": (240, 128)},
-        notes=("정원 문 (prologue_gate). 돌담 가운데 열린 아치 문 너머로 무채색 마을 원경(지붕들, 먼 시계탑 실루엣)이 보인다. "
-               "먼 것일수록 밝은 회색(대기 원근). 왼쪽 끝 = 정원으로 돌아가는 출구, 문 = 오솔길(path)로 나가는 출구. 잔향 없음."),
+        props={
+            # 조사 지점 (그 물건 바로 앞 바닥)
+            "gate": (240, 144), "signpost": (154, 162), "town": (400, 146), "bird": (120, 146),
+        },
+        notes=("정원 문 (prologue_gate). 돌담 가운데 열린 아치 문(gate) 너머로 무채색 마을 원경(지붕·굴뚝 연기, 마을 한가운데 시계탑)이 보인다. "
+               "먼 것일수록 밝은 회색(대기 원근). town = 담 너머 마을을 바라보는 자리, bird = 담 위 회색 새 아래, "
+               "signpost = 글씨가 지워지고 화살표만 시계탑 쪽을 가리키는 이정표. "
+               "왼쪽 끝 = 정원으로 돌아가는 출구, 문 = 오솔길(path)로 나가는 출구. 잔향 없음."),
     )
     return c.to_image(), m
 
@@ -431,7 +508,7 @@ def lane() -> tuple:
     K.potted_plant(c, 178, 42, size=7, seed=2)
     K.potted_plant(c, 196, 42, size=6, seed=3)
     # 낡은 포스터 두 장 (중립) + 잔향 포스터 자리
-    for (px, py, pw, ph, s) in ((214, 74, 16, 20, 1), (300, 70, 18, 22, 2)):
+    for (px, py, pw, ph, s) in ((214, 98, 16, 20, 1), (272, 94, 16, 22, 2)):
         c.shade_rect(px + 2, py + 2, pw, ph, 1)
         c.rect(px, py, pw, ph, K.FOG)
         c.frame(px, py, pw, ph, K.MIST)
@@ -531,16 +608,23 @@ def lane() -> tuple:
         c.hline(441 + k * 4 // 7, 455 + k * 4 // 7, y, K.WOOD_D)
     bl.append((438, 122, 22, 6))
     bl.append(K.crate(c, 196, 186, 16, 7, 5))
+    cat(c, 376, 189)                                              # 처마(담) 위 고양이
 
     m = meta(
         walkable=[(0, 132), (480, 132), (480, 194), (0, 194)],
         blockers=bl,
         spawns={"default": (24, 166), "from_atelier_door": (16, 166), "from_stairs": (462, 166)},
         exits=[("atelier_door", (0, 136, 8, 56)), ("stairs", (472, 136, 8, 56))],
-        props={"lane_poster": (254, 102)},
+        props={
+            # 잔향 기준점 (포스터 바닥 중앙 — 벽 아래쪽, 눈높이)
+            "lane_poster": (254, 124),
+            # 조사 지점 / NPC 자리
+            "sweeper": (240, 166), "laundry": (96, 140), "cat": (382, 186), "puddle": (140, 176),
+        },
         notes=("좁은 골목 (ch1_lane). 걸을 수 있는 띠가 y 132~194 로 좁다. 뒤쪽 건물 세 채, 빨랫줄, 앞쪽 건물 지붕(내려다봄). "
-               "lane_poster 는 벽돌 건물 벽에 붙는 숨김 잔향: 좌표 = 포스터 바닥 중앙(벽면, 바닥 아님). "
-               "그 양옆에 낡은 중립 포스터 두 장을 그려 두어 흑백에서는 섞여 보이게 했다. 상호작용 지점은 포스터 아래 바닥 (254, 136) 권장."),
+               "lane_poster 는 벽돌 건물 벽에 붙는 숨김 잔향: 기준점 y 124 = 벽 밑동 바로 위(눈높이). 바닥 맨 위(y 132)에 선 캐릭터의 "
+               "감지기(발 위 8px)와 거의 같은 높이라 상호작용 거리 20px 안에 든다. 양옆에 낡은 중립 포스터 두 장. "
+               "sweeper = 골목 청소부 NPC 의 발 위치(골목 한가운데), laundry = 빨랫줄 셔츠 아래, cat = 처마(담) 위 고양이 앞, puddle = 웅덩이."),
     )
     return c.to_image(), m
 
@@ -569,7 +653,6 @@ def path() -> tuple:
     c.shade_rect(0, 106, W, 5, 1, 10)
 
     def path_y(x: float) -> float:
-        import math
         return 190 - 18 * math.sin(x / 480 * math.pi * 1.4) - x * 0.04
 
     for xx in range(-4, W + 4):
@@ -629,8 +712,37 @@ def path() -> tuple:
     c.poly([(411, 123), (439, 123), (444, 127), (439, 131), (411, 131)], K.SKIN_S)
     c.hline(414, 434, 127, K.WOOD)
     bl.append((422, 148, 8, 5))
-    for k, (fx, fy) in enumerate(((60, 140), (250, 136), (160, 228), (270, 236), (460, 228), (350, 138), (40, 210))):
+    for k, (fx, fy) in enumerate(((24, 150), (250, 136), (160, 228), (270, 236), (460, 228), (350, 138), (40, 210))):
         flower_patch(c, fx, fy, seed=660 + k, n=8)
+    for k, (fx, fy) in enumerate(((172, 228), (188, 232), (180, 222), (196, 226))):    # 들꽃 무리
+        flower_patch(c, fx, fy, seed=690 + k, n=10)
+    # 연필 자국 같은 나무껍질의 나무
+    tx, ty = 64, 152
+    c.shade_ellipse(tx + 3, ty, 16, 4)
+    c.poly([(tx - 8, ty), (tx - 5, ty - 4), (tx - 5, ty - 28), (tx + 5, ty - 28), (tx + 5, ty - 4), (tx + 9, ty)], K.INK)
+    c.poly([(tx - 7, ty - 1), (tx - 4, ty - 4), (tx - 4, ty - 28), (tx + 4, ty - 28), (tx + 4, ty - 4), (tx + 8, ty - 1)], K.FOG)
+    c.poly([(tx - 7, ty - 1), (tx - 4, ty - 4), (tx - 4, ty - 28), (tx + 4, ty - 28), (tx + 4, ty - 4), (tx + 8, ty - 1)], K.MIST)
+    c.vline(tx - 3, ty - 28, ty - 3, K.FOG)
+    pr2 = random.Random(691)
+    for k in range(14):                                           # 흔들리는 세로 연필 획
+        xx = tx - 3 + (k * 5) % 8
+        y0 = ty - 28 + pr2.randint(0, 10)
+        ln = pr2.randint(5, 14)
+        col = K.STONE if xx < tx + 1 else K.SHADOW
+        for j in range(ln):
+            c.set(xx + (1 if (j // 4) % 2 and xx < tx + 3 else 0), min(ty - 2, y0 + j), col)
+    for k in range(8):                                            # 그늘 쪽 겹친 사선 빗금
+        c.line(tx + 1, ty - 25 + k * 3, tx + 4, ty - 28 + k * 3, K.ASH)
+    for xx in (tx - 6, tx - 5, tx + 6, tx + 7):                   # 뿌리 획
+        c.set(xx, ty - 1, K.STONE)
+    K.foliage(c, tx, ty - 44, 22, 17, seed=692, base=K.ASH, dark=K.STONE, light=K.MIST, hi=K.FOG)
+    for k in range(10):                                           # 잎에도 연필 빗금 몇 줄
+        x0 = tx - 16 + pr2.randint(0, 30)
+        y0 = ty - 54 + pr2.randint(0, 18)
+        c.line(x0, y0, x0 + 3, y0 - 3, K.STONE)
+    bl.append((tx - 7, ty - 6, 15, 6))
+    # 회색 나비
+    sprite_at(c, BUTTERFLY, {"K": K.INK, "f": K.PAPERC}, 250, 120)
     for k, (bx, by, r) in enumerate(((216, 226, 10), (470, 136, 9), (140, 124, 8))):
         K.foliage(c, bx, by, r, r * 0.7, seed=670 + k, base=K.ASH, dark=K.STONE, light=K.MIST, hi=K.FOG)
         bl.append((bx - r, by, 2 * r, 5))
@@ -641,9 +753,15 @@ def path() -> tuple:
         blockers=bl,
         spawns={"default": (20, 196), "from_garden_gate": (14, 196), "from_market": (466, 172)},
         exits=[("garden_gate", (0, 160, 8, 64)), ("market", (472, 140, 8, 64))],
-        props={"path_lamp": (300, 166), "signpost": (426, 152)},
+        props={
+            # 잔향 기준점 (스프라이트 바닥 중앙)
+            "path_lamp": (300, 166),
+            # 조사 지점 (그 물건 바로 앞 바닥)
+            "tree": (64, 164), "sign": (426, 164), "butterfly": (252, 140), "wildflowers": (184, 238),
+        },
         notes=("숲가 오솔길 (ch1_path). 위쪽은 나무 울타리 너머 숲, 가운데로 흙길이 왼쪽→오른쪽으로 굽어 지나간다. "
-               "path_lamp(온기 잔향 가로등, 높이 약 43px)는 흙길 위쪽 가장자리에 선다. 이정표(signpost)는 조사 지점 후보."),
+               "path_lamp(온기 잔향 가로등, 높이 약 43px)는 흙길 위쪽 가장자리에 선다. tree = 연필 빗금 같은 껍질의 나무(왼쪽), "
+               "sign = 화살표만 시장 쪽(오른쪽)을 가리키는 표지판, butterfly = 들꽃 위 회색 나비, wildflowers = 아래쪽 들꽃 무리."),
     )
     return c.to_image(), m
 
@@ -706,6 +824,31 @@ def stairs() -> tuple:
     flagstones(c, 150, 140, 180, 30, sw=16, sh=10, seed=79, base=K.FOG, gap=K.ASH, hi=K.PAPERC, lo=K.MIST)
     c.hline(150, 329, 140, K.INK)
     c.shade_rect(150, 141, 180, 2, 1)
+    # 층계참의 희미한 사방치기 분필 그림
+    chalk = []
+    hx0 = 194
+    for kind in ("1", "1", "2", "1", "2", "1"):
+        if kind == "1":
+            chalk.append((hx0, 146, 12, 18))
+        else:
+            chalk.append((hx0, 146, 12, 9))
+            chalk.append((hx0, 155, 12, 9))
+        hx0 += 12
+    cr = random.Random(703)
+    for (x, y, w, h) in chalk:
+        for xx in range(x, x + w + 1):
+            for yy in (y, y + h):
+                if cr.random() < 0.8:
+                    c.set(xx, yy, K.PAPERC)
+        for yy in range(y, y + h + 1):
+            for xx in (x, x + w):
+                if cr.random() < 0.8:
+                    c.set(xx, yy, K.PAPERC)
+    for i, (x, y, w, h) in enumerate(chalk[:8]):
+        if cr.random() < 0.7:
+            c.text(str(i + 1), x + 5, y + (h - 5) // 2, K.PAPERC)
+    for k in range(9):                                             # 반원 '하늘' 칸
+        c.set(hx0 + 1 + round(5 * math.sin(k / 8 * 3.14159)), 146 + k * 2, K.PAPERC)
     # 양쪽 돌 난간벽 + 손잡이
     for (x0, y0, y1) in ((168, 48, 140), (304, 48, 140), (168, 170, 270), (304, 170, 270)):
         c.rect(x0, y0, 8, y1 - y0, K.INK)
@@ -713,9 +856,11 @@ def stairs() -> tuple:
         c.vline(x0 + 1, y0, y1 - 1, K.FOG)
         for yy in range(y0 + 6, y1, 14):
             c.hline(x0 + 1, x0 + 6, yy, K.ASH)
-    for hx in (172, 307):
+    for hx in (172, 307):                                          # 반질반질 닳은 손잡이
         c.vline(hx, 48, 139, K.SHADOW)
         c.vline(hx, 171, 269, K.SHADOW)
+        for yy in list(range(52, 139, 3)) + list(range(173, 269, 3)):
+            c.set(hx, yy, K.FOG if yy % 2 else K.PAPERC)
     # 계단 위 화분들
     bl = []
     for (px, py, s) in ((186, 232, 9), (292, 208, 8), (162, 166, 11), (320, 166, 10), (190, 110, 8), (290, 82, 9)):
@@ -729,9 +874,13 @@ def stairs() -> tuple:
         blockers=[b for b in bl if 150 <= b[0] <= 330],
         spawns={"default": (240, 256), "from_lane": (240, 262), "from_square": (240, 58)},
         exits=[("lane", (178, 262, 124, 8)), ("square", (178, 48, 124, 6))],
-        props={"landing": (240, 156)},
-        notes=("계단길 (ch1_stairs). 화면 아래(골목)에서 위(광장 윗길)로 오르는 돌계단. 가운데 층계참(landing)이 넓어서 "
-               "'닮은 습관(하늘 쪽)' 연출 자리로 쓰기 좋다. 양옆은 계단식으로 올라가는 집 정면. 계단 단차 = 8px. 잔향 없음."),
+        props={
+            # 조사 지점 (그 물건 바로 앞 바닥)
+            "railing": (186, 200), "pots": (282, 216), "chalk": (240, 156), "view": (210, 64),
+        },
+        notes=("계단길 (ch1_stairs). 화면 아래(골목)에서 위(광장 윗길)로 오르는 돌계단. 가운데 층계참에 희미한 사방치기 분필 그림(chalk) — "
+               "'닮은 습관(하늘 쪽)' 연출 자리로 쓰기 좋다. railing = 반질반질 닳은 왼쪽 손잡이 옆, pots = 계단 화분 앞, "
+               "view = 계단 꼭대기(윗길 난간 너머 마을 전망). 양옆은 계단식으로 올라가는 집 정면. 계단 단차 = 8px. 잔향 없음."),
     )
     return c.to_image(), m
 
@@ -746,28 +895,94 @@ def market() -> tuple:
         K.window(c, wx, 26, 22, 18, sill=K.WOOD)
     bunting(c, 0, 240, 52, sag=10)
     bunting(c, 240, 480, 50, sag=12)
-    # 가게 차양 + 진열대
+    # 가게 세 곳: 과일(사과) / 꽃무늬 천 / 빵
     bl = []
-    for (ax, aw, a, b, s) in ((10, 140, K.PAPER, K.ASH, 1), (180, 130, K.FOG, K.STONE, 2), (330, 140, K.PAPERC, K.MIST, 3)):
+    for (ax, aw, a, b, kind) in ((10, 140, K.PAPER, K.ASH, "fruit"), (180, 130, K.FOG, K.STONE, "cloth"),
+                                 (330, 140, K.PAPERC, K.MIST, "bakery")):
         c.rect(ax + 4, 64, aw - 8, 44, K.SHADOW)              # 가게 안 어둠
+        if kind == "bakery":                                   # 가게 안 빵 선반
+            for sy in (74, 88):
+                c.hline(ax + 8, ax + aw - 9, sy, K.WOOD)
+                for lx in range(ax + 12, ax + aw - 14, 11):
+                    c.ellipse(lx + 4, sy - 3, 4.5, 3, K.SKIN_S)
+                    c.hline(lx + 2, lx + 6, sy - 4, K.SKIN_M)
+        if kind == "cloth":                                    # 가게 안 걸린 천
+            for k, col in enumerate((K.FOG, K.MIST, K.PAPERC, K.ASH, K.FOG)):
+                fx0 = ax + 10 + k * 23
+                c.rect(fx0, 72, 18, 24, col)
+                for yy in range(74, 95, 5):
+                    for xx in range(fx0 + 2 + (yy // 5) % 2 * 3, fx0 + 17, 6):
+                        petal = K.STONE if col in (K.PAPERC, K.FOG) else K.PAPERC
+                        for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
+                            c.set(xx + dx, yy + dy, petal)
+                c.vline(fx0 + 17, 72, 95, P.darker(col))
         K.awning(c, ax, 58, aw, 14, a=a, b=b)
-        # 진열대
-        c.rect(ax + 2, 98, aw - 4, 24, K.INK)
+        c.rect(ax + 2, 98, aw - 4, 24, K.INK)                  # 진열대
         c.rect(ax + 3, 99, aw - 6, 6, K.SKIN_S)
         c.rect(ax + 3, 105, aw - 6, 16, K.WOOD)
         for xx in range(ax + 8, ax + aw - 6, 10):
             c.vline(xx, 106, 120, K.WOOD_D)
-        rr = random.Random(s)
-        xx = ax + 6
-        while xx < ax + aw - 22:
-            fruit = rr.choice((K.FOG, K.MIST, K.PAPERC, K.ASH, K.SKIN_M))
-            produce_crate(c, xx, 90, seed=rr.randint(0, 999), fruit=fruit, w=18)
-            xx += 21
+        rr = random.Random(ax)
+        if kind == "fruit":                                    # 회색 사과 상자
+            xx = ax + 6
+            while xx < ax + aw - 22:
+                K.crate(c, xx, 90, 18, 9, 6)
+                for k in range(7):
+                    fx = xx + 2 + (k % 4) * 4 + (k // 4) * 2
+                    fy = 89 + (k // 4) * 3 + rr.randint(0, 1)
+                    c.ellipse(fx + 1.5, fy + 1.5, 2.3, 2.1, K.INK)
+                    c.ellipse(fx + 1.5, fy + 1.5, 1.7, 1.5, K.ASH)
+                    c.set(fx + 1, fy + 1, K.MIST)
+                    c.set(fx + 2, fy - 1, K.WOOD_D)                # 꼭지
+                xx += 21
+        elif kind == "cloth":                                  # 꽃무늬 천 두루마리
+            for k in range(5):
+                rx0 = ax + 8 + k * 23
+                col = (K.PAPERC, K.FOG, K.MIST, K.PAPER, K.FOG)[k]
+                for j in range(2):
+                    ry0 = 92 + j * 6
+                    c.rect(rx0 - 1, ry0 - 1, 20, 7, K.INK)
+                    c.rect(rx0, ry0, 18, 5, col)
+                    c.ellipse(rx0 + 18, ry0 + 2, 1.5, 2.5, P.darker(col))
+                    for xx in range(rx0 + 2, rx0 + 16, 5):
+                        c.set(xx, ry0 + 2, K.STONE)
+                        c.set(xx + 1, ry0 + 1, K.ASH)
+                        c.set(xx - 1, ry0 + 3, K.ASH)
+        else:                                                  # 빵 바구니
+            xx = ax + 8
+            while xx < ax + aw - 26:
+                c.ellipse(xx + 10, 101, 11, 4, K.INK)
+                c.rect(xx - 1, 101, 23, 6, K.INK)
+                c.rect(xx, 101, 21, 5, K.SKIN_S)
+                for k in range(xx + 1, xx + 21, 2):
+                    c.vline(k, 102, 105, K.WOOD)
+                for k in range(3):
+                    c.ellipse(xx + 5 + k * 6, 98, 3.5, 2.6, K.INK)
+                    c.ellipse(xx + 5 + k * 6, 98, 2.6, 1.8, K.SKIN_M)
+                    c.set(xx + 4 + k * 6, 97, K.SKIN_L)
+                c.line(xx + 2, 96, xx + 18, 92, K.INK)            # 바게트
+                c.line(xx + 3, 95, xx + 17, 91, K.SKIN_M)
+                for k in range(3):                                # 빵 냄새 (김)
+                    for j in range(5):
+                        c.set(xx + 6 + k * 5 + (j % 2), 88 - j * 2, K.FOG)
+                xx += 31
         bl.append((ax + 2, 114, aw - 4, 8))
-        # 매단 간판
-        c.vline(ax + aw // 2, 72, 76, K.INK)
-        K.box(c, ax + aw // 2 - 10, 76, 20, 9, K.SKIN_L)
-        c.hline(ax + aw // 2 - 6, ax + aw // 2 + 5, 80, K.WOOD)
+        # 매단 간판 (그림 간판)
+        sx = ax + aw // 2
+        c.vline(sx, 72, 76, K.INK)
+        K.box(c, sx - 10, 76, 20, 11, K.SKIN_L)
+        if kind == "fruit":
+            c.ellipse(sx, 82, 3, 3, K.ASH)
+            c.set(sx, 78, K.WOOD_D)
+            c.set(sx + 1, 78, K.STONE)
+        elif kind == "cloth":
+            c.rect(sx - 3, 79, 7, 5, K.MIST)
+            c.hline(sx - 4, sx + 4, 79, K.WOOD)
+            c.hline(sx - 4, sx + 4, 83, K.WOOD)
+            c.line(sx + 4, 78, sx + 7, 84, K.SHADOW)
+        else:
+            c.ellipse(sx, 82, 5, 2.6, K.SKIN_S)
+            c.hline(sx - 3, sx + 3, 81, K.SKIN_M)
     # 길
     street(c, 122, 92, seed=84)
     c.shade_rect(0, 122, W, 3, 1, 10)
@@ -801,26 +1016,215 @@ def market() -> tuple:
         blockers=bl,
         spawns={"default": (20, 170), "from_path": (14, 170), "from_square": (466, 170)},
         exits=[("path", (0, 136, 8, 64)), ("square", (472, 136, 8, 64))],
-        props={"stall_left": (80, 124), "stall_mid": (245, 124), "stall_right": (400, 124)},
-        notes=("시장 거리 (ch1_market). 위쪽 가게 세 곳(줄무늬 차양 + 과일 진열대), 아래쪽 파라솔 노점. 과일도 모두 회색(색을 잃은 세계). "
-               "걸을 수 있는 띠 y 126~210. stall_* = 상인 NPC 가 서기 좋은 자리. '닮은 습관(별 쪽)' 연출은 가운데 진열대 앞 권장. 잔향 없음."),
+        props={
+            # 조사 지점 / NPC 자리 (진열대 바로 앞 바닥)
+            "vendor": (96, 130), "apples": (42, 130), "cloth": (245, 130), "bakery": (400, 130),
+        },
+        notes=("시장 거리 (ch1_market). 위쪽 가게 세 곳: 왼쪽 과일 가게(회색 사과 상자 — apples), 가운데 꽃무늬 천 가게(cloth), "
+               "오른쪽 빵 가게(바구니 빵·바게트·김 — bakery). 아래쪽 파라솔 노점. 과일·빵·천 모두 회색(색을 잃은 세계). "
+               "vendor = 과일 가게 진열대 앞, 시장 상인 NPC 를 세우는 발 위치. 진열대 뒤(y 약 108)에 세우면 배경 위에 그려져 "
+               "진열대 앞에 선 것처럼 보이므로 이 자리를 권장(진열대 앞에 서서 손님을 맞는 상인). "
+               "걸을 수 있는 띠 y 126~210. '닮은 습관(별 쪽)' 연출은 가운데 천 가게 앞 권장. 잔향 없음."),
     )
     return c.to_image(), m
 
 
-# ====================================================================== 9·10. 광장 (낮·밤)
-def square_scene(night: bool = False) -> tuple:
+# ====================================================================== 9·10·11. 광장 (낮·밤·시계탑 아래 철문)
+# 세 배경은 같은 광장이다. 좌표가 같아서 ch1_square → ch1_square_02 → ch1_night 사이에 소품 자리가 그대로 이어진다.
+#   왼쪽 위 = 시계탑(화면 위로 솟음, 높은 곳에 멈춘 시계판). 탑 발치 = 기둥 시계(잔향 square_clock) 자리.
+#   가운데 = 회색 물이 흐르는 분수. 왼쪽 건물 벽 = '사람을 찾습니다' 게시판.
+#   square_gate: 탑 발치(왼쪽 구역)를 낮은 쇠 난간이 두르고, 난간 앞쪽 오른쪽 끝에 무거운 철문 자리(gate_rect)가 열려 있다.
+
+SQ_CLOCK = (112, 150)          # 기둥 시계(잔향 square_clock) 바닥 중앙 = 탑 발치
+SQ_BENCH = (280, 250)          # 잔향 벤치(square_bench) 바닥 중앙 — 탑 발치에서 195px
+SQ_FOUNTAIN = (240, 190)       # 분수 중심
+# square_gate 의 난간·철문 (발 기준선 y 198)
+RAIL_FEET = 198
+RAIL_RIGHT_X = 176             # 오른쪽 난간(남북 방향) x
+GATE_RECT = (142, 180, 28, 18)  # 철문 통로: 엔진이 이 사각형에 창살·충돌을 그린다
+
+
+def clock_face(c: Canvas, cx: int, cy: int, r: int, *, hour: float, minute: float) -> None:
+    """숫자가 반쯤 지워진 멈춘 시계판."""
+    c.ellipse(cx + 0.5, cy + 0.5, r + 2, r + 2, K.INK)
+    c.ellipse(cx + 0.5, cy + 0.5, r + 1, r + 1, K.STONE)
+    c.ellipse(cx + 0.5, cy + 0.5, r, r, K.FOG)
+    c.ellipse(cx - 0.5, cy - 0.5, r - 1.5, r - 1.5, K.PAPERC)
+    erased = {1, 2, 5, 7, 8, 10}
+    for k in range(12):
+        a = -math.pi / 2 + k * math.pi / 6
+        x = round(cx + math.cos(a) * (r - 2.6))
+        y = round(cy + math.sin(a) * (r - 2.6))
+        if k in erased:
+            c.set(x, y, K.MIST)
+        else:
+            c.set(x, y, K.SHADOW)
+            c.set(x + (1 if k in (0, 6) else 0), y + (0 if k in (0, 6) else 1), K.SHADOW)
+    for val, length, col in ((hour / 12, r * 0.5, K.INK), (minute / 60, r * 0.8, K.INK)):
+        a = -math.pi / 2 + val * 2 * math.pi
+        c.line(cx, cy, round(cx + math.cos(a) * length), round(cy + math.sin(a) * length), col)
+    c.set(cx, cy, K.SHADOW)
+
+
+def clock_tower(c: Canvas, x0: int, x1: int, base_y: int, *, minute: float) -> None:
+    """화면 위로 솟은 돌 시계탑. 높은 곳에 시계판, 아래에 아치문과 기단."""
+    w = x1 - x0
+    cx = (x0 + x1) // 2
+    stone_wall(c, x0, 0, w, base_y, seed=96, base=K.MIST, gap=K.ASH, hi=K.FOG, lo=K.ASH)
+    for yy in range(0, base_y, 10):                       # 모서리 돌
+        for qx in (x0 + 1, x1 - 7):
+            c.rect(qx, yy, 6, 5, K.FOG)
+            c.hline(qx, qx + 5, yy, K.PAPERC)
+    c.vline(x0, 0, base_y - 1, K.INK)
+    c.vline(x1 - 1, 0, base_y - 1, K.INK)
+    c.shade_rect(x1 - 10, 0, 9, base_y, 1, 6)
+    for by in (8, 52):                                    # 돌림띠
+        c.rect(x0 - 2, by, w + 4, 4, K.INK)
+        c.rect(x0 - 1, by + 1, w + 2, 2, K.FOG)
+    clock_face(c, cx, 30, 15, hour=10, minute=minute)
+    c.rect(cx - 2, 60, 5, 16, K.INK)                      # 좁은 창
+    c.rect(cx - 1, 61, 3, 14, K.SHADOW)
+    c.rect(cx - 13, 82, 26, base_y - 82, K.INK)           # 기단 아치문
+    for i in range(24):
+        yy = int(84 - 5 * math.sin(math.pi * i / 23))
+        c.vline(cx - 12 + i, yy, base_y - 1, K.WOOD_D)
+        c.set(cx - 12 + i, yy - 1, K.INK)
+    for xx in range(cx - 9, cx + 12, 5):
+        c.vline(xx, 84, base_y - 1, K.WOOD)
+    c.rect(cx + 6, 98, 2, 3, K.MIST)
+    c.rect(x0 - 3, base_y - 6, w + 6, 6, K.INK)            # 기단
+    c.rect(x0 - 2, base_y - 5, w + 4, 5, K.STONE)
+    c.hline(x0 - 2, x1 + 1, base_y - 5, K.ASH)
+
+
+def notice_board(c: Canvas, x: int, y: int, w: int, h: int, *, seed: int) -> None:
+    """'사람을 찾습니다' 게시판: 전단마다 얼굴 칸이 흐릿하다(W-FACE)."""
+    rng = random.Random(seed)
+    c.rect(x - 2, y - 4, w + 4, 4, K.INK)                  # 작은 지붕
+    c.rect(x - 1, y - 3, w + 2, 2, K.STONE)
+    c.rect(x - 1, y - 1, w + 2, h + 2, K.INK)
+    c.rect(x, y, w, h, K.WOOD)
+    c.rect(x + 2, y + 2, w - 4, h - 4, K.SKIN_S)
+    c.rect(x + 3, y + 3, w - 6, 5, K.PAPER)                # 머리글 띠 (글자는 읽을 수 없음)
+    worn_marks(c, x + 5, y + 3, w - 10, seed=seed + 1, col=K.STONE)
+    spots = [(x + 3 + i * 11 + rng.randint(-1, 1), y + 10 + j * 14 + rng.randint(-1, 1))
+             for j in range((h - 12) // 14) for i in range((w - 6) // 11)]
+    for fx, fy in spots:
+        col = rng.choice((K.PAPERC, K.PAPER, K.FOG))
+        c.rect(fx, fy, 10, 13, K.MIST)
+        c.rect(fx, fy, 9, 12, col)
+        for yy in range(fy + 1, fy + 6):                    # 흐릿한 얼굴 칸 (디더)
+            for xx in range(fx + 2, fx + 7):
+                c.set(xx, yy, K.MIST if (xx + yy) % 2 else K.FOG)
+        c.hline(fx + 2, fx + 6, fy + 8, K.ASH)
+        c.hline(fx + 2, fx + 5, fy + 10, K.MIST)
+        c.set(fx + 4, fy, K.STONE)                          # 압정
+    c.shade_rect(x, y + h + 1, w, 2, 1)
+
+
+def fountain(c: Canvas, cx: int, cy: int) -> tuple[int, int, int, int]:
+    """회색 물이 흐르는 둥근 분수. 돌려주는 값 = 발밑 막힘."""
+    c.shade_ellipse(cx + 4, cy + 13, 50, 11)
+    c.ellipse(cx, cy + 7, 48, 16, K.INK)                  # 수반 앞면(옆벽)
+    c.ellipse(cx, cy + 7, 47, 15, K.ASH)
+    for xx in range(cx - 44, cx + 45, 9):
+        c.vline(xx, cy + 8, cy + 19, K.STONE)
+    c.ellipse(cx, cy, 48, 16, K.INK)                      # 가장자리 윗면
+    c.ellipse(cx, cy, 47, 15, K.FOG)
+    c.ellipse(cx, cy - 0.5, 46, 14, K.PAPERC)
+    c.ellipse(cx, cy + 0.5, 42, 12, K.MIST)
+    c.ellipse(cx, cy + 1, 41, 11.5, K.ASH)                # 회색 물
+    for k, (rx, ry) in enumerate(((34, 9), (24, 6.5), (14, 4))):   # 물결 고리
+        for t in range(0, 360, 5 + k * 3):
+            a = math.radians(t)
+            if (t // 20) % 2:
+                c.set(round(cx + math.cos(a) * rx), round(cy + 2 + math.sin(a) * ry), K.MIST)
+    c.rect(cx - 5, cy - 16, 11, 19, K.INK)                # 가운데 기둥
+    c.rect(cx - 4, cy - 15, 9, 18, K.MIST)
+    c.vline(cx - 3, cy - 15, cy + 2, K.FOG)
+    c.vline(cx + 3, cy - 15, cy + 2, K.ASH)
+    c.ellipse(cx, cy - 16, 14, 4.6, K.INK)                # 위 수반
+    c.ellipse(cx, cy - 16.5, 13, 3.6, K.FOG)
+    c.ellipse(cx, cy - 15.5, 10, 2.4, K.ASH)
+    c.rect(cx - 1, cy - 26, 3, 10, K.INK)                 # 물줄기 꼭지
+    c.vline(cx, cy - 25, cy - 17, K.FOG)
+    c.ellipse(cx + 0.5, cy - 27, 2.5, 2, K.INK)
+    c.ellipse(cx + 0.5, cy - 27.5, 1.5, 1, K.FOG)
+    for side in (-1, 1):                                   # 떨어지는 물
+        for t in range(14):
+            x = cx + side * (12 + t // 2)
+            y = cy - 16 + t
+            c.set(x, y, K.PAPERC if t % 3 else K.FOG)
+        for k in range(5):
+            c.set(cx + side * (16 + k * 2), cy - 1 + (k % 2), K.PAPERC)
+    for k in range(8):                                     # 위로 튀는 물
+        a = -math.pi / 2 + (k - 3.5) * 0.35
+        c.set(round(cx + math.cos(a) * 5), round(cy - 27 + math.sin(a) * 3), K.PAPERC)
+    return (cx - 47, cy - 12, 95, 32)
+
+
+def iron_railing(c: Canvas) -> list[tuple[int, int, int, int]]:
+    """square_gate: 탑 발치를 두르는 낮은 쇠 난간 + 철문 기둥. 돌려주는 값 = 난간 막힘(철문 통로는 비움)."""
+    gx, gy, gw, gh = GATE_RECT
+    top = RAIL_FEET - 16
+
+    def post(x: int, feet: int, tall: int = 16) -> None:
+        c.rect(x - 1, feet - tall, 4, tall + 1, K.INK)
+        c.vline(x, feet - tall + 1, feet - 1, K.STONE)
+        c.vline(x + 1, feet - tall + 1, feet - 1, K.SHADOW)
+        c.rect(x - 1, feet - tall - 2, 4, 2, K.INK)        # 창끝 장식
+        c.set(x, feet - tall - 3, K.INK)
+
+    # 앞쪽 난간 (동서 방향): 왼쪽 끝 ~ 왼쪽 철문 기둥
+    c.shade_rect(16, RAIL_FEET + 1, gx - 16, 2, 1)
+    for yy, col in ((top + 2, K.INK), (top + 3, K.SHADOW), (RAIL_FEET - 4, K.INK)):
+        c.hline(16, gx - 1, yy, col)
+        c.hline(gx + gw, RAIL_RIGHT_X + 3, yy, col)
+    for x in range(18, gx - 3, 6):
+        post(x, RAIL_FEET)
+    post(gx + gw + 6, RAIL_FEET)
+    # 오른쪽 난간 (남북 방향): 기둥이 화면 안쪽으로 줄지어 물러난다 → 구슬처럼 이어진 창끝 장식으로 읽히게
+    rx = RAIL_RIGHT_X
+    c.shade_rect(rx + 4, 124, 4, RAIL_FEET - 124, 1, 8)
+    c.rect(rx, 124 - 16, 4, RAIL_FEET - 124 + 17, K.INK)
+    c.vline(rx + 1, 124 - 15, RAIL_FEET - 1, K.ASH)
+    c.vline(rx + 2, 124 - 15, RAIL_FEET - 1, K.STONE)
+    for feet in range(124, RAIL_FEET + 1, 6):
+        t = feet - 16
+        c.hline(rx - 1, rx + 4, t, K.INK)                # 창끝 장식 (양옆으로 1px 튀어나옴)
+        c.hline(rx, rx + 3, t + 1, K.SHADOW)
+        c.set(rx + 1, t - 1, K.INK)
+        c.hline(rx, rx + 3, feet - 5, K.INK)             # 아래 가로대 눈금
+        c.set(rx + 1, t + 2, K.MIST)
+    # 무거운 철문 기둥 두 개 + 아치 (통로는 비워 둔다 — 창살은 엔진이 그린다)
+    for px in (gx - 4, gx + gw):
+        c.rect(px - 1, RAIL_FEET - 30, 6, 31, K.INK)
+        c.rect(px, RAIL_FEET - 29, 4, 29, K.STONE)
+        c.vline(px, RAIL_FEET - 29, RAIL_FEET - 1, K.ASH)
+        c.ellipse(px + 2, RAIL_FEET - 32, 3, 3, K.INK)
+        c.ellipse(px + 2, RAIL_FEET - 32.5, 2, 2, K.ASH)
+    for i in range(gw + 4):
+        yy = int(RAIL_FEET - 30 - 6 * math.sin(math.pi * i / (gw + 3)))
+        c.set(gx - 2 + i, yy, K.INK)
+        c.set(gx - 2 + i, yy + 1, K.SHADOW)
+    c.rect(gx, RAIL_FEET - 2, gw, 2, K.STONE)              # 통로 문턱
+    c.hline(gx, gx + gw - 1, RAIL_FEET - 2, K.ASH)
+    return [(16, RAIL_FEET - 6, gx - 16, 8),                        # 앞 난간 (왼쪽 기둥까지)
+            (gx + gw, RAIL_FEET - 6, RAIL_RIGHT_X + 6 - gx - gw, 8),  # 오른쪽 철문 기둥 ~ 모서리
+            (RAIL_RIGHT_X, 114, 6, RAIL_FEET - 114 + 2)]            # 오른쪽 난간
+
+
+def square_scene(night: bool = False, gate: bool = False) -> tuple:
     c = Canvas(W, H, K.INK)
     sky(c, 0, 24, seed=91)
     windows = []
-    # 양옆 건물 + 가운데 시청
-    facade(c, 0, 14, 140, 100, kind="brick", seed=92, roof=16)
+    # 왼쪽 건물(게시판) · 시계탑 · 시청 · 오른쪽 건물
+    facade(c, 0, 14, 86, 100, kind="brick", seed=92, roof=16)
     facade(c, 340, 14, 140, 100, kind="plaster", seed=93, roof=16, timber=True)
     facade(c, 140, 0, 200, 114, kind="plaster_cool", seed=94, roof=0)
     c.rect(136, 0, 208, 8, K.STONE)                        # 시청 처마 돌림띠
     c.hline(136, 343, 7, K.INK)
     c.hline(136, 343, 1, K.MIST)
-    # 시청: 박공 + 둥근 창 자리(빈 원형 장식) + 기둥 + 아치 입구
     c.poly([(196, 8), (240, 0), (284, 8)], K.FOG)
     for xx in range(150, 334, 26):
         c.rect(xx, 12, 8, 98, K.INK)
@@ -829,106 +1233,140 @@ def square_scene(night: bool = False) -> tuple:
         c.rect(xx - 1, 12, 10, 3, K.FOG)
     for (wx, wy) in ((160, 22), (186, 22), (264, 22), (290, 22), (160, 60), (290, 60)):
         windows.append((wx, wy, 14, 22))
-    c.rect(212, 66, 56, 48, K.INK)                         # 아치 입구
+    c.rect(212, 66, 56, 48, K.INK)                         # 시청 아치 입구
     c.rect(214, 70, 52, 44, K.SHADOW)
     for i in range(52):
-        import math
         yy = int(70 - 8 * math.sin(math.pi * i / 51))
         c.vline(214 + i, yy, 70, K.SHADOW)
         c.set(214 + i, yy - 1, K.INK)
     K.door(c, 226, 76, 28, 38, wood=K.WOOD_D, pane=False)
-    c.ellipse(240, 40, 12, 12, K.INK)                      # 둥근 장식 (시계 없음: 시계는 잔향 소품)
+    c.ellipse(240, 40, 12, 12, K.INK)                      # 시청 둥근 창 장식
     c.ellipse(240, 40, 11, 11, K.FOG)
     c.ellipse(240, 40, 8, 8, K.MIST)
     c.ellipse(240, 40, 7, 7, K.FOG)
-    for (wx, wy) in ((20, 40), (90, 40), (360, 40), (430, 40), (20, 74), (430, 74)):
+    for (wx, wy) in ((14, 38), (52, 38), (360, 40), (430, 40), (430, 74)):
         windows.append((wx, wy, 22, 20))
     for (wx, wy, ww, wh) in windows:
         K.window(c, wx, wy, ww, wh, sill=K.STONE)
-    K.awning(c, 64, 70, 60, 10, a=K.PAPER, b=K.ASH)
-    K.door(c, 76, 82, 22, 31, wood=K.WOOD)
+    notice_board(c, 10, 70, 60, 36, seed=97)
     K.awning(c, 356, 70, 60, 10, a=K.FOG, b=K.STONE)
     K.door(c, 376, 82, 22, 31, wood=K.WOOD_D)
+    clock_tower(c, 84, 140, 114, minute=25 if night else 20)
     # 시청 계단
     for i in range(3):
         c.rect(196 - i * 6, 114 + i * 4, 88 + i * 12, 4, K.INK)
         c.rect(197 - i * 6, 114 + i * 4, 86 + i * 12, 3, K.FOG)
         c.hline(197 - i * 6, 282 + i * 6, 114 + i * 4, K.PAPERC)
-    # 광장 바닥: 판석 + 가운데 원형 무늬
+    # 광장 바닥: 판석 + 탑 발치 둥근 돌 포장
     flagstones(c, 0, 114, W, 156, sw=24, sh=12, seed=95, base=K.MIST, gap=K.ASH, hi=K.FOG, lo=K.ASH, crack=0.1)
+    cobbles(c, 16, 114, RAIL_RIGHT_X - 16, RAIL_FEET - 112, cw=8, ch=5, seed=98, base=K.MIST, gap=K.ASH, hi=K.FOG, lo=K.ASH, alt=K.FOG)
     for i in range(3):                                     # 계단 다시 (바닥 위)
         c.rect(196 - i * 6, 114 + i * 4, 88 + i * 12, 4, K.INK)
         c.rect(197 - i * 6, 114 + i * 4, 86 + i * 12, 3, K.FOG)
         c.hline(197 - i * 6, 282 + i * 6, 114 + i * 4, K.PAPERC)
     c.shade_rect(0, 114, 190, 3, 1, 10)
     c.shade_rect(290, 114, 190, 3, 1, 10)
-    cx, cy = 240, 186
-    for (rx, ry, col) in ((60, 30, K.ASH), (58, 28.5, K.FOG), (50, 24.5, K.MIST), (42, 20.5, K.FOG),
-                          (40, 19.5, K.ASH), (28, 13.5, K.MIST), (26, 12.5, K.FOG), (12, 6, K.ASH), (11, 5.4, K.PAPERC)):
-        c.ellipse(cx, cy, rx, ry, col)
-    import math
-    for k in range(16):                                    # 바큇살 무늬
-        a = k * math.pi / 8
-        for t in range(14, 40):
-            c.set(int(cx + math.cos(a) * t * 1.45), int(cy + math.sin(a) * t * 0.71), K.ASH)
-    # 나무 화단 4개, 가로등, 벤치(중립)
-    bl = []
+    # 머릿돌 (탑 기단 앞, 글자가 닳음)
+    c.rect(84, 112, 16, 15, K.INK)
+    c.rect(85, 113, 14, 13, K.FOG)
+    c.rect(85, 113, 14, 3, K.PAPERC)
+    c.rect(85, 122, 14, 4, K.MIST)
+    worn_marks(c, 87, 116, 11, seed=99, col=K.MIST)
+    c.shade_rect(85, 127, 16, 2, 1)
+    plaque_block = (84, 118, 16, 9)
+    # 분수
+    fountain_block = fountain(c, *SQ_FOUNTAIN)
+    # 나무 화단 3개, 가로등, 벤치(중립)
+    bl = [plaque_block, fountain_block]
     lamps = []
-    for (tx, ty) in ((44, 172), (436, 172), (60, 252), (420, 252)):
-        c.ellipse(tx + 2, ty + 3, 18, 7, K.ASH)              # 바닥 그늘
+    for (tx, ty) in ((436, 172), (60, 252), (420, 252)):
+        c.ellipse(tx + 2, ty + 3, 18, 7, K.ASH)
         c.ellipse(tx, ty, 18, 8, K.INK)
-        c.ellipse(tx, ty, 17, 7, K.FOG)                      # 돌 테두리 (밝게)
+        c.ellipse(tx, ty, 17, 7, K.FOG)
         c.ellipse(tx, ty + 1, 17, 6, K.MIST)
         c.ellipse(tx, ty - 0.5, 14, 4.5, K.SHADOW)
-        c.ellipse(tx, ty, 13, 4, K.WOOD_D)                   # 흙
+        c.ellipse(tx, ty, 13, 4, K.WOOD_D)
         bl.append((tx - 16, ty - 5, 32, 10))
         K.tree(c, tx, ty, r=18, seed=tx + ty, trunk_h=14)
-    for (lx, ly) in ((150, 148), (330, 148), (150, 236), (330, 236)):
+    for (lx, ly) in ((40, 150), (330, 148), (330, 236)):
         bl.append(K.lamp_post(c, lx, ly, h=40, lit=night))
         lamps.append((lx, ly))
-    for (bx, by) in ((88, 128), (360, 128), (196, 236)):
+    for (bx, by) in ((360, 128), (196, 236)):
         bl.append(K.bench(c, bx, by, w=32))
-    # 비둘기 (중립) 몇 마리
-    for (px, py) in ((270, 140), (276, 144), (110, 210)):
-        c.rect(px, py, 4, 3, K.INK)
-        c.rect(px + 1, py, 2, 2, K.MIST)
-        c.set(px + 4, py, K.INK)
+    # 비둘기 (분수 앞 오른쪽)
+    for k, (px, py, flip) in enumerate(((300, 214, False), (309, 219, True), (318, 213, False), (326, 221, True), (296, 223, True))):
+        sprite_at(c, PIGEON, {"K": K.INK, "M": K.MIST, "S": K.ASH, "a": K.STONE}, px, py, flip=flip)
+    if gate:
+        bl += iron_railing(c)
 
     if night:
         c.remap_all(P.NIGHT)
-        # 하늘: 짙게 + 별
         c.rect(0, 0, W, 14, K.SHADOW)
         sr = random.Random(97)
         for _ in range(26):
             sx, sy = sr.randint(0, W - 1), sr.randint(0, 12)
             if c.get(sx, sy) == K.SHADOW:
                 c.set(sx, sy, sr.choice((K.FOG, K.MIST, K.PAPERC)))
-        # 불 켜진 창 (몇 개만)
         for i, (wx, wy, ww, wh) in enumerate(windows):
             if i % 3 != 1:
                 K.window(c, wx, wy, ww, wh, sill=K.STONE, lit=True)
                 c.light_rect(wx - 4, wy + wh + 2, ww + 8, 6, 1, 6)
         K.door(c, 226, 76, 28, 38, wood=K.WOOD_D, pane=False)
-        # 가로등 빛 웅덩이
         for (lx, ly) in lamps:
             c.glow(lx, ly + 2, 40, 18, rings=((1.0, 4), (0.75, 8), (0.5, 16)))
             c.glow(lx, ly - 46, 10, 10, rings=((1.0, 8), (0.6, 16)))
             K.lamp_post(c, lx, ly, h=40, lit=True)
-        c.glow(240, 120, 40, 10, rings=((1.0, 6), (0.6, 12)))   # 시청 입구 불빛
+        c.glow(240, 120, 40, 10, rings=((1.0, 6), (0.6, 12)))
+        c.glow(112, 30, 20, 20, rings=((1.0, 6), (0.7, 10)))      # 시계판만 희미하게 보이게
 
-    props = {"square_clock": (176, 176), "square_bench": (378, 212), "square_fountain": (cx, cy), "town_hall_door": (240, 114)}
-    notes = ("마을 광장 (ch1_square, ch1_square_02). 위쪽 가운데 시청(둥근 장식만, 시계 없음), 양옆 상점. 가운데 원형 바닥 무늬. "
-             "나무 화단 4, 가로등 4(중립), 중립 벤치 3. square_clock(그리움)과 square_bench(온기)는 잔향 소품 자리: "
-             "중립 벤치와 모양이 같지만 노란 벤치는 흑백에서도 한 단계 밝다. square_fountain = ch5 잔향 자리(이번 범위 밖, 가운데 무늬 위). "
-             "아래 왼쪽 = 계단길(stairs), 오른쪽 = 시장(market) 출구.")
+    walkable = [(16, 120), (464, 120), (464, 150), (480, 150), (480, 214), (464, 214), (464, 254),
+                (110, 254), (110, 269), (16, 269)]
+    base_props = {"square_clock": SQ_CLOCK, "square_bench": SQ_BENCH, "square_fountain": (240, 214),
+                  "town_hall_door": (240, 114)}
+    if gate:
+        props = {
+            # 잔향 기준점 (스프라이트 바닥 중앙)
+            "square_clock": SQ_CLOCK, "square_bench": SQ_BENCH,
+            # 동시 조작 장치 (sibling.md §4-1 붙잡기-이동)
+            "gate_hold": (190, 208), "gate_latch": (152, 174),
+            # 조사 지점
+            "clockface": (136, 140), "lamp": (40, 162), "plaque": (91, 138),
+            # 그 밖
+            "fountain": (240, 218), "town_hall_door": (240, 114),
+        }
+        m = meta(
+            walkable=walkable,
+            blockers=bl,
+            spawns={"default": (380, 200), "from_square": (120, 220)},
+            exits=[("garden", (472, 152, 8, 60))],
+            props=props,
+            notes=("광장 시계탑 아래 (ch1_square_02, 데모 끊는 점). square.png 와 같은 광장에 낮은 쇠 난간을 더했다: "
+                   "왼쪽 탑 발치 구역(x 16~182, y 120~198)을 앞쪽(동서) 난간과 오른쪽(남북) 난간이 막고, 앞쪽 난간 오른쪽 끝에 "
+                   "철문 통로 gate_rect 를 비워 두었다(창살·문 충돌은 엔진이 gate_rect 에 그린다. 기둥·아치·문턱은 배경). "
+                   "blockers 에 난간 세 토막이 있고 통로는 비어 있다 → 철문을 열어야만 안으로 들어갈 수 있다. "
+                   "gate_hold = 철문 바깥 오른쪽 앞 손잡이 자리(붙잡는 사람이 서는 곳, 통로를 막지 않음), "
+                   "gate_latch = 철문 바로 안쪽 고정 장치 자리. 안쪽: square_clock(탑 발치 시계 장치, 잔향), clockface(높은 시계판을 올려다보는 자리), "
+                   "plaque(탑 기단 앞 닳은 머릿돌), lamp(탑 옆 가로등). 바깥: square_bench(잔향 벤치 자리 — 배경에 벤치를 그리지 않음, 탑 발치에서 195px). "
+                   "오른쪽 끝 = 정원 가는 길(garden)."),
+        )
+        m["gate_rect"] = list(GATE_RECT)
+        return c.to_image(), m
     if night:
-        notes = ("광장 밤 (ch1_night). square.png 와 배치·좌표가 같다(이 json 은 square.json 과 같은 값). "
-                 "어두운 명도로 바꾸고 일부 창과 가로등 4개에 빛(밝은 디더 웅덩이)을 넣었다. 잔향 소품은 엔진이 같은 좌표에 그린다.")
+        props = {**base_props, "clock": (112, 162), "board": (36, 124), "fountain": (240, 218), "bench": (376, 158)}
+        notes = ("광장 밤 (ch1_night). square.png 와 배치·좌표가 같다. 어두운 명도 + 일부 창·가로등 4개·시계판에 빛. "
+                 "시계탑 시계판의 분침이 낮(square)보다 한 칸(5분) 앞에 있다. clock = 탑 발치(높은 시계판을 올려다보는 자리), "
+                 "board = '찾습니다' 게시판 앞, fountain = 분수 앞, bench = 오른쪽 위 중립 벤치 앞(잔향 벤치가 아닌 일반 벤치). "
+                 "모은 잔향(square_clock·square_bench)을 보여 줄 때는 같은 기준점에 둔다.")
+    else:
+        props = {**base_props, "clock": (112, 162), "board": (36, 124), "fountain": (240, 218), "pigeons": (312, 232)}
+        notes = ("마을 광장 (ch1_square). 왼쪽 위 시계탑(화면 위로 솟음, 높은 곳에 숫자가 반쯤 지워진 멈춘 시계판), 가운데 회색 물이 흐르는 분수, "
+                 "왼쪽 건물 벽에 '사람을 찾습니다' 게시판(전단의 얼굴 칸이 흐릿), 분수 앞 오른쪽 비둘기. "
+                 "clock = 탑 발치(기둥 시계 square_clock 자리 바로 앞, 시계판을 올려다보는 자리), board = 게시판 앞, fountain = 분수 앞, pigeons = 비둘기 앞. "
+                 "기둥 시계(잔향)는 ch1_square_02 에서만 엔진이 그린다. 아래 왼쪽 = 계단길(stairs), 오른쪽 = 시장(market) 출구.")
     m = meta(
-        walkable=[(16, 120), (464, 120), (464, 150), (480, 150), (480, 214), (464, 214), (464, 254),
-                  (110, 254), (110, 269), (16, 269)],
+        walkable=walkable,
         blockers=bl,
-        spawns={"default": (240, 226), "from_stairs": (60, 262), "from_market": (468, 182)},
+        spawns={"default": (240, 236), "from_stairs": (60, 262), "from_market": (468, 182)},
         exits=[("stairs", (16, 262, 94, 8)), ("market", (472, 152, 8, 60))],
         props=props,
         notes=notes,
@@ -944,6 +1382,10 @@ def square_night() -> tuple:
     return square_scene(True)
 
 
+def square_gate() -> tuple:
+    return square_scene(False, gate=True)
+
+
 SCENES = {
     "atelier_door": atelier_door,
     "garden_gate": garden_gate,
@@ -953,4 +1395,5 @@ SCENES = {
     "market": market,
     "square": square,
     "square_night": square_night,
+    "square_gate": square_gate,
 }

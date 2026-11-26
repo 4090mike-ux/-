@@ -11,6 +11,9 @@
   4. 배경 메타데이터 game/art/bg/*.json (asset_manifest.md §4 형식)
      - 필수 키, 다각형 3점 이상, 좌표가 화면(480×270) 안
      - spawns 는 walkable 안 + blockers 밖, 각 출구 rect 는 walkable 과 겹침, 짝 PNG 존재
+  5. 슬라이스 조사 지점 (slice_beats.md §2): 장면별 id 가 props 에 있고, 바닥 위·막힘 밖, 서로 24px 넘게 떨어짐.
+     gate_rect 가 있는 배경(square_gate)은 바닥 채우기로 철문 퍼즐을 확인한다: 문이 닫히면 gate_latch·square_clock 에
+     못 가고, 열면 갈 수 있다. gate_hold 와 from_* 스폰은 문 밖에서 닿는다.
 
 사용법
   python tools/pixelart/check_art.py            # 오류가 있으면 종료 코드 1
@@ -130,6 +133,128 @@ def check_meta(path: Path) -> list[str]:
     return errs
 
 
+# ------------------------------------------------------------------ 슬라이스 조사 지점 (docs/narrative/slice_beats.md §2)
+# 엔진(chapter_scene.gd)은 장면 정의에 좌표가 없으면 props[<id>] 에 조사 대상·잔향을 둔다.
+# 여기 적은 id 는 모두 '걸을 수 있는 바닥 위 + 막힘 밖'이어야 하고, 조사 지점끼리는 반경 24px 보다 멀어야 한다.
+SLICE_ECHOES = {"atelier_brush", "atelier_easel", "garden_pot", "garden_sprinkler", "path_lamp",
+                "square_clock", "square_bench"}
+SLICE_PROPS: dict[str, list[str]] = {
+    "atelier": ["sofa", "window", "palette", "canvas", "sketchbook", "brushes", "coat", "atelier_brush", "atelier_easel"],
+    "garden": ["flowers", "shed", "swing", "can", "pot", "fence", "garden_pot", "garden_sprinkler"],
+    "atelier_door": ["mailbox", "lamp", "sign", "passerby"],
+    "garden_gate": ["gate", "signpost", "town", "bird"],
+    "lane": ["sweeper", "laundry", "cat", "puddle"],
+    "path": ["tree", "sign", "butterfly", "wildflowers", "path_lamp"],
+    "stairs": ["railing", "pots", "chalk", "view"],
+    "market": ["vendor", "apples", "cloth", "bakery"],
+    "square": ["fountain", "board", "pigeons", "clock"],
+    "square_night": ["clock", "board", "fountain", "bench"],
+    "square_gate": ["square_clock", "square_bench", "gate_hold", "gate_latch", "clockface", "lamp", "plaque"],
+}
+INSPECT_RADIUS = 24.0
+BOX_HALF_W, BOX_H = 6, 8      # 캐릭터 발 충돌 상자 12×8 (chapter_scene.gd)
+
+
+def _in_blocker(x: float, y: float, blockers: list) -> bool:
+    return any(bx <= x < bx + bw and by <= y < by + bh for bx, by, bw, bh in blockers)
+
+
+def check_slice(name: str, m: dict) -> list[str]:
+    errs: list[str] = []
+    rel = f"game/art/bg/{name}.json"
+    props, poly, blockers = m.get("props", {}), m.get("walkable", []), m.get("blockers", [])
+    ids = SLICE_PROPS.get(name, [])
+    for pid in ids:
+        if pid not in props:
+            errs.append(f"{rel}: 슬라이스 id '{pid}' 가 props 에 없음")
+            continue
+        x, y = props[pid]
+        if not _in_poly(x + 0.5, y + 0.5, poly):
+            errs.append(f"{rel}: props.{pid} ({x},{y}) 가 걸을 수 있는 바닥 밖")
+        if _in_blocker(x, y, blockers):
+            errs.append(f"{rel}: props.{pid} ({x},{y}) 가 blocker 안")
+    spots = [(pid, props[pid]) for pid in ids if pid in props and pid not in SLICE_ECHOES]
+    for i, (a, pa) in enumerate(spots):
+        for b, pb in spots[i + 1:]:
+            d = ((pa[0] - pb[0]) ** 2 + (pa[1] - pb[1]) ** 2) ** 0.5
+            if 0 < d <= INSPECT_RADIUS:
+                errs.append(f"{rel}: 조사 지점 {a}·{b} 사이 {d:.0f}px ≤ 반경 {INSPECT_RADIUS:.0f} (서로 헷갈림)")
+    if "gate_rect" in m:
+        errs += _check_gate(rel, m)
+    return errs
+
+
+def _reachable(m: dict, extra: list) -> set[tuple[int, int]]:
+    """기본 스폰에서 발 위치로 갈 수 있는 정수 좌표 (4방향 채우기)."""
+    poly = m["walkable"]
+    w, h = m.get("size", [480, 270])
+    blockers = m["blockers"] + extra
+    inside = [[False] * w for _ in range(h)]
+    for yy in range(h):
+        xs = []
+        n = len(poly)
+        for i in range(n):
+            (x0, y0), (x1, y1) = poly[i], poly[(i + 1) % n]
+            if (y0 > yy + 0.5) != (y1 > yy + 0.5):
+                xs.append(x0 + (yy + 0.5 - y0) * (x1 - x0) / (y1 - y0))
+        xs.sort()
+        for a, b in zip(xs[::2], xs[1::2]):
+            for xx in range(max(0, int(a + 0.5)), min(w, int(b + 0.5))):
+                inside[yy][xx] = True
+
+    def ok(x: int, y: int) -> bool:
+        if not (BOX_HALF_W <= x < w - BOX_HALF_W and BOX_H <= y < h):
+            return False
+        for cx, cy in ((x - BOX_HALF_W, y - BOX_H), (x + BOX_HALF_W - 1, y - BOX_H), (x - BOX_HALF_W, y - 1),
+                       (x + BOX_HALF_W - 1, y - 1)):
+            if not inside[cy][cx]:
+                return False
+        for bx, by, bw, bh in blockers:
+            if x + BOX_HALF_W > bx and x - BOX_HALF_W < bx + bw and y > by and y - BOX_H < by + bh:
+                return False
+        return True
+
+    sx, sy = m["spawns"]["default"]
+    seen = {(sx, sy)} if ok(sx, sy) else set()
+    stack = list(seen)
+    while stack:
+        x, y = stack.pop()
+        for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+            if (nx, ny) not in seen and ok(nx, ny):
+                seen.add((nx, ny))
+                stack.append((nx, ny))
+    return seen
+
+
+def _near(reach: set, p: list, r: float) -> bool:
+    px, py = p
+    ri = int(r)
+    return any((px + dx, py + dy) in reach for dx in range(-ri, ri + 1) for dy in range(-ri, ri + 1)
+               if dx * dx + dy * dy <= r * r)
+
+
+def _check_gate(rel: str, m: dict) -> list[str]:
+    """철문 퍼즐: 문이 닫혀 있으면 안쪽(gate_latch·square_clock)에 못 가고, 열면 갈 수 있어야 한다."""
+    errs: list[str] = []
+    g = m["gate_rect"]
+    props = m["props"]
+    closed = _reachable(m, [g])
+    opened = _reachable(m, [])
+    if not _near(closed, props.get("gate_hold", [0, 0]), 20):
+        errs.append(f"{rel}: 문이 닫힌 상태에서 gate_hold 에 닿을 수 없음")
+    for pid in ("gate_latch", "square_clock"):
+        if pid not in props:
+            continue
+        if _near(closed, props[pid], 20 if pid == "gate_latch" else 20):
+            errs.append(f"{rel}: 문이 닫혀 있는데 {pid} 에 닿을 수 있음 (난간에 틈)")
+        if not _near(opened, props[pid], 20):
+            errs.append(f"{rel}: 문을 열어도 {pid} 에 닿을 수 없음")
+    for name, sp in m["spawns"].items():
+        if tuple(sp) not in closed and name != "default":
+            errs.append(f"{rel}: 스폰 {name} 이 문 밖 영역과 이어지지 않음")
+    return errs
+
+
 def main(argv: list[str] | None = None) -> int:
     P.utf8_stdout()
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -149,6 +274,10 @@ def main(argv: list[str] | None = None) -> int:
     metas = sorted((ART / "bg").glob("*.json")) if not args.paths else []
     for mp in metas:
         all_errors += check_meta(mp)
+        try:
+            all_errors += check_slice(mp.stem, json.loads(mp.read_text(encoding="utf-8")))
+        except (json.JSONDecodeError, KeyError) as e:
+            all_errors.append(f"{mp.name}: 슬라이스 검사 실패 {e}")
     for e in all_errors:
         print(f"오류: {e}")
     status = "실패" if all_errors else "통과"
