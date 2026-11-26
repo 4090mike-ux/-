@@ -13,7 +13,9 @@ signal exit_requested(exit: SceneExit)
 ## 조건을 못 채웠을 때 재생할 cue
 @export var blocked_cue: String = "exit_blocked"
 
-var _cooldown: float = 0.0
+## 장면 시작 직후에는 반응하지 않는다: 도착 지점이 출구 안에 있어도 바로 다시 나가지 않게.
+## (이미 안에 있는 몸은 나갔다가 다시 들어와야 body_entered 가 다시 온다)
+var _cooldown: float = 1.0
 
 
 func _ready() -> void:
