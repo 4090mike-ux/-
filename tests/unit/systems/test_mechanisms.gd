@@ -31,11 +31,17 @@ func _target(m: SiblingMechanisms, iid: String) -> Interactable:
 
 
 func test_hold_opens_gate_and_lock_solves() -> void:
-	var s := _setup([{"type": "hold", "id": "shutter", "gate": "g1", "at": [100, 100], "lock_at": [300, 100]}])
+	var s := _setup([{"type": "hold", "id": "shutter", "gate": "g1", "at": [100, 100], "lock_at": [300, 100],
+		"hint_cues": {"hold": "h_hold", "switch": "h_switch", "latch": "h_latch"}}])
 	var m: SiblingMechanisms = s["m"]
+	assert_str(m.current_hint_cue()).is_equal("h_hold")
 	assert_bool(m.is_gate_open("g1")).is_false()
+	(s["a"] as SiblingCharacter).active = true
 	m.handle(_target(m, "hold_shutter"), s["a"])
 	assert_bool(m.is_gate_open("g1")).is_true()
+	assert_str(m.current_hint_cue()).is_equal("h_switch")
+	(s["a"] as SiblingCharacter).active = false
+	assert_str(m.current_hint_cue()).is_equal("h_latch")
 	m.handle(_target(m, "lock_shutter"), s["a"])   # 붙잡은 사람이 직접 고정은 못 함
 	assert_bool(m.is_solved("shutter")).is_false()
 	m.handle(_target(m, "lock_shutter"), s["b"])

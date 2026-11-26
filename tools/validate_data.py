@@ -322,12 +322,19 @@ def check_scenes(schemas: dict[str, dict], flag_ids: set[str], echo_ids: dict[st
                 if e not in echo_ids:
                     err(where, f"출구 조건 잔향 {e} 정의 없음")
         for entry in data.get("echoes", []):
-            slug = entry if isinstance(entry, str) else entry["slug"]
-            eid = f"echo.{section}.{slug}"
+            if isinstance(entry, str):
+                entry = {"slug": entry}
+            eid = entry.get("id") or f"echo.{section}.{entry['slug']}"
             if eid not in echo_ids:
-                err(where, f"잔향 {eid} 가 game/data/echoes/{section}.json 에 없음")
-            elif echo_ids[eid].get("location", {}).get("scene", "").split("/")[-1] != f"{sid}.tscn":
-                err(where, f"잔향 {eid} 의 location.scene 이 이 장면이 아님")
+                err(where, f"잔향 {eid} 정의 없음 (game/data/echoes/)")
+            elif not entry.get("display_only") and echo_ids[eid].get("location", {}).get("scene", "").split("/")[-1] != f"{sid}.tscn":
+                err(where, f"잔향 {eid} 의 location.scene 이 이 장면이 아님 (이전 장면 잔향이면 display_only)")
+        for mech in data.get("mechanisms", []):
+            for cue in [mech.get("solved_cue")] + list(mech.get("hint_cues", {}).values()):
+                if cue:
+                    need_cue(cue, f"장치 {mech['id']}")
+        for tut in data.get("tutorials", []):
+            need_cue(tut["after"], "튜토리얼 안내")
     notes.append(f"장면 정의 {count}개")
 
 

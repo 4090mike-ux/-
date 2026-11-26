@@ -11,6 +11,11 @@ const SCENES_DIR := "res://game/data/scenes"
 const BG_DIR := "res://game/art/bg"
 const CHAR_DIR := "res://game/art/char"
 const PROPS_DIR := "res://game/art/props"
+## 전역 채도 구간 (docs/gdd/progression.md §4): 챕터 필수 잔향 수집 비율로 시작 → 끝 보간
+const SATURATION_RANGE := {
+	"prologue": [0.0, 0.0], "ch1": [0.0, 0.10], "ch2": [0.10, 0.25], "ch3": [0.25, 0.40],
+	"ch4": [0.40, 0.50], "ch5": [0.70, 0.85], "endings": [0.90, 1.0],
+}
 
 @export var scene_id: String = ""
 
@@ -28,6 +33,10 @@ var mechanisms: SiblingMechanisms = null
 
 var _busy: bool = false
 var _banner: Label
+var _hint_label: Label
+var _hud: CanvasLayer
+var _inspected: Dictionary = {}     # 이 방문에서 재생한 조사 대상 id (출구 조건 "inspected")
+var _planted_this_visit: bool = false
 
 
 func _ready() -> void:
@@ -62,13 +71,17 @@ func is_busy() -> bool:
 	return _busy
 
 
-## 대사 cue 를 재생한다 (없는 cue 는 무시)
+## 대사 cue 를 재생한다 (없는 cue 는 무시). 끝나면 그 cue 뒤의 튜토리얼 안내를 띄운다.
 func play_cue(cue: String) -> void:
 	if dialogue == null or not dialogue.cues.has(cue):
 		return
 	_busy = true
 	await dialogue_box.play(dialogue, cue, scene_id)
 	_busy = false
+	for t: Variant in definition.get("tutorials", []):
+		var td: Dictionary = t
+		if str(td.get("after", "")) == cue:
+			show_hint(str(td["text"]))
 
 
 func has_cue(cue: String) -> bool:
@@ -82,7 +95,14 @@ func active_character() -> SiblingCharacter:
 # ---------------------------------------------------------------- 진입
 
 func _enter() -> void:
+	var card := str(definition.get("title_card", ""))
+	var card_key := "%s:title_card" % scene_id
+	if not card.is_empty() and not GameState.has_seen_cue(card_key):
+		await _show_title_card(tr(card))
+		GameState.mark_cue_seen(card_key)
 	_show_banner()
+	if definition.has("afterimage"):
+		_flash_symbol(str(definition["afterimage"]))
 	var cue := str(definition.get("enter_cue", "start"))
 	var key := "%s:%s" % [scene_id, cue]
 	if has_cue(cue) and (bool(definition.get("enter_cue_repeat", false)) or not GameState.has_seen_cue(key)):
@@ -206,10 +226,14 @@ func _place_echoes() -> void:
 	var props: Dictionary = background_meta.get("props", {})
 	for entry: Variant in definition.get("echoes", []):
 		var e: Dictionary = entry if entry is Dictionary else {"slug": str(entry)}
-		var slug := str(e["slug"])
+		var echo_id := str(e.get("id", "echo.%s.%s" % [section, str(e.get("slug", ""))]))
+		var slug := echo_id.get_slice(".", 2)
+		# 이전 장면에서 모은 잔향: 모았을 때만 두고(색이 남아 있게), 상호작용은 없다
+		if bool(e.get("display_only", false)) and not GameState.has_echo(echo_id):
+			continue
 		var echo := EchoObject.new()
 		echo.name = "Echo_" + slug
-		echo.echo_id = "echo.%s.%s" % [section, slug]
+		echo.echo_id = echo_id
 		echo.position = _to_point(e.get("at", props.get(slug, [240, 160])))
 		echo.restore_radius = float(e.get("restore_radius", 48.0))
 		echo.outline_radius = float(e.get("outline_radius", 12.0))
@@ -294,7 +318,7 @@ func _build_exits() -> void:
 
 func _build_layers() -> void:
 	restore_layer = ColorRestoreLayer.new()
-	restore_layer.global_saturation = float(definition.get("global_saturation", 0.0))
+	restore_layer.global_saturation = float(definition.get("global_saturation", saturation_for(SceneRouter.section_of(scene_id))))
 	add_child(restore_layer)
 	add_child(EchoHighlightLayer.new())
 	puzzle_host = PuzzleHost.new()
@@ -304,12 +328,19 @@ func _build_layers() -> void:
 	add_child(PauseMenu.new())
 	var hud := CanvasLayer.new()
 	hud.layer = 20
+	_hud = hud
 	_banner = Label.new()
 	_banner.position = Vector2(0, 14)
 	_banner.size = Vector2(480, 16)
 	_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_banner.modulate.a = 0.0
 	hud.add_child(_banner)
+	_hint_label = Label.new()
+	_hint_label.position = Vector2(8, 178)
+	_hint_label.size = Vector2(464, 14)
+	_hint_label.add_theme_font_size_override("font_size", 9)
+	_hint_label.modulate.a = 0.0
+	hud.add_child(_hint_label)
 	add_child(hud)
 
 
@@ -336,7 +367,10 @@ func _build_mechanisms() -> void:
 	mechanisms.name = "Mechanisms"
 	add_child(mechanisms)
 	mechanisms.setup(scene_id, definition.get("gates", []), definition.get("mechanisms", []))
-	mechanisms.solved.connect(func(id: String) -> void: play_cue("mech_%s_solved" % id))
+	mechanisms.solved.connect(func(_id: String, cue: String) -> void: play_cue(cue))
+	mechanisms.hint_requested.connect(func(cue: String) -> void:
+		if not _busy:
+			play_cue(cue))
 
 
 func show_message(text: String) -> void:
@@ -372,24 +406,146 @@ func _on_interactable_requested(target: Interactable) -> void:
 		return
 	if plant_menu != null and target.interact_id.begins_with("plot_"):
 		_busy = true
+		var before := GardenModel.planted().size()
 		plant_menu.open(target.interact_id)
 		await plant_menu.closed
 		garden_bed.refresh()
 		_busy = false
+		if GardenModel.planted().size() > before and not _planted_this_visit:
+			_planted_this_visit = true
+			await play_cue("plant_done")
 		return
+	_inspected[target.interact_id] = true
 	await play_cue(target.cue)
 
 
 func _on_exit_requested(exit: SceneExit) -> void:
 	if _busy:
 		return
-	if not exit.requirements_met():
+	if not exit.requirements_met() or not _local_requirements_met(exit.requires):
 		await play_cue(exit.blocked_cue)
+		_step_back_from(exit)
 		return
 	_busy = true
 	if garden_bed != null:
 		await _finish_garden_visit()
+	if has_cue("leave"):
+		await play_cue("leave")
+		_busy = true
 	await SceneRouter.go(exit.target_scene, exit.target_spawn)
+
+
+## 장면 안에서만 판정하는 출구 조건: never, inspected(이번 방문), plots(심김), owner_planted(그 사람 줄에 1칸 이상)
+func _local_requirements_met(req: Dictionary) -> bool:
+	if bool(req.get("never", false)):
+		return false
+	for id: Variant in req.get("inspected", []):
+		if not _inspected.has(str(id)):
+			return false
+	var planted := GardenModel.planted()
+	for plot: Variant in req.get("plots", []):
+		if not planted.has(str(plot)):
+			return false
+	var owner := str(req.get("owner_planted", ""))
+	if not owner.is_empty():
+		var any := false
+		for d: Dictionary in planted.values():
+			any = any or str(d["planted_by"]) == owner
+		if not any:
+			return false
+	return true
+
+
+## 막힌 출구에서 한 걸음 물러난다 (다시 닿아 대사가 반복되지 않게)
+func _step_back_from(exit: SceneExit) -> void:
+	var c := active_character()
+	if c == null:
+		return
+	var center := exit.position + exit.rect_size * 0.5
+	var away := (c.global_position - center).normalized()
+	if away == Vector2.ZERO:
+		away = Vector2.DOWN
+	c.global_position += away * 12.0
+
+
+## 전역 채도: 그 챕터 필수 잔향 수집 비율로 보간
+func saturation_for(section: String) -> float:
+	var r: Array = SATURATION_RANGE.get(section, [0.0, 0.0])
+	var total := 0
+	var got := 0
+	var path := "%s/%s.json" % [GameData.ECHOES_DIR, section]
+	if FileAccess.file_exists(path):
+		var data: Variant = GameData.read_json(path)
+		if data is Dictionary:
+			for e: Dictionary in (data as Dictionary).get("echoes", []):
+				if str(e.get("kind", "")) == "required":
+					total += 1
+					if GameState.has_echo(str(e["id"])):
+						got += 1
+	var t := 0.0 if total == 0 else float(got) / total
+	return lerpf(float(r[0]), float(r[1]), t)
+
+
+## 화면 아래 안내 (튜토리얼). {interact} 같은 자리표시를 지금 키 이름으로 바꾼다.
+func show_hint(text: String) -> void:
+	var shown := text
+	for action in InputActions.ALL:
+		shown = shown.replace("{%s}" % action, key_label(action))
+	_hint_label.text = shown
+	var tween := create_tween()
+	tween.tween_property(_hint_label, "modulate:a", 1.0, 0.3)
+	tween.tween_interval(5.0)
+	tween.tween_property(_hint_label, "modulate:a", 0.0, 0.8)
+
+
+static func key_label(action: StringName) -> String:
+	for e in InputMap.action_get_events(action):
+		var k := e as InputEventKey
+		if k != null:
+			var code := k.physical_keycode if k.physical_keycode != KEY_NONE else k.keycode
+			return OS.get_keycode_string(code)
+	return str(action)
+
+
+func _show_title_card(text: String) -> void:
+	var layer := CanvasLayer.new()
+	layer.layer = 60
+	var bg := ColorRect.new()
+	bg.color = Color(0, 0, 0, 1)
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	layer.add_child(bg)
+	var label := Label.new()
+	label.text = text
+	label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.modulate.a = 0.0
+	layer.add_child(label)
+	add_child(layer)
+	var tween := create_tween()
+	tween.tween_property(label, "modulate:a", 1.0, 0.6)
+	tween.tween_interval(1.6)
+	tween.tween_property(label, "modulate:a", 0.0, 0.6)
+	tween.tween_property(bg, "color:a", 0.0, 0.5)
+	await tween.finished
+	layer.queue_free()
+
+
+## 공감 연결 잔상: 앞 파트의 감정 기호가 0.5초 비친다 (echo.md §2-4)
+func _flash_symbol(emotion: String) -> void:
+	if not EmotionBands.EMOTION_IDS.has(emotion):
+		return
+	var node := Node2D.new()
+	node.position = Vector2(240, 120)
+	node.draw.connect(func() -> void:
+		EmotionSymbols.draw(node, EmotionSymbols.symbol_of(emotion), Vector2.ZERO, EmotionBands.main_color(emotion), 22.0))
+	node.modulate.a = 0.0
+	_hud.add_child(node)
+	var tween := create_tween()
+	tween.tween_property(node, "modulate:a", 0.8, 0.15)
+	tween.tween_interval(0.3)
+	tween.tween_property(node, "modulate:a", 0.0, 0.25)
+	tween.tween_callback(node.queue_free)
 
 
 ## 정원 방문 마무리: 틱·특별 꽃·조합 (garden.md §4-4)

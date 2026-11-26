@@ -105,9 +105,7 @@
           },
           {
             "type": "object",
-            "required": [
-              "slug"
-            ],
+            "required": [],
             "additionalProperties": false,
             "properties": {
               "slug": {
@@ -131,8 +129,28 @@
                 "type": "number",
                 "minimum": 4,
                 "maximum": 40
+              },
+              "id": {
+                "type": "string",
+                "pattern": "^echo\\.(prologue|ch[1-5])\\.[a-z][a-z0-9_]*$"
+              },
+              "display_only": {
+                "type": "boolean",
+                "description": "이전 장면에서 모은 잔향의 색만 남긴다(모았을 때만 놓임, 상호작용 없음)"
               }
-            }
+            },
+            "anyOf": [
+              {
+                "required": [
+                  "slug"
+                ]
+              },
+              {
+                "required": [
+                  "id"
+                ]
+              }
+            ]
           }
         ]
       }
@@ -258,6 +276,31 @@
                   "type": "string",
                   "pattern": "^echo\\.(prologue|ch[1-5])\\.[a-z][a-z0-9_]*$"
                 }
+              },
+              "plots": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^plot_[0-9]{2}$"
+                }
+              },
+              "owner_planted": {
+                "enum": [
+                  "haneul",
+                  "byeol"
+                ]
+              },
+              "inspected": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$"
+                },
+                "description": "이번 방문에서 조사한 대상 id"
+              },
+              "never": {
+                "type": "boolean",
+                "description": "항상 막힘 (맵 가장자리)"
               }
             }
           }
@@ -365,6 +408,28 @@
               "maxItems": 2
             },
             "minItems": 2
+          },
+          "solved_cue": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "hint_cues": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "hold": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "switch": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "latch": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              }
+            }
           }
         },
         "allOf": [
@@ -398,6 +463,41 @@
             }
           }
         ]
+      }
+    },
+    "title_card": {
+      "type": "string",
+      "description": "처음 들어올 때 한 번 보여 줄 제목 카드 i18n 키 (예: chapter.ch1.title)"
+    },
+    "afterimage": {
+      "enum": [
+        "longing",
+        "warmth",
+        "dream",
+        "courage",
+        "healing"
+      ],
+      "description": "공감 연결 잔상: 진입 때 이 감정 기호가 0.5초 비친다"
+    },
+    "tutorials": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "after",
+          "text"
+        ],
+        "properties": {
+          "after": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "text": {
+            "type": "string",
+            "description": "{interact} 같은 자리표시는 지금 키 이름으로 바뀐다"
+          }
+        }
       }
     }
   }

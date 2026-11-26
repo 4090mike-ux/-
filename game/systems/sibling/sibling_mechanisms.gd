@@ -8,7 +8,12 @@ extends Node2D
 ## 풀린 장치는 GameState.mark_cue_seen("<scene>:mech_<id>") 로 기록되고, cue "mech_<id>_solved" 가 있으면 재생된다.
 ## 정의: 장면 JSON 의 "gates": [{id, rect}], "mechanisms": [{type, id, gate, at, lock_at | plates}]
 
-signal solved(mechanism_id: String)
+signal solved(mechanism_id: String, cue: String)
+## 막혔을 때 비활성 캐릭터의 힌트 대사 (30초마다, 최대 3번 — sibling.md §4-2)
+signal hint_requested(cue: String)
+
+const HINT_INTERVAL := 30.0
+const MAX_HINTS := 3
 
 const BAR := Color("#99969e")
 const BAR_DARK := Color("#4a494f")
@@ -19,6 +24,8 @@ var mechanisms: Array[Dictionary] = []
 var holder: SiblingCharacter = null
 var _hold_pos: Vector2 = Vector2.ZERO
 var _plate_bodies: Dictionary = {} # mechanism id → [Area2D...]
+var _idle: float = 0.0
+var _hints: int = 0
 
 
 func setup(owner_scene_id: String, gate_defs: Array, mech_defs: Array) -> void:
@@ -69,6 +76,7 @@ func handle(target: Interactable, actor: SiblingCharacter) -> bool:
 		var m := _mechanism(iid.trim_prefix("hold_"))
 		if m.is_empty() or is_solved(str(m["id"])):
 			return true
+		_idle = 0.0
 		if holder == actor:
 			_release(m)
 		else:
@@ -86,7 +94,8 @@ func handle(target: Interactable, actor: SiblingCharacter) -> bool:
 	return false
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_tick_hints(delta)
 	# 붙잡은 사람이 움직이면 놓친다
 	if holder != null and holder.global_position.distance_to(_hold_pos) > 6.0:
 		for m in mechanisms:
@@ -112,7 +121,33 @@ func _solve(m: Dictionary) -> void:
 	GameState.mark_cue_seen(_solved_key(id))
 	_set_gate(str(m["gate"]), true)
 	holder = null
-	solved.emit(id)
+	solved.emit(id, str(m.get("solved_cue", "mech_%s_solved" % id)))
+
+
+## 상태에 맞는 힌트 cue: 아무도 안 붙잡음 → hold, 붙잡은 사람이 조작 중 → switch, 다른 사람이 조작 중 → latch
+func current_hint_cue() -> String:
+	for m in mechanisms:
+		if str(m["type"]) != "hold" or is_solved(str(m["id"])):
+			continue
+		var cues: Dictionary = m.get("hint_cues", {})
+		if holder == null:
+			return str(cues.get("hold", ""))
+		if holder.active:
+			return str(cues.get("switch", ""))
+		return str(cues.get("latch", ""))
+	return ""
+
+
+func _tick_hints(delta: float) -> void:
+	if _hints >= MAX_HINTS or get_tree().paused:
+		return
+	_idle += delta
+	if _idle >= HINT_INTERVAL:
+		_idle = 0.0
+		var cue := current_hint_cue()
+		if not cue.is_empty():
+			_hints += 1
+			hint_requested.emit(cue)
 
 
 func _release(m: Dictionary) -> void:
