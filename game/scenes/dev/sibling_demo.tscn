@@ -1,0 +1,79 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://game/systems/sibling/sibling_character.gd" id="1_char"]
+[ext_resource type="Script" path="res://game/systems/sibling/sibling_switcher.gd" id="2_switch"]
+[ext_resource type="Script" path="res://game/scenes/dev/sibling_demo.gd" id="3_demo"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(12, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_h"]
+size = Vector2(480, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_v"]
+size = Vector2(16, 270)
+
+[node name="SiblingDemo" type="Node2D"]
+script = ExtResource("3_demo")
+
+[node name="Haneul" type="CharacterBody2D" parent="."]
+position = Vector2(200, 150)
+motion_mode = 1
+script = ExtResource("1_char")
+character_key = "haneul"
+
+[node name="Shape" type="CollisionShape2D" parent="Haneul"]
+position = Vector2(0, -4)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Body" type="Polygon2D" parent="Haneul"]
+color = Color(0.172549, 0.360784, 0.619608, 1)
+polygon = PackedVector2Array(-6, -22, 6, -22, 6, 0, -6, 0)
+
+[node name="Byeol" type="CharacterBody2D" parent="."]
+position = Vector2(280, 150)
+motion_mode = 1
+script = ExtResource("1_char")
+character_key = "byeol"
+
+[node name="Shape" type="CollisionShape2D" parent="Byeol"]
+position = Vector2(0, -4)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Body" type="Polygon2D" parent="Byeol"]
+color = Color(0.819608, 0.72549, 0.121569, 1)
+polygon = PackedVector2Array(-5, -18, 5, -18, 5, 0, -5, 0)
+
+[node name="Walls" type="StaticBody2D" parent="."]
+
+[node name="Top" type="CollisionShape2D" parent="Walls"]
+position = Vector2(240, 8)
+shape = SubResource("RectangleShape2D_wall_h")
+
+[node name="Bottom" type="CollisionShape2D" parent="Walls"]
+position = Vector2(240, 262)
+shape = SubResource("RectangleShape2D_wall_h")
+
+[node name="Left" type="CollisionShape2D" parent="Walls"]
+position = Vector2(8, 135)
+shape = SubResource("RectangleShape2D_wall_v")
+
+[node name="Right" type="CollisionShape2D" parent="Walls"]
+position = Vector2(472, 135)
+shape = SubResource("RectangleShape2D_wall_v")
+
+[node name="Switcher" type="Node" parent="."]
+script = ExtResource("2_switch")
+haneul_path = NodePath("../Haneul")
+byeol_path = NodePath("../Byeol")
+force_unlocked = true
+
+[node name="HudLayer" type="CanvasLayer" parent="."]
+
+[node name="Hud" type="Label" parent="HudLayer"]
+offset_left = 4.0
+offset_top = 2.0
+offset_right = 476.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 8
+text = "태그 전환 데모"

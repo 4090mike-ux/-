@@ -11,9 +11,11 @@
 사용법
   pip install -r tools/requirements.txt
   python tools/validate_data.py
+  python tools/validate_data.py --generated tests/out   # 게임이 만든 save_*.json / persist_*.json 도 검사
 """
 from __future__ import annotations
 
+import argparse
 import colorsys
 import json
 import re
@@ -46,7 +48,10 @@ def err(where: str, msg: str) -> None:
 
 
 def rel(p: Path) -> str:
-    return p.relative_to(ROOT).as_posix()
+    try:
+        return p.relative_to(ROOT).as_posix()
+    except ValueError:
+        return p.as_posix()
 
 
 def load_json(path: Path) -> object | None:
@@ -211,7 +216,29 @@ def check_echoes(schema: dict, flag_ids: set[str], paths: list[Path]) -> dict[st
     return counts if paths else None
 
 
+def check_generated(schemas: dict[str, dict], flag_ids: set[str], folder: Path) -> None:
+    """gdUnit4 테스트(SaveService)가 실제로 쓴 파일을 스키마로 검사한다."""
+    if not folder.exists():
+        notes.append(f"생성 파일 폴더 없음: {folder} (테스트를 먼저 실행)")
+        return
+    found = 0
+    for path in sorted(folder.glob("save_*.json")):
+        found += 1
+        data = validate(path, schemas["save"])
+        if isinstance(data, dict):
+            for f in data.get("state", {}).get("flags", {}):
+                if f not in flag_ids:
+                    err(rel(path), f"플래그 {f} 가 flags.json 에 없음")
+    for path in sorted(folder.glob("persist_*.json")):
+        found += 1
+        validate(path, schemas["persist"])
+    notes.append(f"게임이 만든 파일 {found}개 검사 ({folder.as_posix()})")
+
+
 def main() -> int:
+    parser = argparse.ArgumentParser(description="데이터 계약 검증기")
+    parser.add_argument("--generated", type=Path, help="게임이 만든 세이브 파일 폴더 (예: tests/out)")
+    args = parser.parse_args()
     schemas = load_schemas()
     for required in ("flags", "echo", "save", "persist", "emotions"):
         if required not in schemas:
@@ -247,6 +274,9 @@ def main() -> int:
             if f not in flag_ids:
                 err("docs/schemas/examples/save.example.json", f"플래그 {f} 가 flags.json 에 없음")
     validate(EXAMPLES / "persist.example.json", schemas["persist"])
+    if args.generated is not None:
+        folder = args.generated if args.generated.is_absolute() else ROOT / args.generated
+        check_generated(schemas, flag_ids, folder)
     return report()
 
 

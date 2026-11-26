@@ -8,6 +8,12 @@ const ROOTS: Array[String] = ["res://game", "res://tests"]
 
 
 func _init() -> void:
+	# -s 모드에서는 _init 시점에 오토로드(EchoBus, GameState...)가 아직 전역 이름으로 등록되지 않는다.
+	# 첫 프레임까지 기다렸다가 검사한다.
+	process_frame.connect(_run, CONNECT_ONE_SHOT)
+
+
+func _run() -> void:
 	var failures: Array[String] = []
 	var checked := 0
 	for root in ROOTS:

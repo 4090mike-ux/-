@@ -75,11 +75,17 @@ byeol: [#portrait=surprised] 어? 방금 나도 같은 말 하려고 했는데.
 | 읽기 | `GameState.flag("flag.ch1.met_in_square")` | 플래그 값 (없으면 기본값) |
 | 읽기 | `GameState.lean()` | `"protect"` / `"heal"` / `"balanced"` (차이 2 이하면 balanced) |
 | 읽기 | `GameState.name_display("haneul")` | R-NAME 적용된 표시 이름 |
+| 읽기 | `GameState.has_echo("echo.ch1.x")`, `has_reunited("family_x")`, `has_chosen("ch2_cafe_01")` | 수집·재결합·선택 여부 |
+| 읽기 | `GameState.can_offer_color()` | 숨은 선택지 "내 색을 바친다" 표시 조건 (canon §10) |
 | 쓰기 | `$> GameState.add_protect(1)` / `add_heal(2)` | 성향 +1 또는 +2 (증가만) |
 | 쓰기 | `$> GameState.set_flag("flag.ch2.xxx", true)` | flags.json에 등록된 플래그만 |
 | 쓰기 | `$> GameState.raise_bond(2)` | 관계 단계를 지정 값까지 올림 (스토리 이벤트 전용) |
 | 쓰기 | `$> GameState.reunite_family("family_id")` | 사이드 재결합 완료 |
 | 이벤트 | `$> GameState.trigger("ev_ch4_storm")` | 이벤트 시작 (컷신·플래그 처리는 이벤트 쪽 책임) |
+| 엔딩 | `$> GameState.reach_ending()` | 챕터 5 최종 대화 끝에서 한 번. 엔딩을 정하고 persist 에 기록 |
+
+`[#choice=id]` 응답을 고르면 대사 UI(WP-21)가 `GameState.record_choice(id)`를 자동으로 부른다. 대사 파일에서 직접 부르지 않는다.
+구현: `game/autoload/game_state.gd` (WP-08). 계약 테스트: `tests/unit/core/test_game_state.gd`.
 
 플래그·변수 이름은 [game/data/flags.json](../../game/data/flags.json)에 있는 것만 쓴다. 새 플래그가 필요하면 flags.json에 추가하는 PR을 먼저 올린다.
 

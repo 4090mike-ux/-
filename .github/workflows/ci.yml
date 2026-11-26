@@ -30,6 +30,10 @@ jobs:
         run: python tools/lint_names.py
       - name: 스키마·교차 검사·팔레트
         run: python tools/validate_data.py
+      - name: 분기 시뮬레이터 (엔딩 도달성·픽스처)
+        run: |
+          python tools/branch_sim.py --self-test
+          python tools/branch_sim.py --check
 
   test:
     name: gdUnit4 (Godot 4.7.2, xvfb)
@@ -53,5 +57,14 @@ jobs:
           timeout: 10
           # 포크에서 온 PR 은 checks 쓰기 권한이 없어 리포트 게시가 실패하므로 끈다
           publish-report: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+      - uses: actions/setup-python@v7
+        if: ${{ !cancelled() }}
+        with:
+          python-version: '3.12'
+      - name: 테스트가 만든 세이브 파일 스키마 검사
+        if: ${{ !cancelled() }}
+        run: |
+          pip install -r tools/requirements.txt
+          python tools/validate_data.py --generated tests/out
 
   # W6(WP-39)에서 추가: 태그 푸시 → 웹/Windows 내보내기 → itch.io butler 업로드

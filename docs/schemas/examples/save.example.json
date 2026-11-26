@@ -12,14 +12,37 @@
     "active_character": "byeol"
   },
   "state": {
-    "vars": { "protect": 3, "heal": 4, "bond": 1, "families_reunited": 0 },
-    "flags": { "flag.ch1.met_in_square": true },
-    "echoes_collected": ["echo.ch1.atelier_easel", "echo.ch1.square_bench"],
-    "choices_made": ["ch2_cafe_01"],
+    "vars": {
+      "protect": 3,
+      "heal": 4,
+      "bond": 1
+    },
+    "flags": {
+      "flag.ch1.met_in_square": true
+    },
+    "echoes_collected": [
+      "echo.ch1.atelier_easel",
+      "echo.ch1.square_bench"
+    ],
+    "reunited_families": [],
+    "choices_made": [
+      "ch2_cafe_01"
+    ],
     "garden": {
       "plots": [
-        { "id": "plot_01", "planted_by": "haneul", "emotion": "longing", "growth": 2 },
-        { "id": "plot_02", "planted_by": "byeol", "emotion": "warmth", "growth": 1, "resonance_bonus": 1 }
+        {
+          "id": "plot_01",
+          "planted_by": "haneul",
+          "emotion": "longing",
+          "growth": 2
+        },
+        {
+          "id": "plot_02",
+          "planted_by": "byeol",
+          "emotion": "warmth",
+          "growth": 1,
+          "resonance_bonus": 1
+        }
       ],
       "bloomed": []
     }

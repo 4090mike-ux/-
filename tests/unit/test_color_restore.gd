@@ -70,7 +70,8 @@ func test_demo_scene_instantiates() -> void:
 
 func test_band_restore_keeps_selected_hue_only(
 		_do_skip := DisplayServer.get_name() == "headless",
-		_skip_reason := "실제 렌더링이 필요함 (CI 는 xvfb 에서 실행)") -> void:
+		_skip_reason := "실제 렌더링이 필요함 (CI 는 xvfb 에서 실행)",
+		timeout := 10000) -> void:
 	# 1×4 픽셀: 파랑(그리움) / 노랑(온기) / 피부(중립) / 진한 파랑. 그리움 대역 + 전체 마스크.
 	var vp: SubViewport = auto_free(SubViewport.new())
 	vp.size = Vector2i(4, 1)
@@ -97,8 +98,9 @@ func test_band_restore_keeps_selected_hue_only(
 	vp.add_child(layer)
 	add_child(vp)
 	await await_idle_frame()
-	await RenderingServer.frame_post_draw
-	await RenderingServer.frame_post_draw
+	# frame_post_draw 를 기다리면 창이 최소화됐을 때 영원히 멈춘다. 동기 강제 그리기를 쓴다.
+	RenderingServer.force_draw(false)
+	RenderingServer.force_draw(false)
 	var img := vp.get_texture().get_image()
 	assert_object(img).is_not_null()
 	# 파랑 계열은 원색 유지

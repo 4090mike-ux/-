@@ -25,11 +25,14 @@ python tools/install_addons.py                    # 애드온 재설치가 필�
 tools/ci_local.sh                                 # ★ 완료 전 필수: 린트 + 데이터 검증 + 파싱 검사 + 테스트
 python tools/lint_names.py                        # R-NAME·대사 규약·i18n 키
 python tools/validate_data.py                     # 스키마·교차 검사·팔레트 규칙
+python tools/branch_sim.py                        # 엔딩 분기 보고서 (--check: CI용, --write-fixture: 규칙 변경 후)
 
 "$GODOT_BIN" --headless --path . --import         # 임포트 + 클래스 캐시 (새 워크트리에서 처음 한 번)
 "$GODOT_BIN" --headless --path . -s res://tests/check_scripts.gd   # 스크립트 파싱 오류 검사
 "$GODOT_BIN" --path . res://game/scenes/dev/color_demo.tscn        # 색 복원 데모 실행
 "$GODOT_BIN" --path . res://game/scenes/dev/color_demo.tscn -- --bench   # 셰이더 성능 측정 (60fps 미만이면 종료 코드 1)
+"$GODOT_BIN" --path . res://game/scenes/dev/color_demo.tscn -- --shot=user://shot.png   # 스크린샷 저장 후 종료
+"$GODOT_BIN" --path . res://game/scenes/dev/sibling_demo.tscn      # 이동·태그 전환 데모
 
 tools/new_worktree.sh WP-12 echo-sense            # WP 작업용 워크트리 + 브랜치 wp/WP-12-echo-sense
 ```
@@ -88,6 +91,8 @@ G0~G7 게이트 판정 · 설정·엔딩·대사 최종 검수 · 아트 스타�
 
 ## 9. 현재 상태
 
-- Wave 0(계약) 진행 중. G0(canon 서명)·G1(계약 동결) 전이다.
-- 오토로드(GameState, SaveService, EchoBus), 입력 맵은 아직 없다 — W1(WP-08, WP-09).
+- W0(계약) 완료, W1(기반) 진행 중. canon의 [제안] 항목은 개발자 위임(2026-11-26)에 따라 **작업 기본값**으로 쓰되, G0 서명 전이므로 바뀔 수 있다.
+- 오토로드: `EchoBus`, `GameState`, `SaveService` (ADR-0004). 입력 액션: `InputActions` 상수 참조.
+- 엔딩 규칙: `EndingRules`(GDScript) ↔ `tools/branch_sim.py`(Python), 픽스처로 교차 검증.
 - 에디터 플러그인(gdUnit4, Dialogue Manager)은 설치만 돼 있고 아직 켜지 않았다.
+- `project.godot`는 에디터·ProjectSettings.save()가 통째로 다시 쓰므로 주석을 넣지 않는다.
