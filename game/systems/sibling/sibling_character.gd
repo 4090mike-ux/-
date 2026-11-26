@@ -5,8 +5,14 @@ extends CharacterBody2D
 
 signal facing_changed(facing: Vector2)
 
+const GROUP := &"siblings"
+
 @export_enum("haneul", "byeol") var character_key: String = "haneul"
-@export var speed: float = 72.0
+## 걷기 속도 80 px/s (docs/gdd/controls_accessibility.md) [제안]
+@export var speed: float = 80.0
+
+## 잔향 감지 중 ×0.6 등 일시적인 속도 배율 (EchoSensor 가 설정)
+var speed_multiplier: float = 1.0
 
 var active: bool = false:
 	set(value):
@@ -15,6 +21,19 @@ var active: bool = false:
 			velocity = Vector2.ZERO
 
 var facing: Vector2 = Vector2.DOWN
+
+
+func _ready() -> void:
+	add_to_group(GROUP)
+
+
+## 같은 씬에 있는 상대 캐릭터 (없으면 null)
+func partner() -> SiblingCharacter:
+	for node in get_tree().get_nodes_in_group(GROUP):
+		var other := node as SiblingCharacter
+		if other != null and other != self:
+			return other
+	return null
 
 
 func _physics_process(_delta: float) -> void:
@@ -33,7 +52,7 @@ func move_with(dir: Vector2) -> void:
 		if four != facing:
 			facing = four
 			facing_changed.emit(facing)
-	velocity = dir.limit_length(1.0) * speed
+	velocity = dir.limit_length(1.0) * speed * speed_multiplier
 	move_and_slide()
 
 

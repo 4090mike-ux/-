@@ -67,6 +67,17 @@
       "status": "proposed"
     },
     {
+      "id": "shared_echo_found",
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 9,
+      "scope": "derived",
+      "derived_from": "state.echoes_collected 중 sensed_by == both 인 개수",
+      "description": "공명 잔향 수집 수. bond 4 조건(7개 이상)에 쓴다 — docs/gdd/endings.md §4.",
+      "status": "proposed"
+    },
+    {
       "id": "seen_endings",
       "type": "string_list",
       "default": [],
@@ -100,7 +111,7 @@
       "type": "bool",
       "default": false,
       "chapter": "ch4",
-      "set_by": "garden: 5색 조합 완성",
+      "set_by": "ev_ch4_family_flower",
       "description": "'가족의 꽃' 개화. 챕터 4 진행 트리거.",
       "status": "proposed"
     },
@@ -127,7 +138,7 @@
       "type": "bool",
       "default": false,
       "chapter": "ch5",
-      "set_by": "garden: 신규 색 조합 완성",
+      "set_by": "ev_ch5_rainbow_flower",
       "description": "'무지개 꽃' 개화. 기적 엔딩 조건.",
       "status": "proposed"
     },

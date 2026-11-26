@@ -209,6 +209,8 @@ def check_echoes(schema: dict, flag_ids: set[str], paths: list[Path]) -> dict[st
             if eid.split(".")[1:2] != [chapter]:
                 err(rel(path), f"{eid}: 파일 chapter({chapter})와 id 챕터가 다름")
             counts[echo.get("kind", "required")] = counts.get(echo.get("kind", "required"), 0) + 1
+            if echo.get("sensed_by") == "both" and echo.get("reward", {}).get("color_shards", 0) % 2:
+                err(rel(path), f"{eid}: 공명 잔향(both)의 color_shards 는 짝수여야 한다 (하늘·별 반반)")
             refs = list(echo.get("requires", {}).get("flags", [])) + list(echo.get("reward", {}).get("sets_flags", []))
             for f in refs:
                 if f not in flag_ids:

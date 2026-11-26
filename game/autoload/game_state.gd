@@ -67,6 +67,17 @@ var hidden_echo_found: int:
 	set(_value):
 		push_error("hidden_echo_found 는 계산값이다")
 
+## 계산값: 모은 공명 잔향 수 (sensed_by == both). bond 4 조건에 쓴다 (docs/gdd/endings.md §4)
+var shared_echo_found: int:
+	get:
+		var count := 0
+		for id in _echoes:
+			if str(GameData.echo_def(id).get("sensed_by", "")) == "both":
+				count += 1
+		return count
+	set(_value):
+		push_error("shared_echo_found 는 계산값이다")
+
 var active_character: String = "haneul"
 var chapter: String = "prologue"
 var scene_path: String = ""

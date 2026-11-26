@@ -1,19 +1,26 @@
 class_name EchoSensor
 extends Node2D
-## 잔향 감지 (WP-12). SiblingCharacter 의 자식으로 둔다.
-## echo_sense 를 hold_time 이상 누르고 있으면 감지 반경이 radius 까지 커지고, 반경 안의 잔향이 맥동한다.
-## 감지된 잔향 가까이에서 interact 를 누르면 interact_requested 를 보낸다(공명 퍼즐은 받는 쪽이 연다).
+## 잔향 감지 (WP-12). SiblingCharacter 의 자식으로 둔다. 수치는 docs/gdd/echo.md §2 [제안].
+##
+## - echo_sense 를 누르고 있으면 감지 반경이 0.6초에 걸쳐 최대 반경까지 넓어진다(ease-out).
+## - 최대 반경 = 80px + bond 보너스(2:+8, 3:+16, 4:+24). 두 사람이 40px 안 + bond ≥ 1 이면 ×1.25.
+## - 숨김 잔향은 현재 반경의 60% 안에서만, 공명 잔향(both)은 두 사람이 64px 안에 함께 있을 때만 감지된다.
+## - 감지 중 이동 속도 ×0.6. 감지된 잔향 20px 안에서 interact → interact_requested.
 
 signal interact_requested(echo: EchoObject)
 
-## 이만큼 누르고 있어야 감지가 시작된다(실수로 스치는 입력 방지) [제안]
-@export var hold_time: float = 0.3
-## 최대 감지 반경(px) [제안]
-@export var radius: float = 96.0
-## 반경이 0 → radius 로 커지는 시간(초) [제안]
+@export var base_radius: float = 80.0
+## bond 0~4 별 추가 반경
+@export var bond_radius_bonus: Array[float] = [0.0, 0.0, 8.0, 16.0, 24.0]
+@export var resonance_multiplier: float = 1.25
+@export var resonance_distance: float = 40.0
+@export var together_distance: float = 64.0
+@export var hidden_radius_ratio: float = 0.6
+@export var sensing_speed_multiplier: float = 0.6
+## 이만큼 누른 뒤부터 반경이 넓어진다 (0 = 바로)
+@export var hold_time: float = 0.0
 @export var grow_time: float = 0.6
-## 상호작용 가능 거리(px) [제안]
-@export var interact_radius: float = 28.0
+@export var interact_radius: float = 20.0
 
 var current_radius: float = 0.0
 var _held: float = 0.0
@@ -24,9 +31,35 @@ func character() -> SiblingCharacter:
 	return get_parent() as SiblingCharacter
 
 
+func character_key() -> String:
+	var c := character()
+	return c.character_key if c != null else "haneul"
+
+
 func is_active() -> bool:
 	var c := character()
 	return c != null and c.active
+
+
+## 상대 캐릭터까지 거리 (상대가 없으면 INF)
+func partner_distance() -> float:
+	var c := character()
+	if c == null:
+		return INF
+	var other := c.partner()
+	return INF if other == null else c.global_position.distance_to(other.global_position)
+
+
+func siblings_together() -> bool:
+	return partner_distance() <= together_distance
+
+
+func max_radius() -> float:
+	var bond := clampi(GameState.bond, 0, bond_radius_bonus.size() - 1)
+	var r := base_radius + bond_radius_bonus[bond]
+	if GameState.bond >= 1 and partner_distance() <= resonance_distance:
+		r *= resonance_multiplier
+	return r
 
 
 func _process(delta: float) -> void:
@@ -51,35 +84,38 @@ func _unhandled_input(event: InputEvent) -> void:
 
 ## 한 프레임 감지 갱신 (테스트에서 직접 부른다)
 func update_sense(delta: float, holding: bool) -> void:
-	if holding:
-		_held += delta
-	else:
+	var c := character()
+	if c != null:
+		c.speed_multiplier = sensing_speed_multiplier if holding else 1.0
+	if not holding:
 		_held = 0.0
 		_announced.clear()
-	if _held >= hold_time:
-		current_radius = move_toward(current_radius, radius, radius / maxf(grow_time, 0.01) * delta)
-	else:
-		current_radius = move_toward(current_radius, 0.0, radius * 3.0 * delta)
+		current_radius = move_toward(current_radius, 0.0, base_radius * 4.0 * delta)
+		return
+	_held += delta
+	var t := clampf((_held - hold_time) / maxf(grow_time, 0.01), 0.0, 1.0)
+	current_radius = max_radius() * ease(t, 0.4)
 	if current_radius <= 0.0:
 		return
-	var key := character().character_key if character() != null else "both"
 	for echo in targets_in(current_radius):
 		var dist := global_position.distance_to(echo.global_position)
 		echo.sense(1.0 - dist / (current_radius + 0.001) * 0.5)
 		if not _announced.has(echo.echo_id):
 			_announced[echo.echo_id] = true
-			EchoBus.echo_sensed.emit(echo.echo_id, key)
+			EchoBus.echo_sensed.emit(echo.echo_id, character_key())
 
 
-## 반경 안에서 이 캐릭터가 감지할 수 있는 잔향
+## 반경 안에서 이 캐릭터가 지금 감지할 수 있는 잔향 (숨김은 반경의 60% 안)
 func targets_in(range_px: float) -> Array[EchoObject]:
 	var result: Array[EchoObject] = []
-	var key := character().character_key if character() != null else "both"
+	var key := character_key()
+	var together := siblings_together()
 	for node in get_tree().get_nodes_in_group(EchoObject.GROUP):
 		var echo := node as EchoObject
-		if echo == null or not echo.can_be_sensed_by(key):
+		if echo == null or not echo.can_be_sensed_by(key, together):
 			continue
-		if global_position.distance_to(echo.global_position) <= range_px:
+		var limit := range_px * (hidden_radius_ratio if echo.is_hidden() else 1.0)
+		if global_position.distance_to(echo.global_position) <= limit:
 			result.append(echo)
 	return result
 
@@ -88,11 +124,12 @@ func targets_in(range_px: float) -> Array[EchoObject]:
 func nearest_interactable() -> EchoObject:
 	var best: EchoObject = null
 	var best_dist := INF
-	for echo in targets_in(interact_radius):
-		if not echo.is_sensed():
+	for node in get_tree().get_nodes_in_group(EchoObject.GROUP):
+		var echo := node as EchoObject
+		if echo == null or not echo.is_sensed() or not echo.can_be_sensed_by(character_key(), siblings_together()):
 			continue
 		var d := global_position.distance_to(echo.global_position)
-		if d < best_dist:
+		if d <= interact_radius and d < best_dist:
 			best = echo
 			best_dist = d
 	return best
@@ -100,5 +137,5 @@ func nearest_interactable() -> EchoObject:
 
 func _draw() -> void:
 	if current_radius > 1.0:
-		var alpha := 0.35 * current_radius / radius
+		var alpha := 0.3 * current_radius / max_radius()
 		draw_arc(Vector2.ZERO, current_radius, 0.0, TAU, 48, Color(1, 1, 1, alpha), 1.0)

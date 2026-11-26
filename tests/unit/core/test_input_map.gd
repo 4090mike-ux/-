@@ -14,7 +14,17 @@ func test_all_actions_exist_with_keyboard_and_gamepad() -> void:
 		assert_bool(has_pad).override_failure_message("%s: 패드 입력 없음" % action).is_true()
 
 
-func test_tag_switch_is_tab() -> void:
-	var tab := InputEventKey.new()
-	tab.physical_keycode = KEY_TAB
-	assert_bool(tab.is_action(InputActions.TAG_SWITCH)).is_true()
+func _key(code: Key) -> InputEventKey:
+	var e := InputEventKey.new()
+	e.physical_keycode = code
+	return e
+
+
+func test_default_keys_follow_gdd_controls_table() -> void:
+	# docs/gdd/controls_accessibility.md §1
+	assert_bool(_key(KEY_TAB).is_action(InputActions.TAG_SWITCH)).is_true()
+	assert_bool(_key(KEY_SHIFT).is_action(InputActions.ECHO_SENSE)).is_true()
+	assert_bool(_key(KEY_X).is_action(InputActions.ECHO_SENSE)).is_true()
+	assert_bool(_key(KEY_SPACE).is_action(InputActions.INTERACT)).is_true()
+	assert_bool(_key(KEY_E).is_action(InputActions.INTERACT)).is_true()
+	assert_bool(_key(KEY_P).is_action(InputActions.PAUSE)).is_true()

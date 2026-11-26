@@ -41,7 +41,7 @@ TAG_RULES: dict[str, object] = {
     "emotion": EMOTIONS,
     "cutin": {"protect"},
     "echo": re.compile(r"^echo\.(prologue|ch[1-5])\.[a-z][a-z0-9_]*$"),
-    "choice": re.compile(r"^(prologue|ch[1-5]|endings)_[a-z0-9]+_[0-9]{2}$"),
+    "choice": re.compile(r"^(prologue|ch[1-5]|endings)_[a-z0-9_]+_[0-9]{2}$"),
     "sfx": re.compile(r"^[a-z0-9_]+$"),
     "bgm": re.compile(r"^[a-z0-9_]+$"),
 }

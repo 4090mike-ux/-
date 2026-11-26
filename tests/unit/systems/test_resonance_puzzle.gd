@@ -9,7 +9,6 @@ func _puzzle() -> ResonancePuzzle:
 	p.pause_tree = false
 	add_child(p)
 	p.solved.connect(func(id: String) -> void: _results.append("solved:" + id))
-	p.failed.connect(func(id: String) -> void: _results.append("failed:" + id))
 	return p
 
 
@@ -51,12 +50,28 @@ func test_three_hits_solve() -> void:
 	assert_array(_results).contains_exactly(["solved:echo.ch1.x"])
 
 
-func test_timeout_fails() -> void:
+func test_timer_gives_hints_never_fails() -> void:
 	var p := _puzzle()
 	p.open("echo.ch1.y", "courage")
 	p.advance(p.time_limit + 0.1)
-	assert_bool(p.is_open).is_false()
-	assert_array(_results).contains_exactly(["failed:echo.ch1.y"])
+	assert_bool(p.is_open).is_true()
+	assert_int(p.hints_given).is_equal(1)
+	assert_float(p.current_tolerance_deg()).is_greater(p.tolerance_deg)
+	assert_bool(p.can_skip()).is_false()
+	p.advance(p.time_limit + 0.1)
+	assert_bool(p.can_skip()).is_true()
+	assert_array(_results).is_empty()
+
+
+func test_skip_after_two_hints_solves_with_same_reward() -> void:
+	var p := _puzzle()
+	p.open("echo.ch1.z", "healing")
+	assert_bool(p.skip()).is_false()
+	p.give_hint()
+	p.give_hint()
+	assert_bool(p.skip()).is_true()
+	assert_bool(p.was_skipped).is_true()
+	assert_array(_results).contains_exactly(["solved:echo.ch1.z"])
 
 
 func test_every_emotion_has_a_distinct_symbol() -> void:

@@ -120,8 +120,8 @@ func test_lean_uses_balance_threshold_two() -> void:
 
 func test_echoes_are_counted_once_and_hidden_ones_separately() -> void:
 	var defs: Array[Dictionary] = [
-		{"id": "echo.ch1.a", "kind": "required", "emotion": "longing"},
-		{"id": "echo.ch1.b", "kind": "hidden", "emotion": "warmth"},
+		{"id": "echo.ch1.a", "kind": "required", "emotion": "longing", "sensed_by": "both"},
+		{"id": "echo.ch1.b", "kind": "hidden", "emotion": "warmth", "sensed_by": "byeol"},
 	]
 	GameData.override_echo_defs(defs)
 	EchoBus.echo_collected.connect(_record)
@@ -131,6 +131,7 @@ func test_echoes_are_counted_once_and_hidden_ones_separately() -> void:
 	assert_bool(GameState.collect_echo("not-an-echo")).is_false()
 	assert_int(GameState.echo_found).is_equal(2)
 	assert_int(GameState.hidden_echo_found).is_equal(1)
+	assert_int(GameState.shared_echo_found).is_equal(1)
 	assert_array(_events).contains_exactly([["echo.ch1.a", "longing"], ["echo.ch1.b", "warmth"]])
 
 

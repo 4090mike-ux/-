@@ -1,6 +1,7 @@
 extends Node2D
 ## W2 프로토타입 (G2 셀프 플레이용): 흑백 방에서 잔향 5개를 감지 → 공명 퍼즐 → 색 복원.
-## 조작: 이동 WASD/방향키, 잔향 감지 Space 길게, 공명 E, 전환 Tab. 실제 아트 전까지 도형으로 그린다.
+## 조작: 이동 WASD/방향키, 잔향 감지 Shift(X) 길게, 공명 E/Space, 전환 Tab. 실제 아트 전까지 도형으로 그린다.
+## 공명 잔향(포스터·벽난로)은 두 사람이 가까이 함께 있어야 감지된다.
 ## 스크린샷: godot --path . res://game/scenes/dev/echo_prototype.tscn -- --shot=user://proto.png
 ##   (커튼·벽난로 잔향을 모은 상태 + 포스터 감지 중 + 퍼즐 화면을 각각 찍는다: proto.png, proto_puzzle.png)
 ## 색은 감정 대역 규칙(art_style.md §3)을 지킨다: 감정 소품은 감정 색, 나머지는 채도 0.28 이하 중립색.
@@ -25,7 +26,6 @@ func _ready() -> void:
 	for sensor: EchoSensor in [$Haneul/EchoSensor, $Byeol/EchoSensor]:
 		sensor.interact_requested.connect(_on_interact_requested)
 	_puzzle.solved.connect(_on_solved)
-	_puzzle.failed.connect(_on_failed)
 	_puzzle.cancelled.connect(_on_cancelled)
 	EchoBus.character_switched.connect(func(_k: String) -> void: _update_hud())
 	_update_hud()
@@ -67,17 +67,12 @@ func _on_interact_requested(echo: EchoObject) -> void:
 func _on_solved(_echo_id: String) -> void:
 	if _pending != null:
 		_pending.collect()
-		_message = "%s 의 색이 돌아왔다" % tr(str(EmotionBands.load_emotions()[_pending.emotion()]["name_key"]))
+		_message = "%s 의 색이 돌아왔다%s" % [tr(str(EmotionBands.load_emotions()[_pending.emotion()]["name_key"])),
+			" (건너뜀)" if _puzzle.was_skipped else ""]
 	_pending = null
 	if _collected_count() == _total_count():
 		_message = "모든 잔향을 모았다"
 		create_tween().tween_property(_restore, "global_saturation", FINALE_SATURATION, 3.0)
-	_update_hud()
-
-
-func _on_failed(_echo_id: String) -> void:
-	_pending = null
-	_message = "공명이 흩어졌다 — 다시 시도"
 	_update_hud()
 
 
@@ -102,7 +97,7 @@ func _total_count() -> int:
 func _update_hud() -> void:
 	var lines := PackedStringArray([
 		"잔향 %d/%d   지금: %s" % [_collected_count(), _total_count(), GameState.name_display(GameState.active_character)],
-		"Space 길게: 감지 · E: 공명 · Tab: 전환",
+		"Shift 길게: 감지 · E: 공명 · Tab: 전환 · 공명 잔향은 둘이 함께",
 	])
 	if not _message.is_empty():
 		lines.append(_message)

@@ -61,7 +61,7 @@ byeol: [#portrait=surprised] 어? 방금 나도 같은 말 하려고 했는데.
 | `[#emotion=<id>]` | longing, warmth, dream, courage, healing | 이 줄에서 감정 색 큐(말풍선 테두리·기호) | 대사 UI / 색 복원 |
 | `[#cutin=protect]` | protect | 보호 본능 자동 컷인 | 연출 |
 | `[#echo=<잔향id>]` | echo.chN.xxx | 이 줄이 특정 잔향과 연결됨 | 잔향 시스템 |
-| `[#choice=<id>]` | `<구간>_<장소>_<2자리>` 예: ch2_cafe_01 | **성향 선택지 표시.** 분기 시뮬레이터가 센다 | 분기 시뮬레이터 |
+| `[#choice=<id>]` | `<구간>_<장소>_<2자리>` 예: ch2_cafe_01, ch2_park_03_01 (장소에 밑줄 허용) | **성향 선택지 표시.** 분기 시뮬레이터가 센다 | 분기 시뮬레이터 |
 | `[#sfx=<id>]`, `[#bgm=<id>]` | 오디오 id | 효과음·배경음 큐 | 오디오 |
 
 ## 5. 상태 읽기·쓰기 (GameState 계약)
@@ -71,7 +71,7 @@ byeol: [#portrait=surprised] 어? 방금 나도 같은 말 하려고 했는데.
 | 종류 | API | 설명 |
 |---|---|---|
 | 읽기 | `GameState.protect`, `heal`, `bond`, `families_reunited` | 정수 |
-| 읽기 | `GameState.echo_found`, `GameState.hidden_echo_found` | 계산값 |
+| 읽기 | `GameState.echo_found`, `hidden_echo_found`, `shared_echo_found` | 계산값 (공명 잔향 수는 bond 4 조건) |
 | 읽기 | `GameState.flag("flag.ch1.met_in_square")` | 플래그 값 (없으면 기본값) |
 | 읽기 | `GameState.lean()` | `"protect"` / `"heal"` / `"balanced"` (차이 2 이하면 balanced) |
 | 읽기 | `GameState.name_display("haneul")` | R-NAME 적용된 표시 이름 |
