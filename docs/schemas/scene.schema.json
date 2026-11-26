@@ -386,26 +386,34 @@
                 "description": "배경 메타데이터의 최상위 키 (예: gate_rect)"
               }
             ]
+          },
+          "style": {
+            "enum": [
+              "bars",
+              "void"
+            ],
+            "description": "bars = 창살 문(기본), void = 기억의 다리 회색 공백"
           }
         }
       }
     },
     "mechanisms": {
       "type": "array",
-      "description": "동시 조작 퍼즐 (docs/gdd/sibling.md §4). hold = 붙잡기-이동, plates = 두 발판",
+      "description": "동시 조작 퍼즐 (docs/gdd/sibling.md §4). hold = 붙잡기-이동, plates = 두 발판, bridge = 기억의 다리, gaze = 엇갈린 시선 (ADR-0010)",
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": [
           "type",
-          "id",
-          "gate"
+          "id"
         ],
         "properties": {
           "type": {
             "enum": [
               "hold",
-              "plates"
+              "plates",
+              "bridge",
+              "gaze"
             ]
           },
           "id": {
@@ -489,8 +497,99 @@
               "latch": {
                 "type": "string",
                 "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "anchor": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "cross": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "stand": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "look": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "enter": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "wrong_person": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
               }
             }
+          },
+          "seer": {
+            "enum": [
+              "haneul",
+              "byeol"
+            ],
+            "description": "gaze: 단서를 보는 사람 (장치는 다른 사람이 맞춘다)"
+          },
+          "clues": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "description": "배경 메타데이터 props 이름"
+                }
+              ]
+            },
+            "minItems": 2,
+            "description": "gaze: 단서 표식 자리 (sequence 순서대로)"
+          },
+          "sequence": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "longing",
+                "warmth",
+                "dream",
+                "courage",
+                "healing"
+              ]
+            },
+            "minItems": 2,
+            "maxItems": 6,
+            "description": "gaze: 장치에 넣을 감정 기호 순서"
+          },
+          "palette": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "longing",
+                "warmth",
+                "dream",
+                "courage",
+                "healing"
+              ]
+            },
+            "minItems": 2,
+            "maxItems": 5,
+            "uniqueItems": true
+          },
+          "caption": {
+            "type": "string"
+          },
+          "time_limit_sec": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 120
           }
         },
         "allOf": [
@@ -504,6 +603,7 @@
             },
             "then": {
               "required": [
+                "gate",
                 "at",
                 "lock_at"
               ]
@@ -519,7 +619,41 @@
             },
             "then": {
               "required": [
+                "gate",
                 "plates"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "bridge"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "gate",
+                "at",
+                "lock_at"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "gaze"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "at",
+                "seer",
+                "clues",
+                "sequence"
               ]
             }
           }

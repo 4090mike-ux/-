@@ -77,3 +77,62 @@ func test_host_without_data_succeeds_immediately() -> void:
 	var outcome: Array = await host.run("echo.ch9.missing", "none")
 	assert_array(outcome).is_equal([true, false])
 	assert_str(PuzzleHost.slug_of("echo.ch1.square_clock")).is_equal("square_clock")
+
+
+func test_color_match_afterimage_hides_clues_and_reveals_on_sense() -> void:
+	var p := _open(ColorMatchPuzzle.new(), {"slots": ["longing", "warmth", "longing", "warmth", "longing"],
+		"palette": ["warmth", "longing"], "difficulty": 3, "time_limit_sec": 0}) as ColorMatchPuzzle
+	assert_float(p.afterimage_sec).is_equal(4.0)  # CM-B: 난이도 3 → 4초
+	assert_bool(p.clues_visible()).is_true()
+	p.advance(4.1)
+	assert_bool(p.clues_visible()).is_false()
+	assert_bool(p.reveal()).is_true()
+	assert_bool(p.clues_visible()).is_true()
+	assert_bool(p.reveal()).is_false()  # 쿨다운
+	p.advance(1.1)
+	assert_bool(p.clues_visible()).is_false()
+	assert_bool(p.place(0, "longing")).is_true()  # 단서가 안 보여도 기호가 맞으면 들어간다
+
+
+func test_easy_color_match_keeps_clues_visible() -> void:
+	var p := _open(ColorMatchPuzzle.new(), {"slots": ["longing", "warmth"], "palette": ["warmth", "longing"], "difficulty": 2}) as ColorMatchPuzzle
+	p.advance(10.0)
+	assert_bool(p.clues_visible()).is_true()
+
+
+func test_two_player_color_match_splits_slots_by_side() -> void:
+	GameState.reset()
+	GameState.raise_bond(1)
+	GameState.raise_bond(2)
+	var defs: Array[Dictionary] = [{"id": "echo.ch3.pair_test", "emotion": "dream", "kind": "required", "sensed_by": "both"}]
+	GameData.override_echo_defs(defs)
+	var p: ColorMatchPuzzle = auto_free(ColorMatchPuzzle.new())
+	p.pause_tree = false
+	p.use_settings = false
+	add_child(p)
+	p.open("echo.ch3.pair_test", {"slots": ["dream", "longing", "warmth", "dream"], "palette": ["dream", "longing", "warmth"], "difficulty": 2})
+	assert_bool(p.two_player).is_true()
+	assert_str(p.side_of(0)).is_equal("haneul")
+	assert_str(p.side_of(1)).is_equal("haneul")
+	assert_str(p.side_of(2)).is_equal("byeol")
+	assert_str(p.side).is_equal("haneul")
+	assert_bool(p.place(2, "warmth")).is_false()  # 별 쪽 칸은 하늘이 못 채운다
+	assert_bool(p.place(0, "dream")).is_true()
+	p.switch_side()
+	assert_bool(p.place(1, "longing")).is_false()
+	assert_bool(p.place(2, "warmth")).is_true()
+	GameData.clear_cache()
+	GameState.reset()
+
+
+func test_two_player_needs_bond_2() -> void:
+	GameState.reset()
+	var defs: Array[Dictionary] = [{"id": "echo.ch3.pair_test", "emotion": "dream", "kind": "required", "sensed_by": "both"}]
+	GameData.override_echo_defs(defs)
+	var p: ColorMatchPuzzle = auto_free(ColorMatchPuzzle.new())
+	p.pause_tree = false
+	p.use_settings = false
+	add_child(p)
+	p.open("echo.ch3.pair_test", {"slots": ["dream", "longing"], "palette": ["dream", "longing"]})
+	assert_bool(p.two_player).is_false()
+	GameData.clear_cache()
