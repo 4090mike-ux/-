@@ -1,0 +1,56 @@
+{
+  "$schema": "../../docs/schemas/emotions.schema.json",
+  "schema_version": 1,
+  "emotions": [
+    {
+      "id": "longing",
+      "name_key": "emotion.longing",
+      "color_name": "blue",
+      "symbol": "wave",
+      "hue_band": { "center_deg": 215, "half_width_deg": 18, "softness_deg": 5 },
+      "ramp": ["#153961", "#2c5c9e", "#608ed6", "#81aaf7"],
+      "status": "confirmed",
+      "note": "그리움의 파랑. 하늘 파트(화실)의 대표 색."
+    },
+    {
+      "id": "warmth",
+      "name_key": "emotion.warmth",
+      "color_name": "yellow",
+      "symbol": "sun",
+      "hue_band": { "center_deg": 52, "half_width_deg": 10, "softness_deg": 4 },
+      "ramp": ["#8c7415", "#d1b91f", "#f2e15c", "#fff38a"],
+      "status": "confirmed",
+      "note": "온기의 노랑. 별 파트(정원)의 대표 색."
+    },
+    {
+      "id": "dream",
+      "name_key": "emotion.dream",
+      "color_name": "purple",
+      "symbol": "star",
+      "hue_band": { "center_deg": 280, "half_width_deg": 15, "softness_deg": 5 },
+      "ramp": ["#46235c", "#7d4599", "#b070cc", "#d07ff0"],
+      "status": "proposed",
+      "note": "TODO-확인: 보라가 상징하는 감정 이름은 원작 설정에서 확정해야 함. 임시로 '꿈'."
+    },
+    {
+      "id": "courage",
+      "name_key": "emotion.courage",
+      "color_name": "orange",
+      "symbol": "flame",
+      "hue_band": { "center_deg": 22, "half_width_deg": 10, "softness_deg": 4 },
+      "ramp": ["#803817", "#cc6529", "#f2985c", "#ffbd8a"],
+      "status": "proposed",
+      "note": "TODO-확인: 주황이 상징하는 감정 이름은 원작 설정에서 확정해야 함. 임시로 '용기'."
+    },
+    {
+      "id": "healing",
+      "name_key": "emotion.healing",
+      "color_name": "green",
+      "symbol": "leaf",
+      "hue_band": { "center_deg": 125, "half_width_deg": 20, "softness_deg": 5 },
+      "ramp": ["#1b591c", "#389440", "#63c771", "#7ceb8f"],
+      "status": "proposed",
+      "note": "TODO-확인: 초록이 상징하는 감정 이름은 원작 설정에서 확정해야 함. 임시로 '치유'(heal 성향과 연결)."
+    }
+  ]
+}

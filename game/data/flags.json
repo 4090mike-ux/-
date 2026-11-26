@@ -1,0 +1,154 @@
+{
+  "$schema": "../../docs/schemas/flags.schema.json",
+  "schema_version": 1,
+  "variables": [
+    {
+      "id": "protect",
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "scope": "save",
+      "changed_by": "GameState.add_protect(n)  # n = 1 또는 2",
+      "description": "하늘 성향. 챕터 2~5 선택지(약 24개)에서 누적. 증가만 한다(canon D9).",
+      "status": "confirmed"
+    },
+    {
+      "id": "heal",
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "scope": "save",
+      "changed_by": "GameState.add_heal(n)  # n = 1 또는 2",
+      "description": "별 성향. protect 와 같은 선택지들에서 누적. 증가만 한다(canon D9).",
+      "status": "confirmed"
+    },
+    {
+      "id": "bond",
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 4,
+      "scope": "save",
+      "changed_by": "GameState.raise_bond(level)  # 스토리 이벤트 전용",
+      "description": "관계 복원 단계(0~4). 선택지로는 올리지 않는다.",
+      "status": "confirmed"
+    },
+    {
+      "id": "families_reunited",
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 6,
+      "scope": "save",
+      "changed_by": "GameState.reunite_family(family_id)",
+      "description": "사이드 가족 재결합 수.",
+      "status": "confirmed"
+    },
+    {
+      "id": "echo_found",
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 30,
+      "scope": "derived",
+      "derived_from": "state.echoes_collected 의 개수",
+      "description": "잔향 수집 수 (필수 18 + 숨김 12).",
+      "status": "confirmed"
+    },
+    {
+      "id": "hidden_echo_found",
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 12,
+      "scope": "derived",
+      "derived_from": "state.echoes_collected 중 kind == hidden 인 개수",
+      "description": "숨김 잔향 수집 수. 기적 엔딩 조건.",
+      "status": "proposed"
+    },
+    {
+      "id": "seen_endings",
+      "type": "string_list",
+      "default": [],
+      "scope": "persist",
+      "changed_by": "엔딩 도달 시 SaveService 가 추가",
+      "description": "세이브 간 공유되는 본 엔딩 목록. 희생(트루) 엔딩 해금 조건.",
+      "status": "confirmed"
+    }
+  ],
+  "flags": [
+    {
+      "id": "flag.ch1.met_in_square",
+      "type": "bool",
+      "default": false,
+      "chapter": "ch1",
+      "set_by": "ev_ch1_square_meeting",
+      "description": "광장에서 두 주인공이 처음 만남. 이후 태그 전환(Tab) 해금.",
+      "status": "proposed"
+    },
+    {
+      "id": "flag.ch3.hs_signature_found",
+      "type": "bool",
+      "default": false,
+      "chapter": "ch3",
+      "set_by": "ev_ch3_joint_artwork",
+      "description": "협력 작품에서 H.S 서명을 다시 발견함. 의미 해설은 진실 공개 후.",
+      "status": "proposed"
+    },
+    {
+      "id": "flag.ch4.family_flower_bloomed",
+      "type": "bool",
+      "default": false,
+      "chapter": "ch4",
+      "set_by": "garden: 5색 조합 완성",
+      "description": "'가족의 꽃' 개화. 챕터 4 진행 트리거.",
+      "status": "proposed"
+    },
+    {
+      "id": "flag.ch4.storm_done",
+      "type": "bool",
+      "default": false,
+      "chapter": "ch4",
+      "set_by": "ev_ch4_storm",
+      "description": "기억의 폭풍 이벤트 종료.",
+      "status": "proposed"
+    },
+    {
+      "id": "flag.ch4.truth_revealed",
+      "type": "bool",
+      "default": false,
+      "chapter": "ch4",
+      "set_by": "ev_ch4_storm",
+      "description": "진실 공개. true 가 되면 표시 이름이 본명으로 바뀐다(R-NAME).",
+      "status": "proposed"
+    },
+    {
+      "id": "flag.ch5.rainbow_flower_bloomed",
+      "type": "bool",
+      "default": false,
+      "chapter": "ch5",
+      "set_by": "garden: 신규 색 조합 완성",
+      "description": "'무지개 꽃' 개화. 기적 엔딩 조건.",
+      "status": "proposed"
+    },
+    {
+      "id": "flag.ch5.offered_color",
+      "type": "bool",
+      "default": false,
+      "chapter": "ch5",
+      "set_by": "최종 대화의 숨은 선택지 '내 색을 바친다'",
+      "description": "희생(트루) 엔딩 조건. 숨은 선택지는 해금 조건을 만족할 때만 보인다.",
+      "status": "proposed"
+    },
+    {
+      "id": "flag.endings.reached",
+      "type": "enum",
+      "default": "none",
+      "values": ["none", "protect", "heal", "family", "miracle", "sacrifice"],
+      "chapter": "endings",
+      "set_by": "엔딩 평가(canon §10)",
+      "description": "이 세이브에서 도달한 엔딩.",
+      "status": "proposed"
+    }
+  ]
+}

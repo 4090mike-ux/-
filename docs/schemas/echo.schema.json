@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://void-painter.local/schemas/echo.schema.json",
+  "title": "잔향 정의 (game/data/echoes/<chapter>.json)",
+  "description": "챕터별 잔향 목록. 색과 기호는 emotion 으로부터 정해지므로(game/data/emotions.json) 여기에 다시 쓰지 않는다. 전체 30개 = 필수 18 + 숨김 12 (canon_v1 §9).",
+  "type": "object",
+  "required": ["schema_version", "chapter", "echoes"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "schema_version": { "const": 1 },
+    "chapter": { "enum": ["prologue", "ch1", "ch2", "ch3", "ch4", "ch5"] },
+    "echoes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/echo" }
+    }
+  },
+  "$defs": {
+    "flag_id": {
+      "type": "string",
+      "pattern": "^flag\\.(prologue|ch[1-5]|endings|global)\\.[a-z][a-z0-9_]*$"
+    },
+    "echo": {
+      "type": "object",
+      "required": ["id", "emotion", "kind", "name_key", "location", "sensed_by", "puzzle", "reward"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^echo\\.(prologue|ch[1-5])\\.[a-z][a-z0-9_]*$"
+        },
+        "emotion": { "enum": ["longing", "warmth", "dream", "courage", "healing"] },
+        "kind": {
+          "description": "required = 진행 필수(18개), hidden = 숨김(12개, 기적·희생 엔딩 조건)",
+          "enum": ["required", "hidden"]
+        },
+        "name_key": {
+          "type": "string",
+          "pattern": "^(truth\\.)?echo\\.[a-z0-9_.]+$",
+          "description": "i18n 키. 진실 공개 후에만 보이는 이름은 truth. 접두사"
+        },
+        "location": {
+          "type": "object",
+          "required": ["scene"],
+          "additionalProperties": false,
+          "properties": {
+            "scene": { "type": "string", "pattern": "^res://game/scenes/.+\\.tscn$" },
+            "marker": { "type": "string", "description": "씬 안의 Marker2D 이름 (위치는 씬이 원천)" }
+          }
+        },
+        "sensed_by": { "enum": ["haneul", "byeol", "both"] },
+        "requires": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "flags": { "type": "array", "items": { "$ref": "#/$defs/flag_id" }, "uniqueItems": true },
+            "bond_min": { "type": "integer", "minimum": 0, "maximum": 4 }
+          }
+        },
+        "puzzle": {
+          "type": "object",
+          "required": ["type"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "enum": ["none", "color_match", "memory_order"] },
+            "time_limit_sec": { "type": "integer", "minimum": 0, "maximum": 120 },
+            "difficulty": { "type": "integer", "minimum": 1, "maximum": 5 }
+          }
+        },
+        "reward": {
+          "type": "object",
+          "required": ["color_shards"],
+          "additionalProperties": false,
+          "properties": {
+            "color_shards": { "type": "integer", "minimum": 0, "maximum": 10 },
+            "memory_cut": { "type": "string", "pattern": "^res://game/.+$" },
+            "sets_flags": { "type": "array", "items": { "$ref": "#/$defs/flag_id" }, "uniqueItems": true }
+          }
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

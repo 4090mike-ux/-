@@ -1,0 +1,36 @@
+# Godot
+.godot/
+.import/
+export_presets.cfg
+*.translation
+/build/
+/android/
+
+# gdUnit4 실행 산출물
+reports/
+.gdunit4_action/
+addons/gdUnit4/test/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+.vscode/*
+!.vscode/extensions.json
+
+# Claude Code: 공유할 것(skills, agents, settings.json)만 커밋
+.claude/*
+!.claude/skills/
+!.claude/agents/
+!.claude/settings.json
+
+# 비밀 정보 (butler/steam 키 등)
+.env
+*.env
+secrets/

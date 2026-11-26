@@ -1,0 +1,46 @@
+GIMP Palette
+Name: void-painter v0
+Columns: 4
+#
+# Void Painter: Colors of Echoes - reference palette v0 (provisional, before art sign-off)
+# Rules (docs/style/art_style.md):
+#   neutral-*  : HSV saturation <= 0.28, or hue outside every emotion band
+#   <emotion>-*: hue inside its band (game/data/emotions.json), saturation >= 0.45
+#   reserved-* : red band, kept for rainbow flower / hidden events
+# Checked by: python tools/validate_data.py
+#
+ 21  20  23	neutral-ink
+ 44  44  48	neutral-shadow
+ 74  73  79	neutral-stone
+110 108 115	neutral-ash
+153 150 158	neutral-mist
+196 193 201	neutral-fog
+237 235 240	neutral-paper-cool
+242 234 223	neutral-paper
+232 211 195	neutral-skin-light
+201 172 153	neutral-skin-mid
+158 131 117	neutral-skin-shadow
+122 104  88	neutral-wood-mid
+ 82  68  60	neutral-wood-dark
+ 21  57  97	longing-dark
+ 44  92 158	longing-mid
+ 96 142 214	longing-light
+129 170 247	longing-highlight
+140 116  21	warmth-dark
+209 185  31	warmth-mid
+242 225  92	warmth-light
+255 243 138	warmth-highlight
+ 70  35  92	dream-dark
+125  69 153	dream-mid
+176 112 204	dream-light
+208 127 240	dream-highlight
+128  56  23	courage-dark
+204 101  41	courage-mid
+242 152  92	courage-light
+255 189 138	courage-highlight
+ 27  89  28	healing-dark
+ 56 148  64	healing-mid
+ 99 199 113	healing-light
+124 235 143	healing-highlight
+204  61  80	reserved-red
+128  32  45	reserved-red-dark

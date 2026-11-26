@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://void-painter.local/schemas/persist.schema.json",
+  "title": "세이브 간 공유 기록 (user://persist.json)",
+  "description": "모든 슬롯이 공유하는 기록. 희생(트루) 엔딩 해금 조건에 쓰인다 (canon_v1 §10).",
+  "type": "object",
+  "required": ["schema_version", "seen_endings", "clear_count"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "schema_version": { "const": 1 },
+    "seen_endings": {
+      "type": "array",
+      "items": { "enum": ["protect", "heal", "family", "miracle", "sacrifice"] },
+      "uniqueItems": true
+    },
+    "clear_count": { "type": "integer", "minimum": 0 },
+    "first_clear_at": { "type": "string", "format": "date-time" }
+  }
+}

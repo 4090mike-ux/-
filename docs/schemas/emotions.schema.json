@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://void-painter.local/schemas/emotions.schema.json",
+  "title": "감정 색 정의 (game/data/emotions.json)",
+  "description": "감정 = 색 계약. 색 복원 셰이더 대역, 아트 팔레트, 잔향 데이터, 색각 이상 기호가 모두 이 파일을 원천으로 쓴다. 대역 수치를 바꾸면 docs/style/palette.gpl 과 테스트도 함께 바뀐다(ADR 필요).",
+  "type": "object",
+  "required": ["schema_version", "emotions"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "schema_version": { "const": 1 },
+    "emotions": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": { "$ref": "#/$defs/emotion" }
+    }
+  },
+  "$defs": {
+    "hex": { "type": "string", "pattern": "^#[0-9a-f]{6}$" },
+    "emotion": {
+      "type": "object",
+      "required": ["id", "name_key", "color_name", "symbol", "hue_band", "ramp", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "enum": ["longing", "warmth", "dream", "courage", "healing"] },
+        "name_key": { "type": "string", "pattern": "^emotion\\.[a-z]+$" },
+        "color_name": { "enum": ["blue", "yellow", "purple", "orange", "green"] },
+        "symbol": { "enum": ["wave", "sun", "star", "flame", "leaf"] },
+        "hue_band": {
+          "type": "object",
+          "required": ["center_deg", "half_width_deg", "softness_deg"],
+          "additionalProperties": false,
+          "properties": {
+            "center_deg": { "type": "number", "minimum": 0, "exclusiveMaximum": 360 },
+            "half_width_deg": { "type": "number", "exclusiveMinimum": 0, "maximum": 45 },
+            "softness_deg": { "type": "number", "minimum": 0, "maximum": 15 }
+          }
+        },
+        "ramp": {
+          "description": "dark, mid, light, highlight 4색. 모두 대역 안 + HSV 채도 0.45 이상",
+          "type": "array",
+          "items": { "$ref": "#/$defs/hex" },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "status": { "enum": ["confirmed", "proposed"] },
+        "note": { "type": "string" }
+      }
+    }
+  }
+}

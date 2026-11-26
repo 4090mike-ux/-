@@ -1,0 +1,30 @@
+{
+  "$schema": "../echo.schema.json",
+  "schema_version": 1,
+  "chapter": "ch1",
+  "echoes": [
+    {
+      "id": "echo.ch1.atelier_easel",
+      "emotion": "longing",
+      "kind": "required",
+      "name_key": "echo.ch1.atelier_easel",
+      "location": { "scene": "res://game/scenes/ch1/atelier.tscn", "marker": "EchoEasel" },
+      "sensed_by": "haneul",
+      "puzzle": { "type": "color_match", "time_limit_sec": 45, "difficulty": 1 },
+      "reward": { "color_shards": 1 },
+      "notes": "예시 데이터. 실제 잔향 목록은 WP-06(GDD)에서 확정한다."
+    },
+    {
+      "id": "echo.ch1.square_bench",
+      "emotion": "warmth",
+      "kind": "hidden",
+      "name_key": "echo.ch1.square_bench",
+      "location": { "scene": "res://game/scenes/ch1/square.tscn", "marker": "EchoBench" },
+      "sensed_by": "both",
+      "requires": { "flags": ["flag.ch1.met_in_square"], "bond_min": 1 },
+      "puzzle": { "type": "memory_order", "time_limit_sec": 60, "difficulty": 2 },
+      "reward": { "color_shards": 2, "memory_cut": "res://game/art/vfx/memory_cuts/ch1_square_bench.tres" },
+      "notes": "숨김 잔향 예시: 두 사람이 함께 있을 때(공감 연결)만 감지된다."
+    }
+  ]
+}

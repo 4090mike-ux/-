@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "description": "대사 화자 키 목록. .dialogue 의 '키: 대사' 에서 키는 여기 있는 것만 쓴다. 표시 이름은 i18n 키로 찾는다(R-NAME).",
+  "speakers": [
+    { "key": "haneul", "name_key": "name.haneul", "truth_name_key": "truth.name.haneul" },
+    { "key": "byeol", "name_key": "name.byeol", "truth_name_key": "truth.name.byeol" },
+    { "key": "jieun", "name_key": "name.jieun" },
+    { "key": "park_staff", "name_key": "name.park_staff" }
+  ]
+}

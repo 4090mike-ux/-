@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://void-painter.local/schemas/flags.schema.json",
+  "title": "변수·플래그 사전 (game/data/flags.json)",
+  "description": "게임 상태 변수와 이벤트 플래그의 단일 목록. 대사·세이브·분기 시뮬레이터는 여기 없는 이름을 쓰면 안 된다. 근거: docs/bible/canon_v1.md §9.",
+  "type": "object",
+  "required": ["schema_version", "variables", "flags"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "schema_version": { "const": 1 },
+    "variables": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/variable" }
+    },
+    "flags": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/flag" }
+    }
+  },
+  "$defs": {
+    "status": { "enum": ["confirmed", "proposed"] },
+    "chapter": { "enum": ["prologue", "ch1", "ch2", "ch3", "ch4", "ch5", "endings", "global"] },
+    "variable": {
+      "type": "object",
+      "required": ["id", "type", "default", "scope", "description", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "type": { "enum": ["int", "string_list"] },
+        "default": { "type": ["integer", "array"] },
+        "min": { "type": "integer" },
+        "max": { "type": "integer" },
+        "scope": {
+          "description": "save = 슬롯 세이브에 저장, persist = user://persist.json, derived = 저장하지 않고 다른 데이터에서 계산",
+          "enum": ["save", "persist", "derived"]
+        },
+        "derived_from": { "type": "string" },
+        "changed_by": { "type": "string", "description": "값을 바꾸는 GameState API 또는 이벤트" },
+        "description": { "type": "string", "minLength": 1 },
+        "status": { "$ref": "#/$defs/status" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "int" } } },
+          "then": { "properties": { "default": { "type": "integer" } } }
+        },
+        {
+          "if": { "properties": { "type": { "const": "string_list" } } },
+          "then": { "properties": { "default": { "type": "array", "items": { "type": "string" } } } }
+        },
+        {
+          "if": { "properties": { "scope": { "const": "derived" } } },
+          "then": { "required": ["derived_from"] }
+        }
+      ]
+    },
+    "flag": {
+      "type": "object",
+      "required": ["id", "type", "default", "chapter", "description", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^flag\\.(prologue|ch[1-5]|endings|global)\\.[a-z][a-z0-9_]*$"
+        },
+        "type": { "enum": ["bool", "int", "enum"] },
+        "default": { "type": ["boolean", "integer", "string"] },
+        "values": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "minItems": 2,
+          "uniqueItems": true
+        },
+        "chapter": { "$ref": "#/$defs/chapter" },
+        "set_by": { "type": "string", "description": "이 플래그를 세우는 이벤트 id (예: ev_ch4_storm)" },
+        "description": { "type": "string", "minLength": 1 },
+        "status": { "$ref": "#/$defs/status" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "bool" } } },
+          "then": { "properties": { "default": { "type": "boolean" } } }
+        },
+        {
+          "if": { "properties": { "type": { "const": "int" } } },
+          "then": { "properties": { "default": { "type": "integer" } } }
+        },
+        {
+          "if": { "properties": { "type": { "const": "enum" } } },
+          "then": { "required": ["values"], "properties": { "default": { "type": "string" } } }
+        }
+      ]
+    }
+  }
+}

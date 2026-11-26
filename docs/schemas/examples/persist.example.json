@@ -1,0 +1,7 @@
+{
+  "$schema": "../persist.schema.json",
+  "schema_version": 1,
+  "seen_endings": ["family"],
+  "clear_count": 1,
+  "first_clear_at": "2027-06-01T22:30:00+09:00"
+}

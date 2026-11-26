@@ -1,0 +1,27 @@
+{
+  "$schema": "../save.schema.json",
+  "schema_version": 1,
+  "slot": 1,
+  "saved_at": "2027-03-14T21:05:00+09:00",
+  "game_version": "0.1.0",
+  "playtime_sec": 5420,
+  "location": {
+    "chapter": "ch2",
+    "scene": "res://game/scenes/ch2/cafe.tscn",
+    "spawn": "FromStreet",
+    "active_character": "byeol"
+  },
+  "state": {
+    "vars": { "protect": 3, "heal": 4, "bond": 1, "families_reunited": 0 },
+    "flags": { "flag.ch1.met_in_square": true },
+    "echoes_collected": ["echo.ch1.atelier_easel", "echo.ch1.square_bench"],
+    "choices_made": ["ch2_cafe_01"],
+    "garden": {
+      "plots": [
+        { "id": "plot_01", "planted_by": "haneul", "emotion": "longing", "growth": 2 },
+        { "id": "plot_02", "planted_by": "byeol", "emotion": "warmth", "growth": 1, "resonance_bonus": 1 }
+      ],
+      "bloomed": []
+    }
+  }
+}

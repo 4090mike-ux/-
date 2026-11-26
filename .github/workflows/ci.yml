@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: 린트·데이터 계약
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          lfs: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: pip install -r tools/requirements.txt
+      - name: 린터 자체 테스트
+        run: python tools/lint_names.py --self-test
+      - name: R-NAME·대사 규약·i18n
+        run: python tools/lint_names.py
+      - name: 스키마·교차 검사·팔레트
+        run: python tools/validate_data.py
+
+  test:
+    name: gdUnit4 (Godot 4.7.2, xvfb)
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # 테스트가 LFS 에셋(png/ogg)을 읽기 시작하면 true 로 바꾼다. LFS 대역폭은 무료 한도가 작다.
+          lfs: false
+      - uses: godot-gdunit-labs/gdUnit4-action@v1.4.3
+        with:
+          godot-version: '4.7.2'
+          version: 'v6.2.3'
+          paths: 'res://tests'
+          timeout: 10
+          # 포크에서 온 PR 은 checks 쓰기 권한이 없어 리포트 게시가 실패하므로 끈다
+          publish-report: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+
+  # W6(WP-39)에서 추가: 태그 푸시 → 웹/Windows 내보내기 → itch.io butler 업로드

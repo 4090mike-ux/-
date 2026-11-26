@@ -1,0 +1,35 @@
+; Engine configuration file.
+; 「공허의 화가: 잔향의 색」 — Godot 4.7.x (GDScript, GL Compatibility)
+; 이 파일은 공유 파일이다. 통합 담당 세션만 수정한다 (docs/ownership.md).
+
+config_version=5
+
+[application]
+
+config/name="공허의 화가: 잔향의 색"
+config/description="색을 잃은 세계에서 잔향을 모아 남매의 기억을 되찾는 2D 탐색 어드벤처"
+run/main_scene="res://game/scenes/dev/color_demo.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[debug]
+
+gdscript/warnings/untyped_declaration=2
+gdscript/warnings/unsafe_property_access=1
+gdscript/warnings/unsafe_method_access=1
+gdscript/warnings/unsafe_call_argument=1
+
+[display]
+
+window/size/viewport_width=480
+window/size/viewport_height=270
+window/size/window_width_override=1440
+window/size/window_height_override=810
+window/stretch/mode="viewport"
+window/stretch/scale_mode="integer"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+2d/snap/snap_2d_transforms_to_pixel=true
