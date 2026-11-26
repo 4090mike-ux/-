@@ -10,3 +10,4 @@
 | 2026-11-26 | `game/autoload/`, `game/systems/core/`, `game/systems/sibling/`, `tools/branch_sim.py`, `tests/` (W1 코어) | Claude Code (Claude Opus 5.5) | 개발 도구 — 코드 초안 | 코드만 | 검수 예정 | 아니오 (개발 도구) |
 | 2026-11-26 | `docs/style/palette.gpl`, `game/data/emotions.json`의 ramp 색 | Claude Code (HSV 계산 스크립트) | 기준 팔레트 v0 수치 생성 | 예 (팔레트) | 아트 승인 때 조정 예정 | 검토 필요 — 아트 승인 후 판단 |
 | 2026-11-26 | `docs/gdd/`, `docs/audio/` (WP-06 GDD 7종, WP-11 오디오 디렉션) | Claude Code 서브에이전트 (Claude Opus 5.5) | 기획 문서 초안 | 아니오 (문서) | 검수 예정 | 아니오 (내부 문서) |
+| 2026-11-26 | `game/art/char/`, `game/art/props/`, `game/art/bg/` (WP-18 버티컬 슬라이스 아트: 주인공·NPC 보행 시트, 초상, 얼굴 오버레이, 잔향 소품 8, 배경 10 + 메타데이터) | Claude Code 서브에이전트 (Claude Opus 5.5), `tools/pixelart/` 코드로 생성 (이미지 생성 AI 미사용) | 출시 에셋 초안 — 코드로 그린 픽셀아트 | 예 | 아트 승인 때 검수 예정 | 예 |
