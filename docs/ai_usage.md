@@ -12,3 +12,4 @@
 | 2026-11-26 | `docs/gdd/`, `docs/audio/` (WP-06 GDD 7종, WP-11 오디오 디렉션) | Claude Code 서브에이전트 (Claude Opus 5.5) | 기획 문서 초안 | 아니오 (문서) | 검수 예정 | 아니오 (내부 문서) |
 | 2026-11-26 | `game/autoload/scene_router.gd`, `game/systems/scene/`, `game/systems/echo/puzzles/`, `game/ui/` (W3 런타임: 장면 뼈대·대사 상자·퍼즐·타이틀) | Claude Code (Claude Opus 5.5) | 개발 도구 — 코드 | 코드만 | 검수 예정 | 아니오 (개발 도구) |
 | 2026-11-26 | `game/dialogue/prologue/`, `game/dialogue/ch1/`, `game/data/echoes/`, `game/data/puzzles/`, `game/i18n/ui.csv`(잔향·장소·NPC 이름), `docs/narrative/slice_beats.md` (WP-16/17 버티컬 슬라이스) | Claude Code 서브에이전트 (Claude Opus 5.5) | 서사 초안 — 프롤로그·챕터 1 대사, 잔향 기억 문구, 퍼즐 캡션, 장소·잔향 이름 | 예 | 사람 검수 필요 | 예 |
+| 2026-11-26 | `docs/bible/story_bible.md` (WP-06 스토리 바이블 v1 초안 — 줄거리·인물·NPC·사이드 가족·장소·잔향 기억·선택지·엔딩·제작 목록) | Claude Code 서브에이전트 (Claude Opus 5.5) | 서사 — story bible draft by Claude | 예 (대사의 근거) | 사람 검수 필요 | 예 |
