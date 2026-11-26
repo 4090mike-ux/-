@@ -9,6 +9,8 @@ const DIRS: Array[String] = ["down", "left", "right", "up"]
 const WALK_FPS := 8.0
 
 @export var sheet: Texture2D
+## 발소리 재질 (wood / stone / grass). 비우면 발소리 없음
+@export var surface: String = ""
 
 
 func _ready() -> void:
@@ -18,6 +20,15 @@ func _ready() -> void:
 	offset = Vector2(0, -FRAME.y * 0.5)
 	if sprite_frames != null:
 		play("idle_down")
+	frame_changed.connect(_on_frame_changed)
+
+
+func _on_frame_changed() -> void:
+	if surface.is_empty() or not String(animation).begins_with("walk_") or (frame != 1 and frame != 3):
+		return
+	var c := get_parent() as SiblingCharacter
+	if c != null and c.active:
+		Audio.play_sfx("step_%s" % surface, "SFX", true)
 
 
 static func build_frames(texture: Texture2D) -> SpriteFrames:

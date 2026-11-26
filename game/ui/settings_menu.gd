@@ -53,6 +53,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		Settings.cycle(KEYS[_index], 1)
 	else:
 		return
+	Audio.play_sfx("ui_move", "UI")
 	get_viewport().set_input_as_handled()
 	_view.queue_redraw()
 

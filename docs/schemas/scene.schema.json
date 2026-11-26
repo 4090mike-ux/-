@@ -499,6 +499,24 @@
           }
         }
       }
+    },
+    "bgm": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "game/audio/bgm/bgm_<이름>.ogg"
+    },
+    "ambience": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "game/audio/sfx/amb/amb_<이름>.ogg"
+    },
+    "surface": {
+      "enum": [
+        "wood",
+        "stone",
+        "grass"
+      ],
+      "description": "발소리 재질"
     }
   }
 }

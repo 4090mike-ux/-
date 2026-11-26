@@ -1,2 +1,4 @@
 # tools/*.py 실행에 필요한 패키지 (CI 와 로컬 공통)
 jsonschema>=4.23,<5
+numpy>=2
+soundfile>=0.12

@@ -205,6 +205,8 @@ func _apply_tags(line: DialogueLine) -> void:
 		border = EmotionBands.main_color(_emotion)
 	_style.border_color = border
 	var sync := line.has_tag("sync")
+	if sync:
+		Audio.play_sfx("dlg_sync", "UI")
 	_label.modulate = Color(1.0, 1.0, 0.92) if sync else Color.WHITE
 	_panel.queue_redraw()
 
@@ -223,6 +225,7 @@ func _build_ui() -> void:
 	add_child(_panel)
 
 	_label = DialogueLabel.new()
+	_label.spoke.connect(_on_spoke)
 	_label.position = Vector2(10, 8)
 	_label.size = BOX_RECT.size - Vector2(20, 14)
 	_label.bbcode_enabled = true
@@ -263,6 +266,12 @@ func _build_ui() -> void:
 	_responses_box.alignment = BoxContainer.ALIGNMENT_END
 	_responses_box.visible = false
 	add_child(_responses_box)
+
+
+func _on_spoke(letter: String, index: int, _speed: float) -> void:
+	if letter.strip_edges().is_empty() or index % 3 != 0 or current_line == null:
+		return
+	Audio.play_sfx("dlg_blip_haneul" if current_line.character == "haneul" else "dlg_blip_byeol", "UI")
 
 
 func _draw_emotion_symbol() -> void:

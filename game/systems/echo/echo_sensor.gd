@@ -23,6 +23,7 @@ extends Node2D
 var current_radius: float = 0.0
 var _held: float = 0.0
 var _toggled: bool = false
+var _was_holding: bool = false
 var _announced: Dictionary = {}
 
 
@@ -73,6 +74,9 @@ func _process(delta: float) -> void:
 		if Input.is_action_just_pressed(InputActions.ECHO_SENSE):
 			_toggled = not _toggled
 		holding = _toggled
+	if holding != _was_holding:
+		Audio.play_sfx("echo_sense_start" if holding else "echo_sense_end")
+		_was_holding = holding
 	update_sense(delta, holding)
 	queue_redraw()
 

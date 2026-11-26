@@ -56,6 +56,7 @@ func open(id: String, puzzle_data: Dictionary) -> void:
 	visible = true
 	if pause_tree:
 		get_tree().paused = true
+	Audio.play_sfx("pzl_open")
 	_view.queue_redraw()
 
 
@@ -82,6 +83,7 @@ func give_hint() -> void:
 	if hints_given < max_hints:
 		hints_given += 1
 	time_left = time_limit
+	Audio.play_sfx("pzl_hint")
 	_on_hint()
 	_check_complete()
 
@@ -97,6 +99,7 @@ func advance(delta: float) -> void:
 
 
 func flash(kind: String) -> void:
+	Audio.play_sfx("pzl_place_ok" if kind == "ok" else "pzl_place_no")
 	feedback = kind
 	feedback_time = 0.35
 	_view.queue_redraw()

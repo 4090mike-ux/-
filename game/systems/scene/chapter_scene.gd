@@ -64,6 +64,9 @@ func _ready() -> void:
 	_build_layers()
 	_build_garden()
 	_build_mechanisms()
+	Audio.play_bgm(str(definition.get("bgm", "")))
+	Audio.play_ambience(str(definition.get("ambience", "")))
+	Audio.set_saturation(restore_layer.global_saturation)
 	_enter.call_deferred()
 
 
@@ -189,6 +192,7 @@ func _spawn_characters() -> void:
 		if ResourceLoader.exists(sheet_path):
 			var sprite := SiblingSprite.new()
 			sprite.sheet = load(sheet_path) as Texture2D
+			sprite.surface = str(definition.get("surface", ""))
 			c.add_child(sprite)
 		else:
 			c.add_child(_placeholder_body(key))
@@ -411,6 +415,8 @@ func _on_interactable_requested(target: Interactable) -> void:
 		await plant_menu.closed
 		garden_bed.refresh()
 		_busy = false
+		if GardenModel.planted().size() > before:
+			Audio.play_sfx("garden_plant")
 		if GardenModel.planted().size() > before and not _planted_this_visit:
 			_planted_this_visit = true
 			await play_cue("plant_done")
@@ -432,6 +438,7 @@ func _on_exit_requested(exit: SceneExit) -> void:
 	if has_cue("leave"):
 		await play_cue("leave")
 		_busy = true
+	Audio.play_sfx("step_door")
 	await SceneRouter.go(exit.target_scene, exit.target_spawn)
 
 
@@ -552,6 +559,8 @@ func _flash_symbol(emotion: String) -> void:
 func _finish_garden_visit() -> void:
 	var result := GardenModel.finish_visit(scene_id)
 	garden_bed.refresh()
+	if bool(result["ticked"]) or not (result["combos"] as Array).is_empty():
+		Audio.play_sfx("garden_grow")
 	var lines: Array[String] = []
 	if bool(result["family_flower"]):
 		lines.append("가운데 화분에 가족의 꽃이 피었다")

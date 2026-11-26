@@ -23,6 +23,7 @@ GameState="*res://game/autoload/game_state.gd"
 SaveService="*res://game/autoload/save_service.gd"
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 SceneRouter="*res://game/autoload/scene_router.gd"
+Audio="*res://game/autoload/audio_director.gd"
 
 [debug]
 
