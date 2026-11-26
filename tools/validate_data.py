@@ -349,10 +349,26 @@ def check_scenes(schemas: dict[str, dict], flag_ids: set[str], echo_ids: dict[st
                 err(where, f"잔향 {eid} 정의 없음 (game/data/echoes/)")
             elif not entry.get("display_only") and echo_ids[eid].get("location", {}).get("scene", "").split("/")[-1] != f"{sid}.tscn":
                 err(where, f"잔향 {eid} 의 location.scene 이 이 장면이 아님 (이전 장면 잔향이면 display_only)")
+        gate_ids = {g["id"] for g in data.get("gates", [])}
+        bg_top = json.loads(bg_meta_path.read_text(encoding="utf-8")) if bg_meta_path.exists() else None
+        for g in data.get("gates", []):
+            if isinstance(g.get("rect"), str) and bg_top is not None and g["rect"] not in bg_top:
+                err(where, f"문 {g['id']}: 배경 {bg}.json 에 '{g['rect']}' 없음")
         for mech in data.get("mechanisms", []):
             for cue in [mech.get("solved_cue")] + list(mech.get("hint_cues", {}).values()):
                 if cue:
                     need_cue(cue, f"장치 {mech['id']}")
+            if mech.get("gate") and mech["gate"] not in gate_ids:
+                err(where, f"장치 {mech['id']}: gates 에 '{mech['gate']}' 없음")
+            for key in ("at", "lock_at"):
+                if isinstance(mech.get(key), str):
+                    need_prop(mech[key], f"장치 {mech['id']} {key}")
+            for key in ("plates", "clues"):
+                for pt in mech.get(key, []):
+                    if isinstance(pt, str):
+                        need_prop(pt, f"장치 {mech['id']} {key}")
+            if mech.get("type") == "gaze" and len(mech.get("clues", [])) != len(mech.get("sequence", [])):
+                err(where, f"장치 {mech['id']}: clues 와 sequence 길이가 다름")
         for tut in data.get("tutorials", []):
             need_cue(tut["after"], "튜토리얼 안내")
     notes.append(f"장면 정의 {count}개")

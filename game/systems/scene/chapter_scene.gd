@@ -390,15 +390,18 @@ func _build_mechanisms() -> void:
 			if md.has(key):
 				var p := resolve_point(md[key])
 				md[key] = [p.x, p.y]
-		if md.has("plates"):
-			var plates: Array = []
-			for pl: Variant in md["plates"]:
-				var pp := resolve_point(pl)
-				plates.append([pp.x, pp.y])
-			md["plates"] = plates
+		for list_key: String in ["plates", "clues"]:
+			if md.has(list_key):
+				var pts: Array = []
+				for pl: Variant in md[list_key]:
+					var pp := resolve_point(pl)
+					pts.append([pp.x, pp.y])
+				md[list_key] = pts
 		mechs.append(md)
 	mechanisms.setup(scene_id, gates, mechs)
 	mechanisms.solved.connect(func(_id: String, cue: String) -> void: play_cue(cue))
+	mechanisms.blocked.connect(func(_id: String, _reason: String) -> void:
+		show_message("…아직은 둘의 마음이 거기까지 닿지 않는다"))
 	mechanisms.hint_requested.connect(func(cue: String) -> void:
 		if not _busy:
 			play_cue(cue))

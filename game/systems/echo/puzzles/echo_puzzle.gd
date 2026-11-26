@@ -2,7 +2,9 @@ class_name EchoPuzzle
 extends CanvasLayer
 ## 공명 퍼즐 공통 (docs/gdd/echo.md §3). 실패는 없다.
 ## - time_limit(초)은 '힌트 타이머': 넘기면 give_hint() 하고 다시 잰다. 0 = 자동 힌트 없음.
-## - 힌트를 max_hints 번 받으면 tag_switch 로 건너뛸 수 있다(보상 동일).
+## - 힌트를 max_hints 번 받으면 tag_switch 로 건너뛸 수 있다(보상 동일). 2인 변형처럼 tag_switch 를
+##   퍼즐이 쓰면(_uses_tag_switch) tag_switch 를 1초 길게 눌러 건너뛴다.
+## - 자동 힌트를 끈 설정이면 echo_sense 를 3초 길게 눌러 수동 힌트 (짧게 누르기는 퍼즐이 쓴다: 잔상 다시 보기).
 ## - 하위 클래스: _setup(data), _on_hint(), _on_input(event) -> bool, _draw_puzzle(view), is_complete().
 
 signal solved(echo_id: String)
@@ -23,6 +25,11 @@ var was_skipped: bool = false
 var time_left: float = 0.0
 var feedback: String = ""          # "ok" / "no" — 잠깐 보이는 반응
 var feedback_time: float = 0.0
+
+const MANUAL_HINT_HOLD := 3.0
+const SKIP_HOLD := 1.0
+var _sense_held: float = 0.0
+var _switch_held: float = 0.0
 
 var _view: Control
 
@@ -108,16 +115,32 @@ func flash(kind: String) -> void:
 func _process(delta: float) -> void:
 	if is_open:
 		advance(delta)
+		_track_holds(delta)
 		_view.queue_redraw()
+
+
+func _track_holds(delta: float) -> void:
+	if time_limit <= 0.0 and Input.is_action_pressed(InputActions.ECHO_SENSE):
+		_sense_held += delta
+		if _sense_held >= MANUAL_HINT_HOLD:
+			_sense_held = 0.0
+			give_hint()
+	else:
+		_sense_held = 0.0
+	if _uses_tag_switch() and can_skip() and Input.is_action_pressed(InputActions.TAG_SWITCH):
+		_switch_held += delta
+		if _switch_held >= SKIP_HOLD:
+			_switch_held = 0.0
+			skip()
+	else:
+		_switch_held = 0.0
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_open:
 		return
-	if event.is_action_pressed(InputActions.TAG_SWITCH) and can_skip():
+	if event.is_action_pressed(InputActions.TAG_SWITCH) and can_skip() and not _uses_tag_switch():
 		skip()
-	elif time_limit <= 0.0 and event.is_action_pressed(InputActions.ECHO_SENSE):
-		give_hint()
 	elif _on_input(event):
 		_check_complete()
 	elif event.is_action_pressed(InputActions.PAUSE) or event.is_action_pressed(&"ui_cancel"):
@@ -165,7 +188,9 @@ func _on_draw() -> void:
 	if hints_given > 0:
 		hint = "힌트 %d · " % hints_given + hint
 	if can_skip():
-		hint += " · Tab 건너뛰기"
+		hint += " · Tab 길게 건너뛰기" if _uses_tag_switch() else " · Tab 건너뛰기"
+	elif time_limit <= 0.0:
+		hint += " · Q 3초 힌트"
 	_view.draw_string(font, Vector2(0, size.y - 10), hint, HORIZONTAL_ALIGNMENT_CENTER, size.x, 9, Color(1, 1, 1, 0.75))
 	if time_limit > 0.0:
 		var w := 120.0 * clampf(time_left / time_limit, 0.0, 1.0)
@@ -192,6 +217,11 @@ func _draw_puzzle(_canvas: Control) -> void:
 
 func _help_text() -> String:
 	return ""
+
+
+## tag_switch 를 퍼즐 안에서 쓰는가 (2인 변형)
+func _uses_tag_switch() -> bool:
+	return false
 
 
 func is_complete() -> bool:
