@@ -4,6 +4,7 @@ extends CanvasLayer
 ##
 ## - 화자 키 → GameState.name_display() (R-NAME). 화자 없는 줄은 지문.
 ## - 태그: [#portrait=표정] 초상, [#emotion=id] 테두리 색 + 기호, [#sync] 남매 동시 발화 연출,
+##   [#cutin=protect] 줄 앞에 보호 컷인, [#sfx=id] 효과음, [#bgm=id] 배경음 (빈 값·none = 끄기),
 ##   응답의 [#choice=id] → GameState.record_choice() 자동 호출.
 ## - interact/ui_accept: 타자 중이면 끝까지 보여 주고, 다 보였으면 다음 줄. 응답은 위/아래 + 확인.
 ## - 대사 중에는 게임을 일시정지한다(이 노드는 PROCESS_MODE_ALWAYS).
@@ -41,6 +42,8 @@ var _responses: Array = []
 var _response_index: int = 0
 var _choosing: bool = false
 var _emotion: String = ""
+var _scene_id: String = ""
+var _cutin: ProtectCutIn
 
 signal _advanced()
 signal _chosen(index: int)
@@ -60,6 +63,7 @@ func play(resource: DialogueResource, cue: String, scene_id: String = "") -> voi
 		return
 	is_playing = true
 	visible = true
+	_scene_id = scene_id
 	if use_settings:
 		seconds_per_char = Settings.text_seconds_per_char()
 	if pause_tree:
@@ -113,6 +117,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _show_line(line: DialogueLine) -> String:
 	current_line = line
+	if line.get_tag_value("cutin") == "protect":
+		await _play_cutin(line)
 	_apply_speaker(line)
 	_apply_tags(line)
 	_label.dialogue_line = line
@@ -133,6 +139,22 @@ func _show_line(line: DialogueLine) -> String:
 	if not choice_id.is_empty():
 		GameState.record_choice(choice_id)
 	return response.next_id
+
+
+## 보호 컷인 동안 대사 상자를 숨긴다. 같은 장면·같은 줄의 컷인은 두 번째부터 건너뛸 수 있다.
+func _play_cutin(line: DialogueLine) -> void:
+	if _cutin == null:
+		_cutin = ProtectCutIn.new()
+		add_child(_cutin)
+	_panel.visible = false
+	_name_panel.visible = false
+	_portrait.visible = false
+	await _cutin.play("%s:cutin:%s" % [_scene_id, line.id])
+	_panel.visible = true
+
+
+func cutin() -> ProtectCutIn:
+	return _cutin
 
 
 func _choose(responses: Array) -> int:
@@ -207,6 +229,12 @@ func _apply_tags(line: DialogueLine) -> void:
 	var sync := line.has_tag("sync")
 	if sync:
 		Audio.play_sfx("dlg_sync", "UI")
+	var sfx := line.get_tag_value("sfx")
+	if not sfx.is_empty():
+		Audio.play_sfx(sfx)
+	if line.has_tag("bgm"):
+		var bgm := line.get_tag_value("bgm")
+		Audio.play_bgm("" if bgm == "none" else bgm)
 	_label.modulate = Color(1.0, 1.0, 0.92) if sync else Color.WHITE
 	_panel.queue_redraw()
 
@@ -271,10 +299,19 @@ func _build_ui() -> void:
 func _on_spoke(letter: String, index: int, _speed: float) -> void:
 	if letter.strip_edges().is_empty() or index % 3 != 0 or current_line == null:
 		return
-	Audio.play_sfx("dlg_blip_haneul" if current_line.character == "haneul" else "dlg_blip_byeol", "UI")
+	Audio.play_sfx(blip_for(current_line.character), "UI")
 
 
 func _draw_emotion_symbol() -> void:
 	if EmotionBands.EMOTION_IDS.has(_emotion):
 		EmotionSymbols.draw(_panel, EmotionSymbols.symbol_of(_emotion), Vector2(BOX_RECT.size.x - 12, 10),
 			EmotionBands.main_color(_emotion), 4.5)
+
+
+## 화자별 글자 블립: 하늘·별은 각자 소리, 나머지는 NPC 블립(없으면 별 소리)
+func blip_for(character: String) -> String:
+	if character == "haneul":
+		return "dlg_blip_haneul"
+	if character == "byeol" or not Audio.has_sfx("dlg_blip_npc"):
+		return "dlg_blip_byeol"
+	return "dlg_blip_npc"

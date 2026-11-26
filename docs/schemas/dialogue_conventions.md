@@ -59,10 +59,10 @@ byeol: [#portrait=surprised] 어? 방금 나도 같은 말 하려고 했는데.
 | `[#sync]` | — | 남매가 같은 말을 동시에 함 / 닮은 습관 연출 | 대사 UI |
 | `[#portrait=<표정>]` | neutral, smile, sad, surprised, angry, scared, worried, determined, tearful, laugh, thinking, blank | 초상 표정 12종 (WP-10에서 확정) | 대사 UI |
 | `[#emotion=<id>]` | longing, warmth, dream, courage, healing | 이 줄에서 감정 색 큐(말풍선 테두리·기호) | 대사 UI / 색 복원 |
-| `[#cutin=protect]` | protect | 보호 본능 자동 컷인 | 연출 |
+| `[#cutin=protect]` | protect | 보호 본능 자동 컷인(1.2초, 이 줄 앞에 재생). 보호자 = 활성 캐릭터, bond 3 전에는 하늘 (ADR-0008) | 대사 UI |
 | `[#echo=<잔향id>]` | echo.chN.xxx | 이 줄이 특정 잔향과 연결됨 | 잔향 시스템 |
 | `[#choice=<id>]` | `<구간>_<장소>_<2자리>` 예: ch2_cafe_01, ch2_park_03_01 (장소에 밑줄 허용) | **성향 선택지 표시.** 분기 시뮬레이터가 센다 | 분기 시뮬레이터 |
-| `[#sfx=<id>]`, `[#bgm=<id>]` | 오디오 id | 효과음·배경음 큐 | 오디오 |
+| `[#sfx=<id>]`, `[#bgm=<id>]` | 오디오 id (`<분류>_<이름>` / 곡 id, `none` = 배경음 끄기) | 효과음·배경음 큐 | 대사 UI → Audio |
 
 ## 5. 상태 읽기·쓰기 (GameState 계약)
 

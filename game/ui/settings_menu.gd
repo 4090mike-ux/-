@@ -6,7 +6,7 @@ signal closed()
 
 const DEFAULT_LAYER := 45
 const KEYS: Array[String] = ["text/speed", "accessibility/echo_sense_mode", "accessibility/puzzle_timer",
-	"accessibility/reduced_motion", "display/scale"]
+	"accessibility/reduced_motion", "accessibility/rumble", "display/scale"]
 
 var is_open: bool = false
 var _index: int = 0

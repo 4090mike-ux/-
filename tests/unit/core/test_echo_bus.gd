@@ -7,6 +7,8 @@ const CONTRACT := {
 	"color_restored": 3,
 	"resonance_triggered": 1,
 	"character_switched": 1,
+	"protect_cutin_played": 1,
+	"memory_opened": 2,
 	"stat_changed": 2,
 	"flag_changed": 2,
 	"truth_revealed": 0,

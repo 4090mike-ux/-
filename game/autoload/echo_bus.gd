@@ -13,6 +13,8 @@ signal resonance_triggered(emotion: String)
 
 # 남매
 signal character_switched(active_character: String)
+signal protect_cutin_played(protector: String)
+signal memory_opened(echo_id: String, shared: bool)
 
 # 상태 (GameState 가 emit)
 signal stat_changed(stat: String, value: int)

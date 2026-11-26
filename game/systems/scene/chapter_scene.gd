@@ -25,6 +25,7 @@ var characters: Dictionary = {}           # key → SiblingCharacter
 var dialogue: DialogueResource = null
 var restore_layer: ColorRestoreLayer
 var dialogue_box: DialogueBox
+var memory_view: MemoryView
 var puzzle_host: PuzzleHost
 var switcher: SiblingSwitcher = null
 var garden_bed: GardenBed = null
@@ -333,6 +334,8 @@ func _build_layers() -> void:
 	add_child(puzzle_host)
 	dialogue_box = DialogueBox.new()
 	add_child(dialogue_box)
+	memory_view = MemoryView.new()
+	add_child(memory_view)
 	add_child(PauseMenu.new())
 	var hud := CanvasLayer.new()
 	hud.layer = 20
@@ -423,7 +426,14 @@ func _on_echo_requested(echo: EchoObject) -> void:
 	if bool(outcome[0]):
 		echo.collect()
 		await get_tree().create_timer(0.9).timeout
-		await play_cue("echo_%s_after" % slug)
+		_busy = true
+		await memory_view.open(echo.echo_id)
+		if has_cue("echo_%s_after" % slug):
+			await play_cue("echo_%s_after" % slug)
+		else:
+			await get_tree().create_timer(1.6).timeout
+		_busy = true
+		await memory_view.close()
 	_busy = false
 
 
