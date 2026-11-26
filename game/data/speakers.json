@@ -5,6 +5,8 @@
     { "key": "haneul", "name_key": "name.haneul", "truth_name_key": "truth.name.haneul" },
     { "key": "byeol", "name_key": "name.byeol", "truth_name_key": "truth.name.byeol" },
     { "key": "jieun", "name_key": "name.jieun" },
-    { "key": "park_staff", "name_key": "name.park_staff" }
+    { "key": "park_staff", "name_key": "name.park_staff" },
+    { "key": "lane_sweeper", "name_key": "name.lane_sweeper" },
+    { "key": "market_vendor", "name_key": "name.market_vendor" }
   ]
 }

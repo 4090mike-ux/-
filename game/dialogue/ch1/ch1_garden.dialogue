@@ -1,0 +1,57 @@
+# scene: ch1_garden
+# r-name: pre
+# wp: WP-17
+# 배경: garden · 조작: 별(단독) · 다음 장면: ch1_lane
+# 큐 트리거·소품·출구: docs/narrative/slice_beats.md
+# start 2번째 줄과 함께 공감 연결 잔상 ②(물결 기호 0.5초) — echo.md §2-4
+# 별 화분 둘레의 노랑 = 프롤로그에서 모은 잔향 garden_pot 의 색 복원이 이 씬에도 남아 있어야 한다.
+# TODO-확인: 물뿌리개(잔향 garden_sprinkler)의 기억 내용은 자리표시 (echo.md §5-3)
+# TODO-확인: 정원 그네가 2인용이라는 소품 설정은 이 초안의 연출
+
+~ start
+아침 이슬. 정원은 여전히 회색이다.
+잠결에 또 물결 무늬가 스쳐 지나갔다.
+byeol: 또 그 꿈. 파란 물결.
+byeol: [#emotion=warmth] 그래도 별 화분 둘레는 아직 노랗네.
+byeol: 오늘은 마을에 가 보기로 했지.
+byeol: 그 전에, 꽃들 물부터 줘야겠다.
+=> END
+
+~ inspect_pot
+byeol: [#portrait=smile] 내 이름 화분. 여기만 조금 따뜻해.
+=> END
+
+~ inspect_swing
+byeol: 두 사람이 앉는 그네네.
+byeol: [#portrait=sad] 혼자 앉으니까, 옆자리가 허전해.
+=> END
+
+~ inspect_flowers
+byeol: 이슬이 맺혔는데도 회색이야.
+byeol: 오늘 색을 찾으면, 너희한테도 나눠 줄게.
+=> END
+
+~ inspect_fence
+byeol: 울타리 너머로 시계탑 꼭대기가 보여.
+=> END
+
+~ echo_garden_sprinkler_intro
+[#echo=echo.ch1.garden_sprinkler] 물뿌리개 속에서 찰랑, 온기가 흔들린다.
+「무거우면 같이 들자.」
+=> END
+
+~ echo_garden_sprinkler_after
+물을 가득 채운 물뿌리개가 너무 무거웠다.
+누군가 손잡이 반대쪽을 들어 주었다.
+byeol: [#emotion=warmth] 그때는 혼자가 아니었구나.
+byeol: 지금은 혼자지만… 그래도 가 볼래.
+byeol: 이 조각도 심고 가야지.
+=> END
+
+~ plant_done
+byeol: 잘 지내. 금방 돌아올게.
+=> END
+
+~ exit_blocked
+byeol: 꽃들 물 주고, 씨앗도 심고 가야지.
+=> END

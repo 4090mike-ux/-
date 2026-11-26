@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://dbp6smil612xi"
+path="res://.godot/imported/ch1_atelier.dialogue-5b88614c8621730c4258e719d51019db.tres"
+
+[deps]
+
+source_file="res://game/dialogue/ch1/ch1_atelier.dialogue"
+dest_files=["res://.godot/imported/ch1_atelier.dialogue-5b88614c8621730c4258e719d51019db.tres"]
+
+[params]
+
+defaults=true

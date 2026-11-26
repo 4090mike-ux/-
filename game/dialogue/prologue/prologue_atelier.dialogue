@@ -1,0 +1,60 @@
+# scene: prologue_atelier
+# r-name: pre
+# wp: WP-16
+# 배경: atelier · 조작: 하늘(단독) · 다음 장면: prologue_garden
+# 큐 트리거·소품·출구: docs/narrative/slice_beats.md
+# 이름을 짓기 전의 속말은 화자 없는 지문으로 쓴다(이름표에 '하늘'이 먼저 뜨지 않게).
+# TODO-확인: 하늘이 깨어나는 화실이 누구의 화실인지, 깨어나는 정황 (canon §7 프롤로그 세부)
+# TODO-확인: H.S 서명의 첫 등장 위치 — 이 초안은 프롤로그 화실 벽에 기대 둔 그림으로 둔다 (canon §5)
+# TODO-확인: 임시 이름을 짓는 장면의 연출 (canon W-NAME). H.S의 뜻은 풀지 않는다 (R-NAME 6항)
+# TODO-확인: 붓(잔향 atelier_brush)의 기억 내용은 자리표시 (echo.md §5-3)
+
+~ start
+물감 냄새. 눈을 뜨니 낯선 천장이 보인다.
+…여기는 어디지.
+아무것도 떠오르지 않는다. 내 이름조차.
+벽에 기대 세워 둔 그림 한 장이 눈에 들어온다.
+그림 구석의 작은 서명. H.S.
+그 두 글자를 보자 가슴 안쪽이 저릿하다.
+haneul: [#portrait=thinking] …하늘.
+입이 먼저 그 말을 꺼냈다. 왜인지는 모른다.
+haneul: 하늘. 일단은 그렇게 부르자.
+haneul: [#portrait=worried] 그런데 왜 전부 회색이지?
+화실 어딘가에서 아주 작게, 무언가가 울린다.
+=> END
+
+~ inspect_window
+haneul: 창밖도 회색이야. 지붕도, 구름도.
+haneul: 꿈속에 들어와 버린 것 같아.
+=> END
+
+~ inspect_palette
+haneul: 물감이 전부 회색으로 말라붙었어.
+haneul: [#portrait=sad] 원래는 무슨 색이었을까.
+=> END
+
+~ inspect_canvas
+haneul: 넓은 들판을 그린 그림. 색은 하나도 없다.
+haneul: 그런데 서명을 보고 있으면, 마음이 놓여.
+=> END
+
+~ inspect_sofa
+haneul: 내가 누워 있던 소파. 담요가 흘러내려 있다.
+haneul: …누가 덮어 줬을까. 내가 덮었을까.
+=> END
+
+~ echo_atelier_brush_intro
+[#echo=echo.prologue.atelier_brush] 붓끝에서 희미한 물결이 번진다.
+「조금만 기다려. 거의 다 됐어.」
+=> END
+
+~ echo_atelier_brush_after
+창가의 오후. 누군가 내 등 뒤에서 그림을 기다렸다.
+「다 됐어?」 「아직.」 「…지금은?」
+haneul: [#emotion=longing] 꽤 오래 기다리게 했구나.
+haneul: 누군지도 모르는데, 이 파랑이 그리워.
+=> END
+
+~ exit_blocked
+haneul: 아직 여기서 찾을 게 남은 것 같아.
+=> END

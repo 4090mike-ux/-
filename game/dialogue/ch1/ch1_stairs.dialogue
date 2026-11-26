@@ -1,0 +1,41 @@
+# scene: ch1_stairs
+# r-name: pre
+# wp: WP-17
+# 배경: stairs · 조작: 하늘(단독) · 다음 장면: ch1_market
+# 큐 트리거·소품·출구: docs/narrative/slice_beats.md
+# 위화감 연출: 닮은 습관(하늘 쪽) — [#sync] 줄에서 습관 동작 애니메이션 재생 (sibling.md §2-2)
+# ch1_market 의 별과 같은 동작·같은 말("…이쪽.")이어야 한다.
+# TODO-확인: 닮은 습관의 내용 — 이 초안은 "길을 고를 때 검지로 허공에 작은 동그라미를 두 번 그리는 버릇" (sibling.md §2-2)
+# TODO-확인: 장소 이름 '계단길'은 자리표시 (progression.md §3-2 †)
+
+~ start
+골목 끝에서 계단길이 두 갈래로 갈라진다.
+haneul: 광장은… 어느 쪽이지.
+저도 모르게 검지가 허공에 작은 동그라미를 두 번 그린다.
+haneul: [#sync] …이쪽.
+haneul: [#portrait=thinking] 방금 그거, 뭐였지. 버릇인가?
+haneul: 몸이 먼저 기억하는 게 많네.
+=> END
+
+~ inspect_railing
+haneul: 난간이 반질반질하게 닳았어.
+haneul: 많은 사람이 이걸 잡고 올라갔겠지.
+=> END
+
+~ inspect_pots
+haneul: 계단마다 화분. 누군가 정성껏 돌본 흔적이야.
+=> END
+
+~ inspect_chalk
+haneul: 계단참에 분필 그림. 사방치기 칸이 희미해.
+haneul: [#portrait=smile] 숫자만 남아도, 뛰는 법은 알 것 같아.
+=> END
+
+~ inspect_view
+haneul: 내려다보니 마을 전체가 연필 스케치 같아.
+haneul: 저 안 어딘가에, 이 파랑이 그리워하는 사람이 있을까.
+=> END
+
+~ exit_blocked
+haneul: 이쪽은 아닌 것 같아. 손가락이 고른 쪽으로 가자.
+=> END

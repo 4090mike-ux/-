@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://dvmktg85v6qcp"
+path="res://.godot/imported/ch1_market.dialogue-0112f8fa811a41f54db715f29fff408c.tres"
+
+[deps]
+
+source_file="res://game/dialogue/ch1/ch1_market.dialogue"
+dest_files=["res://.godot/imported/ch1_market.dialogue-0112f8fa811a41f54db715f29fff408c.tres"]
+
+[params]
+
+defaults=true

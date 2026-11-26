@@ -1,0 +1,24 @@
+{
+  "echo_id": "echo.prologue.garden_pot",
+  "type": "memory_order",
+  "difficulty": 1,
+  "intro_cue": "echo_garden_pot_intro",
+  "cards": [
+    {
+      "id": "c1",
+      "caption": "씨앗 하나, 꾹.",
+      "sketch": "별 모양 화분. 작은 손가락이 흙에 씨앗 하나를 눌러 심는다. 화분 안에는 흙뿐이다."
+    },
+    {
+      "id": "c2",
+      "caption": "떡잎 두 장이 인사한다.",
+      "sketch": "같은 별 모양 화분에서 떡잎 두 장이 올라와 있다. 옆에 작은 물뿌리개."
+    },
+    {
+      "id": "c3",
+      "caption": "꽃이 피었다.",
+      "sketch": "같은 화분 가득 꽃이 활짝 피었다. 화분 앞에서 작은 손이 박수를 친다."
+    }
+  ],
+  "decoy": null
+}

@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://bx5sudl36jrft"
+path="res://.godot/imported/ch1_stairs.dialogue-d8fbe128d40357b287074770a56a23ca.tres"
+
+[deps]
+
+source_file="res://game/dialogue/ch1/ch1_stairs.dialogue"
+dest_files=["res://.godot/imported/ch1_stairs.dialogue-d8fbe128d40357b287074770a56a23ca.tres"]
+
+[params]
+
+defaults=true

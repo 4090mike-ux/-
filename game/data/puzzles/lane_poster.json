@@ -1,0 +1,8 @@
+{
+  "echo_id": "echo.ch1.lane_poster",
+  "type": "color_match",
+  "difficulty": 2,
+  "slots": ["longing", "warmth", "warmth", "longing"],
+  "palette": ["longing", "warmth"],
+  "caption": "여름밤 불꽃놀이"
+}

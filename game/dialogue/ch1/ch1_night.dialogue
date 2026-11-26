@@ -1,0 +1,50 @@
+# scene: ch1_night
+# r-name: pre
+# wp: WP-17
+# 배경: square_night · 조작: 태그 전환 · 다음: 챕터 1 끝 (ch2_street — 슬라이스 밖)
+# 큐 트리거·소품·출구: docs/narrative/slice_beats.md
+# 미수집 숨김 잔향 안내(echo.md §5-4): leave 에서 ch1 숨김 2개(lane_poster, square_bench) 수집 수로 분기. 위치는 알려 주지 않는다.
+# TODO-확인: 장소 이름 '밤의 광장'은 자리표시 (progression.md §3-2 †)
+# TODO-확인: 두 사람이 밤마다 각자 화실·정원으로 돌아가 잔다는 생활 설정은 이 초안의 가정
+
+~ start
+밤. 광장 가로등이 회색 빛을 흘린다.
+haneul: 하루가 길었다.
+byeol: 그래도 혼자였으면 훨씬 길었을 거예요.
+시계탑 바늘이 낮보다 한 칸 앞에 있다.
+byeol: 시계, 진짜 움직였네요.
+haneul: 우리가 들은 울림 덕분일까.
+=> END
+
+~ inspect_clock
+haneul: 밤에 보니 시계탑이 꼭 등대 같아.
+=> END
+
+~ inspect_board
+byeol: 밤에도 '찾습니다' 전단은 그대로예요.
+byeol: [#portrait=determined] 언젠가 다들 찾았으면 좋겠다.
+=> END
+
+~ inspect_fountain
+haneul: 분수 소리가 낮보다 크게 들려.
+=> END
+
+~ inspect_bench
+if GameState.has_echo("echo.ch1.square_bench")
+	byeol: [#emotion=warmth] 아까 그 벤치. 아직 따뜻한 것 같아요.
+else
+	byeol: 낡은 벤치. 누가 오래 앉아 있었던 것 같아요.
+=> END
+
+~ leave
+if GameState.has_echo("echo.ch1.lane_poster") and GameState.has_echo("echo.ch1.square_bench")
+	haneul: 오늘 들을 수 있는 울림은, 다 들은 것 같아.
+elif GameState.has_echo("echo.ch1.lane_poster") or GameState.has_echo("echo.ch1.square_bench")
+	byeol: 지나온 길 어딘가에, 못 들은 울림이 하나 남았어요.
+else
+	byeol: 지나온 길 어딘가에, 못 들은 울림이 두 개쯤 남았어요.
+byeol: 저는 정원으로 갈게요. 꽃들이 기다려요.
+haneul: 나는 화실로. …내일은?
+byeol: [#portrait=smile] 여기서 만나요. 시계탑 아래서.
+haneul: [#emotion=longing] 응. 기다릴게.
+=> END

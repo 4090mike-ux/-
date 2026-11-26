@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://c03a36cuep6a6"
+path="res://.godot/imported/ch1_square_02.dialogue-46cb933ace4741182eeca866c43dfeb1.tres"
+
+[deps]
+
+source_file="res://game/dialogue/ch1/ch1_square_02.dialogue"
+dest_files=["res://.godot/imported/ch1_square_02.dialogue-46cb933ace4741182eeca866c43dfeb1.tres"]
+
+[params]
+
+defaults=true

@@ -1,0 +1,24 @@
+{
+  "echo_id": "echo.ch1.garden_sprinkler",
+  "type": "memory_order",
+  "difficulty": 1,
+  "intro_cue": "echo_garden_sprinkler_intro",
+  "cards": [
+    {
+      "id": "c1",
+      "caption": "텅 빈 물뿌리개.",
+      "sketch": "수돗가 옆에 빈 물뿌리개가 놓여 있다. 물줄기도 물방울도 없다."
+    },
+    {
+      "id": "c2",
+      "caption": "찰랑찰랑, 무거워.",
+      "sketch": "물이 넘칠 듯 가득 찬 물뿌리개. 작은 두 손이 손잡이를 들고, 반대쪽을 다른 손이 함께 받친다."
+    },
+    {
+      "id": "c3",
+      "caption": "꽃들이 물을 마신다.",
+      "sketch": "기울인 물뿌리개에서 물줄기가 쏟아지고, 꽃잎마다 물방울이 맺혀 있다."
+    }
+  ],
+  "decoy": null
+}

@@ -1,0 +1,75 @@
+{
+  "$schema": "../../../docs/schemas/echo.schema.json",
+  "schema_version": 1,
+  "chapter": "ch1",
+  "echoes": [
+    {
+      "id": "echo.ch1.atelier_easel",
+      "emotion": "longing",
+      "kind": "required",
+      "name_key": "echo.ch1.atelier_easel",
+      "location": { "scene": "res://game/scenes/ch1/ch1_atelier.tscn", "marker": "atelier_easel" },
+      "sensed_by": "haneul",
+      "puzzle": { "type": "color_match", "time_limit_sec": 30, "difficulty": 1 },
+      "reward": { "color_shards": 1 },
+      "notes": "이젤 위 반쯤 그린 그림. 퍼즐: game/data/puzzles/atelier_easel.json. 대사: ch1_atelier ~ echo_atelier_easel_intro / _after. 기억 내용은 자리표시(TODO-확인)."
+    },
+    {
+      "id": "echo.ch1.garden_sprinkler",
+      "emotion": "warmth",
+      "kind": "required",
+      "name_key": "echo.ch1.garden_sprinkler",
+      "location": { "scene": "res://game/scenes/ch1/ch1_garden.tscn", "marker": "garden_sprinkler" },
+      "sensed_by": "byeol",
+      "puzzle": { "type": "memory_order", "time_limit_sec": 30, "difficulty": 1 },
+      "reward": { "color_shards": 1 },
+      "notes": "작은 물뿌리개. 퍼즐: game/data/puzzles/garden_sprinkler.json. 대사: ch1_garden ~ echo_garden_sprinkler_intro / _after. 기억 내용은 자리표시(TODO-확인)."
+    },
+    {
+      "id": "echo.ch1.lane_poster",
+      "emotion": "longing",
+      "kind": "hidden",
+      "name_key": "echo.ch1.lane_poster",
+      "location": { "scene": "res://game/scenes/ch1/ch1_lane.tscn", "marker": "lane_poster" },
+      "sensed_by": "haneul",
+      "puzzle": { "type": "color_match", "time_limit_sec": 35, "difficulty": 2 },
+      "reward": { "color_shards": 1 },
+      "notes": "숨김(비밀형, 힌트 없음). 빛바랜 축제 포스터. 퍼즐: game/data/puzzles/lane_poster.json — 이 시기엔 감정이 2색뿐이라 팔레트 2색(echo.md §3-2 난이도 2의 3색과 다름, 미해결 질문). 대사: ch1_lane ~ echo_lane_poster_intro / _after."
+    },
+    {
+      "id": "echo.ch1.path_lamp",
+      "emotion": "warmth",
+      "kind": "required",
+      "name_key": "echo.ch1.path_lamp",
+      "location": { "scene": "res://game/scenes/ch1/ch1_path.tscn", "marker": "path_lamp" },
+      "sensed_by": "byeol",
+      "puzzle": { "type": "color_match", "time_limit_sec": 35, "difficulty": 2 },
+      "reward": { "color_shards": 1 },
+      "notes": "길가의 등불. 퍼즐: game/data/puzzles/path_lamp.json — 팔레트 2색(lane_poster 와 같은 이유). 대사: ch1_path ~ echo_path_lamp_intro / _after. 기억 내용은 자리표시(TODO-확인)."
+    },
+    {
+      "id": "echo.ch1.square_clock",
+      "emotion": "longing",
+      "kind": "required",
+      "name_key": "echo.ch1.square_clock",
+      "location": { "scene": "res://game/scenes/ch1/ch1_square_02.tscn", "marker": "square_clock" },
+      "sensed_by": "both",
+      "requires": { "flags": ["flag.ch1.met_in_square"], "bond_min": 1 },
+      "puzzle": { "type": "memory_order", "time_limit_sec": 35, "difficulty": 2 },
+      "reward": { "color_shards": 2 },
+      "notes": "첫 공명 잔향(튜토리얼). 시계탑 철문 안쪽. 수집 시 기억 공유 분할 화면 + 정원 그리움 칸 +1. 퍼즐: game/data/puzzles/square_clock.json. 대사: ch1_square_02 ~ echo_square_clock_intro / _after."
+    },
+    {
+      "id": "echo.ch1.square_bench",
+      "emotion": "warmth",
+      "kind": "hidden",
+      "name_key": "echo.ch1.square_bench",
+      "location": { "scene": "res://game/scenes/ch1/ch1_square_02.tscn", "marker": "square_bench" },
+      "sensed_by": "both",
+      "requires": { "flags": ["flag.ch1.met_in_square"], "bond_min": 1 },
+      "puzzle": { "type": "memory_order", "time_limit_sec": 35, "difficulty": 2 },
+      "reward": { "color_shards": 2 },
+      "notes": "숨김(표시형 — 둘이 함께 있으면 희미한 반짝임). 광장 벤치. 수집 시 기억 공유 분할 화면 + 정원 온기 칸 +1. 퍼즐: game/data/puzzles/square_bench.json. 대사: ch1_square_02 ~ echo_square_bench_intro / _after."
+    }
+  ]
+}

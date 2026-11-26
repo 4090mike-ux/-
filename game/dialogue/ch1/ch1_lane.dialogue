@@ -1,0 +1,56 @@
+# scene: ch1_lane
+# r-name: pre
+# wp: WP-17
+# 배경: lane · 조작: 하늘(단독) · 다음 장면: ch1_path
+# 큐 트리거·소품·출구: docs/narrative/slice_beats.md
+# W-FACE: 골목 청소부의 얼굴은 0단계(윤곽선뿐인 스케치). 이름 대신 역할로 부른다.
+# TODO-확인: 장소 이름 '골목'은 자리표시 (progression.md §3-2 †)
+# TODO-확인: 골목 청소부는 이 초안이 추가한 NPC (canon §3 인물 표에 없음)
+# TODO-확인: 색이 언제부터 사라졌는지 사람들도 모른다는 대사 — 원인·시점은 canon W-COLOR TODO-확인
+# TODO-확인: 빛바랜 포스터(숨김 잔향 lane_poster)의 기억 내용은 자리표시 (echo.md §5-3)
+
+~ start
+화실을 나와 골목으로 들어선다.
+빨래도, 화분도, 담벼락도 전부 회색.
+haneul: 어디부터 가 봐야 하지.
+쓱, 쓱. 누군가 골목을 쓸고 있다.
+=> END
+
+~ inspect_sweeper
+lane_sweeper: 아, 안녕하세요. …아는 분이던가요?
+lane_sweeper: 미안해요. 요즘은 얼굴을 봐도 잘 몰라서.
+haneul: 저도요. 다들 얼굴이 흐릿해 보여요.
+lane_sweeper: 색이 언제부터 없었는지도 가물가물해요.
+lane_sweeper: 그래도 목소리랑 걸음걸이는 남더라고요.
+lane_sweeper: 사람을 찾으면 광장에 가 봐요. 계단 위예요.
+=> END
+
+~ inspect_laundry
+haneul: 빨랫줄의 셔츠들. 흰색인지 회색인지 모르겠어.
+=> END
+
+~ inspect_cat
+haneul: 담 위에서 고양이가 하품한다.
+haneul: 너는 원래 무슨 색이었니?
+=> END
+
+~ inspect_puddle
+haneul: 물웅덩이에 구름이 비친다. 거기도 회색.
+haneul: [#portrait=sad] …내 얼굴은, 일부러 보지 않았다.
+=> END
+
+~ echo_lane_poster_intro
+[#echo=echo.ch1.lane_poster] 빛바랜 포스터 위로 물결이 인다.
+「불꽃놀이, 같이 보러 가자.」
+=> END
+
+~ echo_lane_poster_after
+여름밤. 불꽃이 터질 때마다 누군가 내 소매를 잡았다.
+무서워서인지 신나서인지 모를, 작은 손.
+haneul: [#emotion=longing] 그 손, 꼭 잡아 줬던가.
+haneul: 기억이 안 나는 게… 조금 아파.
+=> END
+
+~ exit_blocked
+haneul: 어디로 가야 할지 모르겠어. 누구한테 물어볼까.
+=> END

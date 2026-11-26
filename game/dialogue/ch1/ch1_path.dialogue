@@ -1,0 +1,49 @@
+# scene: ch1_path
+# r-name: pre
+# wp: WP-17
+# 배경: path · 조작: 별(단독) · 다음 장면: ch1_stairs
+# 큐 트리거·소품·출구: docs/narrative/slice_beats.md
+# TODO-확인: 장소 이름 '오솔길'은 자리표시 (progression.md §3-2 †)
+# TODO-확인: 길가의 등불(잔향 path_lamp)의 기억 내용은 자리표시 (echo.md §5-3)
+# TODO-확인: "내 이름을 부르는데 그 이름만 들리지 않는다"는 W-NAME 복선 — 챕터 4 독백과 맞는지 확인
+
+~ start
+정원 문을 나와, 오솔길을 따라 내려간다.
+byeol: 풀도 나무도 회색. 그래도 냄새는 똑같네.
+길가에 낡은 등불 하나가 서 있다.
+byeol: 낮인데 켜져 있어. …따뜻해 보여.
+=> END
+
+~ inspect_tree
+byeol: 나무껍질이 연필 자국 같아.
+byeol: 그래도 손을 대 보면, 살아 있는 느낌이야.
+=> END
+
+~ inspect_sign
+byeol: 표지판 글씨는 지워졌어. 화살표만 시장 쪽을 가리켜.
+=> END
+
+~ inspect_butterfly
+byeol: 회색 나비가 어깨에 앉았다 날아갔어.
+byeol: [#portrait=smile] 길 안내해 주는 거야?
+=> END
+
+~ inspect_wildflowers
+byeol: 들꽃들도 정원 꽃들처럼 아파 보여.
+=> END
+
+~ echo_path_lamp_intro
+[#echo=echo.ch1.path_lamp] 등불 속 불씨가 해처럼 동그랗게 울린다.
+「어두우면 이거 들고 와. 길 잃지 말고.」
+=> END
+
+~ echo_path_lamp_after
+해 질 녘. 등불을 든 누군가가 나를 마중 나왔다.
+멀리서 내 이름을 부른다. 그 이름만 들리지 않는다.
+byeol: [#emotion=warmth] 누군가 날 기다려 줬구나. 분명히.
+byeol: [#portrait=determined] 그럼 이번엔, 내가 찾으러 갈래.
+=> END
+
+~ exit_blocked
+byeol: 저 등불, 그냥 지나치면 안 될 것 같아.
+=> END

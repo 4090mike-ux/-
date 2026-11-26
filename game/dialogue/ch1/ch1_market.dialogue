@@ -1,0 +1,46 @@
+# scene: ch1_market
+# r-name: pre
+# wp: WP-17
+# 배경: market · 조작: 별(단독) · 다음 장면: ch1_square
+# 큐 트리거·소품·출구: docs/narrative/slice_beats.md
+# 위화감 연출: 닮은 습관(별 쪽) — [#sync] 줄에서 습관 동작 애니메이션 재생 (sibling.md §2-2)
+# ch1_stairs 의 하늘과 같은 동작·같은 말("…이쪽.")이어야 한다.
+# W-FACE: 시장 상인의 얼굴은 0단계(윤곽선뿐인 스케치). 이름 대신 역할로 부른다.
+# TODO-확인: 닮은 습관의 내용 — ch1_stairs 와 같음 (sibling.md §2-2)
+# TODO-확인: 장소 이름 '시장'은 자리표시 (progression.md §3-2 †)
+# TODO-확인: 시장 상인은 이 초안이 추가한 NPC (canon §3 인물 표에 없음)
+
+~ start
+시장 골목. 좌판마다 회색 과일이 놓여 있다.
+byeol: 사과가… 회색이야.
+시장 끝에서 길이 두 갈래로 나뉜다.
+byeol: 광장은 어느 쪽이더라.
+저도 모르게 검지가 허공에 작은 동그라미를 두 번 그린다.
+byeol: [#sync] …이쪽.
+byeol: [#portrait=thinking] 어? 나 지금 뭐 한 거지?
+=> END
+
+~ inspect_vendor
+market_vendor: 어서 와요. 처음 오는 손님인가요?
+market_vendor: 미안해요. 얼굴이 다 연필 선처럼 보여서.
+byeol: 저도 그래요. 그래도 목소리가 다정하세요.
+market_vendor: 사과가 빨갰던 건 아는데, 어떤 빨강이었는지 몰라요.
+market_vendor: 광장 가요? 시계탑만 보고 가면 돼요.
+=> END
+
+~ inspect_apples
+byeol: 들어 보니 무게는 사과 그대로야. 색만 없어.
+=> END
+
+~ inspect_cloth
+byeol: 천에 꽃무늬가 있어. 무늬는 남았는데 색이 없네.
+=> END
+
+~ inspect_bakery
+byeol: 갓 구운 빵 냄새. 냄새는 그대로야.
+byeol: [#portrait=sad] …누구랑 반 나눠 먹고 싶다.
+=> END
+
+~ exit_blocked
+byeol: 아니, 이쪽 아니야. 손가락이 저쪽이래.
+=> END

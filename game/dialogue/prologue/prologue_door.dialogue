@@ -1,0 +1,45 @@
+# scene: prologue_door
+# r-name: pre
+# wp: WP-16
+# 배경: atelier_door · 조작: 하늘(단독) · 다음 장면: prologue_gate
+# 큐 트리거·소품·출구: docs/narrative/slice_beats.md
+# W-FACE: 행인 얼굴은 0단계(윤곽선뿐인 스케치). 행인은 말하지 않는 NPC 스프라이트다.
+# TODO-확인: 장소 이름 '화실 앞'은 자리표시 (progression.md §3-1 †)
+# TODO-확인: 우편함 이름표·화실 간판이 지워져 있다는 설정은 이 초안의 연출
+
+~ start
+화실 문을 열자, 바깥도 온통 회색이다.
+지붕도, 길도, 흘러가는 구름까지도.
+haneul: [#portrait=surprised] 화실 안만 그런 게 아니었구나.
+길 저편으로 사람들이 지나간다.
+그런데 얼굴이… 연필로 대충 그린 스케치 같다.
+haneul: [#portrait=scared] 눈도, 입도 없어.
+haneul: [#portrait=sad] 내 얼굴도 저렇게 보일까.
+=> END
+
+~ inspect_mailbox
+haneul: 우편함. 이름표 자리가 닳아서 아무것도 안 보여.
+haneul: 여기 살던 사람도 이름을 잃어버렸을까.
+=> END
+
+~ inspect_lamp
+haneul: 가로등이 켜져 있는데, 빛에도 색이 없어.
+=> END
+
+~ inspect_passerby
+말을 걸어 보려 했지만, 그 사람은 고개만 까딱하고 지나간다.
+haneul: 얼굴은 안 보이는데… 발소리는 다정하네.
+=> END
+
+~ inspect_sign
+haneul: 화실 간판. 글자가 지워져서 읽을 수가 없어.
+=> END
+
+~ exit_blocked
+haneul: 저 너머는 아직… 혼자 가기엔 멀어.
+=> END
+
+~ leave
+해가 천천히 기운다.
+haneul: 오늘은 여기까지. 내일 다시 나와 보자.
+=> END

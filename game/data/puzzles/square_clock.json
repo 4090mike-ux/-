@@ -1,0 +1,29 @@
+{
+  "echo_id": "echo.ch1.square_clock",
+  "type": "memory_order",
+  "difficulty": 2,
+  "intro_cue": "echo_square_clock_intro",
+  "cards": [
+    {
+      "id": "c1",
+      "caption": "세 시. 약속한 시간.",
+      "sketch": "시계탑 시계가 3시를 가리킨다. 시계탑 아래에 한 사람이 서 있다."
+    },
+    {
+      "id": "c2",
+      "caption": "세 시 반. 아직이다.",
+      "sketch": "시계가 3시 30분. 같은 사람이 발끝으로 바닥을 톡톡 찬다."
+    },
+    {
+      "id": "c3",
+      "caption": "네 시. 저 멀리 그림자.",
+      "sketch": "시계가 4시. 광장 끝에서 작은 그림자가 손을 흔들며 달려온다."
+    },
+    {
+      "id": "c4",
+      "caption": "네 시 십 분. 이제 둘.",
+      "sketch": "시계가 4시 10분. 시계탑 아래에 그림자 두 개가 나란히 서 있다."
+    }
+  ],
+  "decoy": null
+}

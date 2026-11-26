@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://gdi47k03wppg"
+path="res://.godot/imported/ch1_night.dialogue-f93180d804e64c59b357568bc2a09180.tres"
+
+[deps]
+
+source_file="res://game/dialogue/ch1/ch1_night.dialogue"
+dest_files=["res://.godot/imported/ch1_night.dialogue-f93180d804e64c59b357568bc2a09180.tres"]
+
+[params]
+
+defaults=true

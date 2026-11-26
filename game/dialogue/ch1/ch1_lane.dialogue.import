@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://jbdjpw8xi4c7"
+path="res://.godot/imported/ch1_lane.dialogue-3f57259be8cc111a034bf0e80dc2285a.tres"
+
+[deps]
+
+source_file="res://game/dialogue/ch1/ch1_lane.dialogue"
+dest_files=["res://.godot/imported/ch1_lane.dialogue-3f57259be8cc111a034bf0e80dc2285a.tres"]
+
+[params]
+
+defaults=true
