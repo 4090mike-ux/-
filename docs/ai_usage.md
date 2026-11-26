@@ -14,3 +14,4 @@
 | 2026-11-26 | `game/dialogue/prologue/`, `game/dialogue/ch1/`, `game/data/echoes/`, `game/data/puzzles/`, `game/i18n/ui.csv`(잔향·장소·NPC 이름), `docs/narrative/slice_beats.md` (WP-16/17 버티컬 슬라이스) | Claude Code 서브에이전트 (Claude Opus 5.5) | 서사 초안 — 프롤로그·챕터 1 대사, 잔향 기억 문구, 퍼즐 캡션, 장소·잔향 이름 | 예 | 사람 검수 필요 | 예 |
 | 2026-11-26 | `game/audio/` (BGM 3곡 haneul·byeol·square, 환경음 2, 효과음 28), `tools/audio/` | Claude Code (코드 합성기로 렌더링) | 음악·효과음 | 예 | 아니오 (코드 생성) | 예 |
 | 2026-11-26 | `game/art/char/`, `game/art/props/`, `game/art/bg/` (WP-18 버티컬 슬라이스 아트: 주인공·NPC 보행 시트, 초상, 얼굴 오버레이, 잔향 소품 8, 배경 10 + 메타데이터) | Claude Code 서브에이전트 (Claude Opus 5.5), `tools/pixelart/` 코드로 생성 (이미지 생성 AI 미사용) | 출시 에셋 초안 — 코드로 그린 픽셀아트 | 예 | 아트 승인 때 검수 예정 | 예 |
+| 2026-11-26 | `docs/bible/story_bible.md` (WP-06 스토리 바이블 v1 초안 — 줄거리·인물·NPC·사이드 가족·장소·잔향 기억·선택지·엔딩·제작 목록) | Claude Code 서브에이전트 (Claude Opus 5.5) | 서사 — story bible draft by Claude | 예 (대사의 근거) | 사람 검수 필요 | 예 |
