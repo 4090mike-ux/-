@@ -1,0 +1,56 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "ch1_garden",
+  "background": "garden",
+  "dialogue": "res://game/dialogue/ch1/ch1_garden.dialogue",
+  "characters": [
+    "byeol"
+  ],
+  "bgm": "byeol",
+  "surface": "grass",
+  "afterimage": "longing",
+  "garden": {
+    "rows_y": [
+      152,
+      216
+    ],
+    "x0": 104,
+    "dx": 58
+  },
+  "echoes": [
+    {
+      "id": "echo.prologue.garden_pot",
+      "display_only": true
+    },
+    "garden_sprinkler"
+  ],
+  "inspectables": [
+    {
+      "id": "pot"
+    },
+    {
+      "id": "swing"
+    },
+    {
+      "id": "flowers"
+    },
+    {
+      "id": "fence"
+    }
+  ],
+  "exits": [
+    {
+      "exit": "garden_gate",
+      "to": "ch1_lane",
+      "spawn": "from_atelier_door",
+      "requires": {
+        "echoes": [
+          "echo.ch1.garden_sprinkler"
+        ],
+        "plots": [
+          "plot_07"
+        ]
+      }
+    }
+  ]
+}

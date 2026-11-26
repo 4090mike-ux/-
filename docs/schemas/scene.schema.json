@@ -113,12 +113,21 @@
                 "pattern": "^[a-z][a-z0-9_]*$"
               },
               "at": {
-                "type": "array",
-                "items": {
-                  "type": "number"
-                },
-                "minItems": 2,
-                "maxItems": 2
+                "oneOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9_]*$",
+                    "description": "배경 메타데이터 props 이름"
+                  }
+                ]
               },
               "restore_radius": {
                 "type": "number",
@@ -173,12 +182,21 @@
             "pattern": "^[a-z][a-z0-9_]*$"
           },
           "at": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            },
-            "minItems": 2,
-            "maxItems": 2
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "description": "배경 메타데이터 props 이름"
+              }
+            ]
           },
           "radius": {
             "type": "number",
@@ -193,8 +211,7 @@
       "items": {
         "type": "object",
         "required": [
-          "speaker",
-          "at"
+          "speaker"
         ],
         "additionalProperties": false,
         "properties": {
@@ -207,12 +224,21 @@
             "pattern": "^[a-z][a-z0-9_]*$"
           },
           "at": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            },
-            "minItems": 2,
-            "maxItems": 2
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "description": "배경 메타데이터 props 이름"
+              }
+            ]
           },
           "cue": {
             "type": "string",
@@ -346,12 +372,20 @@
             "pattern": "^[a-z][a-z0-9_]*$"
           },
           "rect": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            },
-            "minItems": 4,
-            "maxItems": 4
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 4,
+                "maxItems": 4
+              },
+              {
+                "type": "string",
+                "description": "배경 메타데이터의 최상위 키 (예: gate_rect)"
+              }
+            ]
           }
         }
       }
@@ -382,30 +416,57 @@
             "type": "string"
           },
           "at": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            },
-            "minItems": 2,
-            "maxItems": 2
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "description": "배경 메타데이터 props 이름"
+              }
+            ]
           },
           "lock_at": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            },
-            "minItems": 2,
-            "maxItems": 2
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "description": "배경 메타데이터 props 이름"
+              }
+            ]
           },
           "plates": {
             "type": "array",
             "items": {
-              "type": "array",
-              "items": {
-                "type": "number"
-              },
-              "minItems": 2,
-              "maxItems": 2
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "description": "배경 메타데이터 props 이름"
+                }
+              ]
             },
             "minItems": 2
           },
@@ -517,6 +578,43 @@
         "grass"
       ],
       "description": "발소리 재질"
+    },
+    "character_spawns": {
+      "type": "object",
+      "description": "기본 진입일 때 캐릭터별 스폰 (스폰 이름 또는 [x,y])",
+      "properties": {
+        "haneul": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "byeol": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
     }
   }
 }

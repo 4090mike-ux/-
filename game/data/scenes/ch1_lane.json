@@ -1,0 +1,58 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "ch1_lane",
+  "background": "lane",
+  "dialogue": "res://game/dialogue/ch1/ch1_lane.dialogue",
+  "characters": [
+    "haneul"
+  ],
+  "bgm": "haneul",
+  "ambience": "wind",
+  "surface": "stone",
+  "spawns": {
+    "default": [
+      24,
+      166
+    ]
+  },
+  "echoes": [
+    "lane_poster"
+  ],
+  "inspectables": [
+    {
+      "id": "laundry"
+    },
+    {
+      "id": "cat"
+    },
+    {
+      "id": "puddle"
+    }
+  ],
+  "npcs": [
+    {
+      "speaker": "lane_sweeper",
+      "sprite": "npc_a",
+      "at": "sweeper",
+      "cue": "inspect_sweeper"
+    }
+  ],
+  "exits": [
+    {
+      "exit": "stairs",
+      "to": "ch1_path",
+      "requires": {
+        "inspected": [
+          "lane_sweeper"
+        ]
+      }
+    },
+    {
+      "exit": "atelier_door",
+      "to": "ch1_path",
+      "requires": {
+        "never": true
+      }
+    }
+  ]
+}

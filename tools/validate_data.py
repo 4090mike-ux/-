@@ -302,6 +302,26 @@ def check_scenes(schemas: dict[str, dict], flag_ids: set[str], echo_ids: dict[st
                 err(where, f"{why}: cue '{cue}' 가 {data['dialogue']} 에 없음")
 
         need_cue(data.get("enter_cue", "start"), "진입 대사")
+        bg_meta_path = ROOT / f"game/art/bg/{bg}.json"
+        bg_props = json.loads(bg_meta_path.read_text(encoding="utf-8")).get("props", {}) if bg_meta_path.exists() else None
+
+        def need_prop(name: str, why: str) -> None:
+            if bg_props is not None and name not in bg_props:
+                err(where, f"{why}: 배경 {bg}.json 에 prop '{name}' 없음")
+
+        for it in data.get("inspectables", []):
+            at = it.get("at", it["id"])
+            if isinstance(at, str):
+                need_prop(at, f"조사 대상 {it['id']}")
+        for npc in data.get("npcs", []):
+            at = npc.get("at", npc["speaker"])
+            if isinstance(at, str):
+                need_prop(at, f"NPC {npc['speaker']}")
+        for entry in data.get("echoes", []):
+            e = {"slug": entry} if isinstance(entry, str) else entry
+            at = e.get("at", (e.get("slug") or e.get("id", "").split(".")[-1]))
+            if isinstance(at, str):
+                need_prop(at, "잔향 위치")
         for it in data.get("inspectables", []):
             need_cue(it.get("cue", "inspect_" + it["id"]), f"조사 대상 {it['id']}")
         for npc in data.get("npcs", []):

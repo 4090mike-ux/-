@@ -1,0 +1,40 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "ch1_stairs",
+  "background": "stairs",
+  "dialogue": "res://game/dialogue/ch1/ch1_stairs.dialogue",
+  "characters": [
+    "haneul"
+  ],
+  "bgm": "haneul",
+  "ambience": "wind",
+  "surface": "stone",
+  "inspectables": [
+    {
+      "id": "railing"
+    },
+    {
+      "id": "pots"
+    },
+    {
+      "id": "chalk"
+    },
+    {
+      "id": "view"
+    }
+  ],
+  "exits": [
+    {
+      "exit": "square",
+      "to": "ch1_market",
+      "spawn": "from_path"
+    },
+    {
+      "exit": "lane",
+      "to": "ch1_market",
+      "requires": {
+        "never": true
+      }
+    }
+  ]
+}

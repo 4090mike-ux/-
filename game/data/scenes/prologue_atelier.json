@@ -1,0 +1,58 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "prologue_atelier",
+  "background": "atelier",
+  "dialogue": "res://game/dialogue/prologue/prologue_atelier.dialogue",
+  "characters": [
+    "haneul"
+  ],
+  "bgm": "haneul",
+  "surface": "wood",
+  "spawns": {
+    "default": [
+      110,
+      236
+    ]
+  },
+  "echoes": [
+    {
+      "slug": "atelier_brush",
+      "restore_radius": 56
+    }
+  ],
+  "inspectables": [
+    {
+      "id": "sofa"
+    },
+    {
+      "id": "window"
+    },
+    {
+      "id": "palette"
+    },
+    {
+      "id": "canvas"
+    }
+  ],
+  "exits": [
+    {
+      "exit": "atelier_door",
+      "to": "prologue_garden",
+      "requires": {
+        "echoes": [
+          "echo.prologue.atelier_brush"
+        ]
+      }
+    }
+  ],
+  "tutorials": [
+    {
+      "after": "start",
+      "text": "이동: WASD·방향키   조사: {interact}"
+    },
+    {
+      "after": "inspect_canvas",
+      "text": "잔향 감지: {echo_sense} 를 누르고 있기 — 다가가서 {interact}"
+    }
+  ]
+}

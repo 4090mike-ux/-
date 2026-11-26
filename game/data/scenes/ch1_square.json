@@ -1,0 +1,68 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "ch1_square",
+  "background": "square",
+  "dialogue": "res://game/dialogue/ch1/ch1_square.dialogue",
+  "characters": [
+    "haneul",
+    "byeol"
+  ],
+  "active": "haneul",
+  "bgm": "square",
+  "ambience": "wind",
+  "surface": "stone",
+  "character_spawns": {
+    "haneul": "from_stairs",
+    "byeol": "from_market"
+  },
+  "inspectables": [
+    {
+      "id": "fountain"
+    },
+    {
+      "id": "board"
+    },
+    {
+      "id": "pigeons"
+    },
+    {
+      "id": "clock"
+    }
+  ],
+  "exits": [
+    {
+      "rect": [
+        216,
+        112,
+        48,
+        10
+      ],
+      "to": "ch1_square_02",
+      "requires": {
+        "flags": [
+          "flag.ch1.met_in_square"
+        ]
+      }
+    },
+    {
+      "exit": "stairs",
+      "to": "ch1_square_02",
+      "requires": {
+        "never": true
+      }
+    },
+    {
+      "exit": "market",
+      "to": "ch1_square_02",
+      "requires": {
+        "never": true
+      }
+    }
+  ],
+  "tutorials": [
+    {
+      "after": "start",
+      "text": "{tag_switch}: 하늘 ↔ 별 바꾸기 — 시계탑 쪽(위)으로"
+    }
+  ]
+}

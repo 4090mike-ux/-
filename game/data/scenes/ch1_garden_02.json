@@ -1,0 +1,57 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "ch1_garden_02",
+  "background": "garden",
+  "dialogue": "res://game/dialogue/ch1/ch1_garden_02.dialogue",
+  "characters": [
+    "haneul",
+    "byeol"
+  ],
+  "active": "haneul",
+  "bgm": "byeol",
+  "surface": "grass",
+  "garden": {
+    "rows_y": [
+      152,
+      216
+    ],
+    "x0": 104,
+    "dx": 58
+  },
+  "echoes": [
+    {
+      "id": "echo.prologue.garden_pot",
+      "display_only": true
+    },
+    {
+      "id": "echo.ch1.garden_sprinkler",
+      "display_only": true
+    }
+  ],
+  "inspectables": [
+    {
+      "id": "pot"
+    },
+    {
+      "id": "swing"
+    },
+    {
+      "id": "shed"
+    }
+  ],
+  "exits": [
+    {
+      "exit": "garden_gate",
+      "to": "ch1_night",
+      "requires": {
+        "owner_planted": "haneul"
+      }
+    }
+  ],
+  "tutorials": [
+    {
+      "after": "start",
+      "text": "하늘 줄(위)에서 {interact} 로 심기 · {tag_switch} 로 별 줄도 · 다 했으면 오른쪽 문으로"
+    }
+  ]
+}

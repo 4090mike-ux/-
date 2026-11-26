@@ -1,0 +1,62 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "prologue_garden",
+  "background": "garden",
+  "dialogue": "res://game/dialogue/prologue/prologue_garden.dialogue",
+  "characters": [
+    "byeol"
+  ],
+  "bgm": "byeol",
+  "surface": "grass",
+  "afterimage": "longing",
+  "garden": {
+    "rows_y": [
+      152,
+      216
+    ],
+    "x0": 104,
+    "dx": 58
+  },
+  "echoes": [
+    "garden_pot"
+  ],
+  "inspectables": [
+    {
+      "id": "flowers"
+    },
+    {
+      "id": "shed"
+    },
+    {
+      "id": "swing"
+    },
+    {
+      "id": "can"
+    }
+  ],
+  "exits": [
+    {
+      "exit": "garden_gate",
+      "to": "prologue_door",
+      "spawn": "from_atelier",
+      "requires": {
+        "echoes": [
+          "echo.prologue.garden_pot"
+        ],
+        "plots": [
+          "plot_06"
+        ]
+      }
+    }
+  ],
+  "tutorials": [
+    {
+      "after": "start",
+      "text": "감지: {echo_sense} 누르고 있기   조사: {interact}"
+    },
+    {
+      "after": "echo_garden_pot_after",
+      "text": "아래 줄 빈 화단에서 {interact} → 심을 감정 고르기"
+    }
+  ]
+}

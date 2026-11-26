@@ -1,0 +1,44 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "ch1_market",
+  "background": "market",
+  "dialogue": "res://game/dialogue/ch1/ch1_market.dialogue",
+  "characters": [
+    "byeol"
+  ],
+  "bgm": "byeol",
+  "ambience": "wind",
+  "surface": "stone",
+  "inspectables": [
+    {
+      "id": "apples"
+    },
+    {
+      "id": "cloth"
+    },
+    {
+      "id": "bakery"
+    }
+  ],
+  "npcs": [
+    {
+      "speaker": "market_vendor",
+      "sprite": "npc_b",
+      "at": "vendor",
+      "cue": "inspect_vendor"
+    }
+  ],
+  "exits": [
+    {
+      "exit": "square",
+      "to": "ch1_square"
+    },
+    {
+      "exit": "path",
+      "to": "ch1_square",
+      "requires": {
+        "never": true
+      }
+    }
+  ]
+}

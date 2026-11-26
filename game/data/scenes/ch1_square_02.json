@@ -1,0 +1,72 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "ch1_square_02",
+  "background": "square_gate",
+  "dialogue": "res://game/dialogue/ch1/ch1_square_02.dialogue",
+  "characters": [
+    "haneul",
+    "byeol"
+  ],
+  "active": "haneul",
+  "bgm": "square",
+  "ambience": "wind",
+  "surface": "stone",
+  "echoes": [
+    "square_clock",
+    "square_bench"
+  ],
+  "inspectables": [
+    {
+      "id": "clockface"
+    },
+    {
+      "id": "lamp"
+    },
+    {
+      "id": "plaque"
+    }
+  ],
+  "gates": [
+    {
+      "id": "clock_gate",
+      "rect": "gate_rect"
+    }
+  ],
+  "mechanisms": [
+    {
+      "type": "hold",
+      "id": "clock_gate",
+      "gate": "clock_gate",
+      "at": "gate_hold",
+      "lock_at": "gate_latch",
+      "solved_cue": "coop_gate_done",
+      "hint_cues": {
+        "hold": "coop_gate_hint_hold",
+        "switch": "coop_gate_hint_switch",
+        "latch": "coop_gate_hint_latch"
+      }
+    }
+  ],
+  "exits": [
+    {
+      "exit": "garden",
+      "to": "ch1_garden_02",
+      "spawn": "from_garden_gate",
+      "requires": {
+        "echoes": [
+          "echo.ch1.square_clock"
+        ]
+      }
+    }
+  ],
+  "tutorials": [
+    {
+      "after": "start",
+      "text": "손잡이에서 {interact}: 붙잡기 → {tag_switch} 로 바꿔 들어가기 → 안쪽 걸쇠에서 {interact}"
+    },
+    {
+      "after": "coop_gate_done",
+      "text": "공명 잔향은 두 사람이 가까이 있을 때만 느껴진다 — 함께 {echo_sense}"
+    }
+  ]
+}

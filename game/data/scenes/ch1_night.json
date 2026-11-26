@@ -1,0 +1,38 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "ch1_night",
+  "background": "square_night",
+  "dialogue": "res://game/dialogue/ch1/ch1_night.dialogue",
+  "characters": [
+    "haneul",
+    "byeol"
+  ],
+  "active": "haneul",
+  "bgm": "square",
+  "ambience": "wind",
+  "surface": "stone",
+  "inspectables": [
+    {
+      "id": "clock"
+    },
+    {
+      "id": "board"
+    },
+    {
+      "id": "fountain"
+    },
+    {
+      "id": "bench"
+    }
+  ],
+  "exits": [
+    {
+      "exit": "stairs",
+      "to": "ui_demo_end"
+    },
+    {
+      "exit": "market",
+      "to": "ui_demo_end"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "prologue_door",
+  "background": "atelier_door",
+  "dialogue": "res://game/dialogue/prologue/prologue_door.dialogue",
+  "characters": [
+    "haneul"
+  ],
+  "bgm": "haneul",
+  "ambience": "wind",
+  "surface": "stone",
+  "inspectables": [
+    {
+      "id": "mailbox"
+    },
+    {
+      "id": "lamp"
+    },
+    {
+      "id": "sign"
+    }
+  ],
+  "npcs": [
+    {
+      "speaker": "passerby",
+      "sprite": "npc_b",
+      "cue": "inspect_passerby"
+    }
+  ],
+  "exits": [
+    {
+      "exit": "atelier",
+      "to": "prologue_gate"
+    },
+    {
+      "exit": "lane",
+      "to": "prologue_gate",
+      "requires": {
+        "never": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "prologue_gate",
+  "background": "garden_gate",
+  "dialogue": "res://game/dialogue/prologue/prologue_gate.dialogue",
+  "characters": [
+    "byeol"
+  ],
+  "bgm": "byeol",
+  "ambience": "wind",
+  "surface": "grass",
+  "inspectables": [
+    {
+      "id": "gate"
+    },
+    {
+      "id": "signpost"
+    },
+    {
+      "id": "town"
+    },
+    {
+      "id": "bird"
+    }
+  ],
+  "exits": [
+    {
+      "exit": "garden",
+      "to": "ch1_atelier"
+    },
+    {
+      "exit": "path",
+      "to": "ch1_atelier",
+      "requires": {
+        "never": true
+      }
+    }
+  ]
+}

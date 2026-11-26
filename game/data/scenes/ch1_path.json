@@ -1,0 +1,48 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "ch1_path",
+  "background": "path",
+  "dialogue": "res://game/dialogue/ch1/ch1_path.dialogue",
+  "characters": [
+    "byeol"
+  ],
+  "bgm": "byeol",
+  "ambience": "wind",
+  "surface": "grass",
+  "echoes": [
+    "path_lamp"
+  ],
+  "inspectables": [
+    {
+      "id": "tree"
+    },
+    {
+      "id": "sign"
+    },
+    {
+      "id": "butterfly"
+    },
+    {
+      "id": "wildflowers"
+    }
+  ],
+  "exits": [
+    {
+      "exit": "market",
+      "to": "ch1_stairs",
+      "spawn": "from_lane",
+      "requires": {
+        "echoes": [
+          "echo.ch1.path_lamp"
+        ]
+      }
+    },
+    {
+      "exit": "garden_gate",
+      "to": "ch1_stairs",
+      "requires": {
+        "never": true
+      }
+    }
+  ]
+}

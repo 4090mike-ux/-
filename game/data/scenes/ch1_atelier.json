@@ -1,0 +1,57 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "ch1_atelier",
+  "background": "atelier",
+  "dialogue": "res://game/dialogue/ch1/ch1_atelier.dialogue",
+  "characters": [
+    "haneul"
+  ],
+  "bgm": "haneul",
+  "surface": "wood",
+  "title_card": "chapter.ch1.title",
+  "spawns": {
+    "default": [
+      110,
+      236
+    ]
+  },
+  "echoes": [
+    {
+      "id": "echo.prologue.atelier_brush",
+      "display_only": true,
+      "restore_radius": 56
+    },
+    {
+      "slug": "atelier_easel",
+      "restore_radius": 56
+    }
+  ],
+  "inspectables": [
+    {
+      "id": "canvas"
+    },
+    {
+      "id": "sketchbook"
+    },
+    {
+      "id": "window"
+    },
+    {
+      "id": "brushes"
+    },
+    {
+      "id": "coat"
+    }
+  ],
+  "exits": [
+    {
+      "exit": "atelier_door",
+      "to": "ch1_garden",
+      "requires": {
+        "echoes": [
+          "echo.ch1.atelier_easel"
+        ]
+      }
+    }
+  ]
+}

@@ -175,6 +175,7 @@ func _spawn_characters() -> void:
 	spawns.merge(definition.get("spawns", {}), true)
 	var spawn_name := SceneRouter.pending_spawn if spawns.has(SceneRouter.pending_spawn) else "default"
 	var base := _to_point(spawns.get(spawn_name, [240, 200]))
+	var per_char: Dictionary = definition.get("character_spawns", {})
 	var index := 0
 	for key: String in keys:
 		var c := SiblingCharacter.new()
@@ -182,6 +183,9 @@ func _spawn_characters() -> void:
 		c.character_key = key
 		c.motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 		c.position = base + Vector2(index * 26, 0)
+		if per_char.has(key) and spawn_name == "default":
+			var sp: Variant = per_char[key]
+			c.position = _to_point(spawns.get(sp, [240, 200])) if sp is String else _to_point(sp)
 		var shape := RectangleShape2D.new()
 		shape.size = Vector2(12, 8)
 		var col := CollisionShape2D.new()
@@ -238,7 +242,7 @@ func _place_echoes() -> void:
 		var echo := EchoObject.new()
 		echo.name = "Echo_" + slug
 		echo.echo_id = echo_id
-		echo.position = _to_point(e.get("at", props.get(slug, [240, 160])))
+		echo.position = resolve_point(e.get("at", slug))
 		echo.restore_radius = float(e.get("restore_radius", 48.0))
 		echo.outline_radius = float(e.get("outline_radius", 12.0))
 		var tex_path := "%s/%s.png" % [PROPS_DIR, slug]
@@ -259,7 +263,7 @@ func _place_inspectables() -> void:
 		target.interact_id = str(e.get("id", ""))
 		target.cue = str(e.get("cue", "inspect_" + target.interact_id))
 		target.radius = float(e.get("radius", 24.0))
-		target.position = _to_point(e.get("at", props.get(target.interact_id, [240, 160])))
+		target.position = resolve_point(e.get("at", target.interact_id))
 		add_child(target)
 
 
@@ -269,7 +273,7 @@ func _place_npcs() -> void:
 		var npc := Node2D.new()
 		var speaker := str(e.get("speaker", "npc"))
 		npc.name = "Npc_" + speaker
-		npc.position = _to_point(e.get("at", [240, 160]))
+		npc.position = resolve_point(e.get("at", speaker))
 		var sprite := SiblingSprite.new()
 		var sheet := "%s/%s_walk.png" % [CHAR_DIR, str(e.get("sprite", "npc_a"))]
 		if ResourceLoader.exists(sheet):
@@ -370,7 +374,27 @@ func _build_mechanisms() -> void:
 	mechanisms = SiblingMechanisms.new()
 	mechanisms.name = "Mechanisms"
 	add_child(mechanisms)
-	mechanisms.setup(scene_id, definition.get("gates", []), definition.get("mechanisms", []))
+	var gates: Array = []
+	for g: Variant in definition.get("gates", []):
+		var gd: Dictionary = (g as Dictionary).duplicate()
+		var r := resolve_rect(gd["rect"])
+		gd["rect"] = [r.position.x, r.position.y, r.size.x, r.size.y]
+		gates.append(gd)
+	var mechs: Array = []
+	for m: Variant in definition.get("mechanisms", []):
+		var md: Dictionary = (m as Dictionary).duplicate(true)
+		for key: String in ["at", "lock_at"]:
+			if md.has(key):
+				var p := resolve_point(md[key])
+				md[key] = [p.x, p.y]
+		if md.has("plates"):
+			var plates: Array = []
+			for pl: Variant in md["plates"]:
+				var pp := resolve_point(pl)
+				plates.append([pp.x, pp.y])
+			md["plates"] = plates
+		mechs.append(md)
+	mechanisms.setup(scene_id, gates, mechs)
 	mechanisms.solved.connect(func(_id: String, cue: String) -> void: play_cue(cue))
 	mechanisms.hint_requested.connect(func(cue: String) -> void:
 		if not _busy:
@@ -586,6 +610,24 @@ static func _placeholder_body(key: String) -> Polygon2D:
 
 
 # ---------------------------------------------------------------- 좌표 변환
+
+## [x, y] 또는 배경 메타데이터 props 의 이름
+func resolve_point(v: Variant) -> Vector2:
+	if v is String:
+		var props: Dictionary = background_meta.get("props", {})
+		if not props.has(v):
+			push_warning("ChapterScene %s: 배경 메타데이터에 prop '%s' 없음" % [scene_id, v])
+			return Vector2(240, 180)
+		return _to_point(props[v])
+	return _to_point(v)
+
+
+## [x, y, w, h] 또는 배경 메타데이터의 최상위 키 이름 (예: "gate_rect")
+func resolve_rect(v: Variant) -> Rect2:
+	if v is String:
+		return _to_rect(background_meta.get(v, [0, 0, 16, 16]))
+	return _to_rect(v)
+
 
 static func _to_point(v: Variant) -> Vector2:
 	var a: Array = v
