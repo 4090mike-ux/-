@@ -1,0 +1,55 @@
+# scene: ch1_garden_02
+# r-name: pre
+# wp: WP-17
+# 배경: garden · 조작: 태그 전환 · 다음 장면: ch1_night
+# 큐 트리거·소품·출구: docs/narrative/slice_beats.md
+# 정원 방문 흐름(garden.md §4-4): start → 자유 시간(하늘 첫 심기) → '정원 나가기' → 성장 틱 T1 → leave
+# 닮은 습관 되짚기: [#sync] 지문 줄에서 하늘의 습관 동작 애니메이션 재생
+# TODO-확인: 서로의 닮은 습관을 알아채는 장면은 이 초안이 더한 연출 (canon §7 위화감 3종 밖)
+# TODO-확인: 창고의 모종삽 두 개(하나는 작다)는 이 초안의 소품 설정
+
+~ start
+별의 정원. 회색 꽃들 사이로 노란 빛이 군데군데 남아 있다.
+haneul: 여기가 네가 깨어난 곳이구나.
+byeol: 네. 이 화분 보고 이름 지었어요.
+haneul: [#portrait=smile] 정말 별 모양이네.
+byeol: 하늘 씨는 그림 서명 보고 지었다고 했죠?
+haneul: 응. 둘 다 물건한테 이름을 빌렸네.
+byeol: [#portrait=laugh] 이름 빌린 사람끼리네요.
+byeol: 여기, 하늘 씨 자리도 있어요. 조각 하나 심어 봐요.
+haneul: 내 자리? …어디에 심지.
+[#sync] 하늘의 검지가 허공에 작은 동그라미를 두 번 그린다.
+byeol: [#portrait=surprised] 어, 그거! 저도 길 고를 때 그러는데.
+haneul: …너도?
+byeol: 네. 신기하다. 이런 것까지 똑같네요.
+=> END
+
+~ plant_done
+haneul: [#emotion=longing] 심었어. 이걸로 된 건가?
+byeol: 네! 이제 기다리면 돼요. 기다리는 거, 잘해요?
+haneul: …잘하는 것 같아. 이상하게.
+=> END
+
+~ inspect_pot
+haneul: 별 화분 둘레만 노랗네. 네 색이구나.
+byeol: [#portrait=smile] 제 색이요? 그 말 좋다.
+=> END
+
+~ inspect_swing
+byeol: 이 그네, 두 사람용이에요. 같이 앉아 볼래요?
+haneul: …딱 맞네.
+=> END
+
+~ inspect_shed
+haneul: 모종삽이 두 개야. 하나는 조금 작네.
+=> END
+
+~ exit_blocked
+byeol: 하늘 씨도 하나 심고 가요!
+=> END
+
+~ leave
+꽃밭 위로 바람이 한 번 지나간다.
+byeol: [#portrait=surprised] 봐요, 싹이 났어요!
+haneul: 작다. …그래도 살아 있어.
+=> END

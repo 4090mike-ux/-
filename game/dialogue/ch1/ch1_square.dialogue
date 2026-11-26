@@ -1,0 +1,61 @@
+# scene: ch1_square
+# r-name: pre
+# wp: WP-17
+# 배경: square · 조작: 둘(첫 만남 컷신 → 끝나면 태그 전환 해금) · 다음 장면: ch1_square_02
+# 큐 트리거·소품·출구: docs/narrative/slice_beats.md
+# 위화감 연출: 같은 말 동시에 ① — `| ` 동시 발화 + [#sync] (sibling.md §2-2). BGM 두 모티프 1마디 겹침 지점.
+# 이벤트 ev_ch1_square_meeting: 아래 두 줄의 GameState 호출이 그 내용이다(태그 전환 해금, bond 1).
+# TODO-확인: 두 사람이 서로의 얼굴을 조금 알아보는 연출 — canon §2 W-FACE 연출 단계 [제안] 1단계에 따름
+# TODO-확인: 하늘은 계단 쪽, 별은 시장 쪽에서 들어온다는 광장 동선은 이 초안의 설정
+
+~ start
+광장. 멈춘 시계탑 아래로 회색 바람이 분다.
+계단 쪽에서 청년이, 시장 쪽에서 소녀가 걸어 나온다.
+haneul: …어?
+byeol: 어!
+두 사람이 동시에 걸음을 멈춘다.
+haneul: [#sync] 혹시, 우리 어디서 본 적 있…
+| byeol: [#sync] 혹시, 우리 어디서 본 적 있…
+같은 말이 겹치자, 둘 다 입을 다문다.
+byeol: [#portrait=laugh] 방금 완전 똑같았어요.
+haneul: [#portrait=surprised] …응. 똑같았어.
+haneul: 이상하다. 네 얼굴은 조금 보여.
+byeol: 저도요! 다른 사람들은 다 흐릿한데.
+haneul: 나는 하늘. …그렇게 부르기로 했어.
+byeol: 부르기로? 저도 그런데. 저는 별이에요.
+byeol: 정원 화분이 별 모양이었거든요.
+haneul: 나는 화실에 있던 그림 서명을 보고.
+byeol: [#portrait=sad] 눈을 떴는데, 기억이 하나도 없었어요.
+haneul: 나도. 혼자서 하루를 꼬박 헤맸어.
+byeol: 그럼 우리, 둘 다 길 잃은 사람이네요.
+haneul: [#portrait=smile] 그래도 이제 혼자는 아니네.
+$> GameState.set_flag("flag.ch1.met_in_square", true)
+$> GameState.raise_bond(1)
+그때, 시계탑 아래에서 희미한 울림이 번진다.
+byeol: 느껴져요? 저쪽에서 뭔가 울려요.
+haneul: 같이 가 보자.
+=> END
+
+~ inspect_fountain
+byeol: 분수는 흐르는데, 물도 회색이에요.
+haneul: 소리는 맑네. 그것만은 그대로야.
+=> END
+
+~ inspect_board
+haneul: 게시판에 '사람을 찾습니다' 전단이 빼곡해.
+byeol: [#portrait=sad] 얼굴 자리가 다 흐릿해요. 다들 누굴 잃었구나.
+=> END
+
+~ inspect_pigeons
+byeol: 비둘기들이 우리 발치로 모여요.
+haneul: 쟤들은 원래부터 회색이었을지도.
+byeol: [#portrait=laugh] 그건 그렇네요.
+=> END
+
+~ inspect_clock
+haneul: 시계 바늘이 멈춰 있어. 몇 시에 멈춘 걸까.
+=> END
+
+~ exit_blocked
+byeol: 시계탑부터 가 봐요. 계속 울리고 있어요.
+=> END

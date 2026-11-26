@@ -13,3 +13,27 @@ emotion.healing,치유,Healing
 mission.ch2.attic,작은 집의 다락방,The Attic of a Small House
 mission.ch3.lost_studio,잃어버린 작업실,The Lost Studio
 mission.ch3.child_room,그 아이의 방,That Child's Room
+name.lane_sweeper,골목 청소부,Alley Sweeper
+name.market_vendor,시장 상인,Market Vendor
+echo.prologue.atelier_brush,마르지 않은 붓,The Undried Brush
+echo.prologue.garden_pot,별 모양 화분,The Star-Shaped Pot
+echo.ch1.atelier_easel,반쯤 그린 그림,The Half-Finished Painting
+echo.ch1.garden_sprinkler,작은 물뿌리개,The Little Watering Can
+echo.ch1.lane_poster,빛바랜 포스터,The Faded Poster
+echo.ch1.path_lamp,길가의 등불,The Wayside Lamp
+echo.ch1.square_clock,멈춘 시계탑,The Stopped Clock Tower
+echo.ch1.square_bench,따뜻한 벤치,The Warm Bench
+place.prologue_atelier,화실,Atelier
+place.prologue_garden,정원,Garden
+place.prologue_door,화실 앞,Outside the Atelier
+place.prologue_gate,정원 문,Garden Gate
+place.ch1_atelier,화실,Atelier
+place.ch1_garden,정원,Garden
+place.ch1_lane,골목,Alley
+place.ch1_path,오솔길,Footpath
+place.ch1_stairs,계단길,Stairway
+place.ch1_market,시장,Market
+place.ch1_square,광장,Square
+place.ch1_square_02,광장 시계탑,Square Clock Tower
+place.ch1_garden_02,정원,Garden
+place.ch1_night,밤의 광장,Square at Night

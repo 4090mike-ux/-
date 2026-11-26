@@ -1,0 +1,8 @@
+{
+  "echo_id": "echo.prologue.atelier_brush",
+  "type": "color_match",
+  "difficulty": 1,
+  "slots": ["longing", "warmth", "longing"],
+  "palette": ["longing", "warmth"],
+  "caption": "붓끝에 남은 오후"
+}

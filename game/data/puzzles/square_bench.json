@@ -1,0 +1,29 @@
+{
+  "echo_id": "echo.ch1.square_bench",
+  "type": "memory_order",
+  "difficulty": 2,
+  "intro_cue": "echo_square_bench_intro",
+  "cards": [
+    {
+      "id": "c1",
+      "caption": "따끈한 봉투 하나.",
+      "sketch": "벤치 위에 입구를 접은 종이봉투 하나. 봉투 위로 김이 오른다."
+    },
+    {
+      "id": "c2",
+      "caption": "하나뿐인 빵.",
+      "sketch": "봉투에서 꺼낸 둥근 빵 하나를 손이 들고 있다. 봉투는 비어 납작하다."
+    },
+    {
+      "id": "c3",
+      "caption": "반으로 쪼개면 둘.",
+      "sketch": "빵이 두 조각으로 쪼개져 있다. 한 조각이 조금 더 크다. 갈라진 틈에서 김이 오른다."
+    },
+    {
+      "id": "c4",
+      "caption": "빈 봉투, 남은 온기.",
+      "sketch": "벤치 위에 구겨진 빈 봉투와 빵 부스러기만 남았다."
+    }
+  ],
+  "decoy": null
+}

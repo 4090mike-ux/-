@@ -1,0 +1,8 @@
+{
+  "echo_id": "echo.ch1.atelier_easel",
+  "type": "color_match",
+  "difficulty": 1,
+  "slots": ["longing", "longing", "warmth"],
+  "palette": ["longing", "warmth"],
+  "caption": "반쯤 그린 그림"
+}

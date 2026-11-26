@@ -1,0 +1,29 @@
+{
+  "$schema": "../../../docs/schemas/echo.schema.json",
+  "schema_version": 1,
+  "chapter": "prologue",
+  "echoes": [
+    {
+      "id": "echo.prologue.atelier_brush",
+      "emotion": "longing",
+      "kind": "required",
+      "name_key": "echo.prologue.atelier_brush",
+      "location": { "scene": "res://game/scenes/prologue/prologue_atelier.tscn", "marker": "atelier_brush" },
+      "sensed_by": "haneul",
+      "puzzle": { "type": "color_match", "time_limit_sec": 30, "difficulty": 1 },
+      "reward": { "color_shards": 1 },
+      "notes": "첫 감지·첫 퍼즐 튜토리얼(CM-A). 퍼즐: game/data/puzzles/atelier_brush.json. 대사: prologue_atelier ~ echo_atelier_brush_intro / _after. 기억 내용은 자리표시(TODO-확인)."
+    },
+    {
+      "id": "echo.prologue.garden_pot",
+      "emotion": "warmth",
+      "kind": "required",
+      "name_key": "echo.prologue.garden_pot",
+      "location": { "scene": "res://game/scenes/prologue/prologue_garden.tscn", "marker": "garden_pot" },
+      "sensed_by": "byeol",
+      "puzzle": { "type": "memory_order", "time_limit_sec": 30, "difficulty": 1 },
+      "reward": { "color_shards": 1 },
+      "notes": "별 모양 화분(이름의 단서와 같은 물건 — 연결 여부 TODO-확인). 순서 퍼즐 튜토리얼(MO-A). 퍼즐: game/data/puzzles/garden_pot.json. 대사: prologue_garden ~ echo_garden_pot_intro / _after."
+    }
+  ]
+}

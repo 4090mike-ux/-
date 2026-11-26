@@ -1,0 +1,8 @@
+{
+  "echo_id": "echo.ch1.path_lamp",
+  "type": "color_match",
+  "difficulty": 2,
+  "slots": ["warmth", "longing", "warmth", "warmth"],
+  "palette": ["longing", "warmth"],
+  "caption": "해 질 녘의 등불"
+}
