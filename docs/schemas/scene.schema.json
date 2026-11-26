@@ -266,6 +266,27 @@
     },
     "notes": {
       "type": "string"
+    },
+    "garden": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "정원 장면이면 칸 배치 (docs/gdd/garden.md). 나갈 때 방문 마무리(틱·꽃)가 돈다.",
+      "properties": {
+        "rows_y": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "x0": {
+          "type": "number"
+        },
+        "dx": {
+          "type": "number"
+        }
+      }
     }
   }
 }

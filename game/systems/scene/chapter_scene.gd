@@ -22,6 +22,8 @@ var restore_layer: ColorRestoreLayer
 var dialogue_box: DialogueBox
 var puzzle_host: PuzzleHost
 var switcher: SiblingSwitcher = null
+var garden_bed: GardenBed = null
+var plant_menu: PlantMenu = null
 
 var _busy: bool = false
 var _banner: Label
@@ -50,6 +52,7 @@ func _ready() -> void:
 	_place_npcs()
 	_build_exits()
 	_build_layers()
+	_build_garden()
 	_enter.call_deferred()
 
 
@@ -308,6 +311,31 @@ func _build_layers() -> void:
 	add_child(hud)
 
 
+func _build_garden() -> void:
+	if not definition.has("garden"):
+		return
+	var g: Dictionary = definition["garden"]
+	garden_bed = GardenBed.new()
+	garden_bed.name = "GardenBed"
+	var rows: Array = g.get("rows_y", [160, 214])
+	garden_bed.rows_y = Vector2(float(rows[0]), float(rows[1]))
+	garden_bed.x0 = float(g.get("x0", 140.0))
+	garden_bed.dx = float(g.get("dx", 50.0))
+	garden_bed.restore_layer = restore_layer
+	add_child(garden_bed)
+	plant_menu = PlantMenu.new()
+	add_child(plant_menu)
+
+
+func show_message(text: String) -> void:
+	_banner.text = text
+	_banner.modulate.a = 0.0
+	var tween := create_tween()
+	tween.tween_property(_banner, "modulate:a", 1.0, 0.3)
+	tween.tween_interval(1.8)
+	tween.tween_property(_banner, "modulate:a", 0.0, 0.6)
+
+
 # ---------------------------------------------------------------- 이벤트
 
 func _on_echo_requested(echo: EchoObject) -> void:
@@ -328,6 +356,13 @@ func _on_echo_requested(echo: EchoObject) -> void:
 func _on_interactable_requested(target: Interactable) -> void:
 	if _busy:
 		return
+	if plant_menu != null and target.interact_id.begins_with("plot_"):
+		_busy = true
+		plant_menu.open(target.interact_id)
+		await plant_menu.closed
+		garden_bed.refresh()
+		_busy = false
+		return
 	await play_cue(target.cue)
 
 
@@ -338,7 +373,28 @@ func _on_exit_requested(exit: SceneExit) -> void:
 		await play_cue(exit.blocked_cue)
 		return
 	_busy = true
+	if garden_bed != null:
+		await _finish_garden_visit()
 	await SceneRouter.go(exit.target_scene, exit.target_spawn)
+
+
+## 정원 방문 마무리: 틱·특별 꽃·조합 (garden.md §4-4)
+func _finish_garden_visit() -> void:
+	var result := GardenModel.finish_visit(scene_id)
+	garden_bed.refresh()
+	var lines: Array[String] = []
+	if bool(result["family_flower"]):
+		lines.append("가운데 화분에 가족의 꽃이 피었다")
+	if bool(result["rainbow_flower"]):
+		lines.append("무지개 꽃이 피었다")
+	for combo: String in result["combos"]:
+		var name_key := "garden.combo.%s" % combo
+		lines.append("%s 이(가) 피었다" % tr(name_key))
+	if bool(result["ticked"]) and lines.is_empty():
+		lines.append("정원이 조금 자랐다")
+	if not lines.is_empty():
+		show_message(" · ".join(PackedStringArray(lines)))
+		await get_tree().create_timer(1.6).timeout
 
 
 ## 스프라이트 시트가 아직 없을 때 쓰는 실루엣
