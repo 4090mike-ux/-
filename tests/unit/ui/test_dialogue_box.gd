@@ -29,6 +29,7 @@ func after_test() -> void:
 func _box() -> DialogueBox:
 	var box: DialogueBox = auto_free(DialogueBox.new())
 	box.pause_tree = false
+	box.use_settings = false
 	box.seconds_per_char = 0.0
 	add_child(box)
 	box.line_shown.connect(func(c: String, t: String) -> void: _shown.append([c, t]))

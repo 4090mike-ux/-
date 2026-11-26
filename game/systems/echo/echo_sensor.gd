@@ -22,6 +22,7 @@ extends Node2D
 
 var current_radius: float = 0.0
 var _held: float = 0.0
+var _toggled: bool = false
 var _announced: Dictionary = {}
 
 
@@ -67,7 +68,12 @@ func _process(delta: float) -> void:
 		_announced.clear()
 		queue_redraw()
 		return
-	update_sense(delta, Input.is_action_pressed(InputActions.ECHO_SENSE))
+	var holding := Input.is_action_pressed(InputActions.ECHO_SENSE)
+	if Settings.echo_sense_toggle():  # 접근성: 한 번 눌러 켜고 한 번 더 눌러 끔
+		if Input.is_action_just_pressed(InputActions.ECHO_SENSE):
+			_toggled = not _toggled
+		holding = _toggled
+	update_sense(delta, holding)
 	queue_redraw()
 
 

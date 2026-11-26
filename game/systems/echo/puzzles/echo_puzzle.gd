@@ -13,6 +13,7 @@ const DEFAULT_LAYER := 30
 @export var time_limit: float = 30.0
 @export var max_hints: int = 2
 @export var pause_tree: bool = true
+@export var use_settings: bool = true
 
 var echo_id: String = ""
 var data: Dictionary = {}
@@ -47,6 +48,8 @@ func open(id: String, puzzle_data: Dictionary) -> void:
 	feedback = ""
 	if puzzle_data.has("time_limit_sec"):
 		time_limit = float(puzzle_data["time_limit_sec"])
+	if use_settings and not Settings.puzzle_auto_hint():
+		time_limit = 0.0  # 자동 힌트 끔 → echo_sense 로 수동 힌트
 	time_left = time_limit
 	_setup(puzzle_data)
 	is_open = true
@@ -110,6 +113,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed(InputActions.TAG_SWITCH) and can_skip():
 		skip()
+	elif time_limit <= 0.0 and event.is_action_pressed(InputActions.ECHO_SENSE):
+		give_hint()
 	elif _on_input(event):
 		_check_complete()
 	elif event.is_action_pressed(InputActions.PAUSE) or event.is_action_pressed(&"ui_cancel"):

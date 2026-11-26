@@ -21,8 +21,9 @@ const EXPRESSION_FALLBACK := {
 	"tearful": "sad", "laugh": "smile", "thinking": "neutral", "blank": "neutral",
 }
 
-## 글자당 초 (설정 메뉴에서 바꾼다)
+## 글자당 초. use_settings 면 Settings(text/speed) 값을 쓴다
 @export var seconds_per_char: float = 0.03
+@export var use_settings: bool = true
 @export var pause_tree: bool = true
 
 var is_playing: bool = false
@@ -59,6 +60,8 @@ func play(resource: DialogueResource, cue: String, scene_id: String = "") -> voi
 		return
 	is_playing = true
 	visible = true
+	if use_settings:
+		seconds_per_char = Settings.text_seconds_per_char()
 	if pause_tree:
 		get_tree().paused = true
 	DialogueManager.process_mode = Node.PROCESS_MODE_ALWAYS

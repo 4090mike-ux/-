@@ -3,13 +3,14 @@ extends Control
 ## 배경은 흑백 위로 감정 기호 다섯 개가 천천히 떠다니고, 고른 메뉴의 기호만 색을 띤다.
 
 const FIRST_SCENE := "prologue_atelier"
-const ITEMS: Array[String] = ["new", "continue", "quit"]
-const LABELS := {"new": "새로 시작", "continue": "이어하기", "quit": "종료"}
+const ITEMS: Array[String] = ["new", "continue", "settings", "quit"]
+const LABELS := {"new": "새로 시작", "continue": "이어하기", "settings": "설정", "quit": "종료"}
 
 var _index: int = 0
 var _available: Array[String] = []
 var _time: float = 0.0
 var _starting: bool = false
+var _settings: SettingsMenu
 
 
 func _ready() -> void:
@@ -22,6 +23,9 @@ func _ready() -> void:
 	if _available.has("continue"):
 		_index = _available.find("continue")
 	GameState.count_playtime = false
+	Settings.apply()
+	_settings = SettingsMenu.new()
+	add_child(_settings)
 
 
 func _process(delta: float) -> void:
@@ -30,7 +34,7 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _starting:
+	if _starting or _settings.is_open:
 		return
 	if event.is_action_pressed(InputActions.MOVE_UP) or event.is_action_pressed(&"ui_up"):
 		_index = wrapi(_index - 1, 0, _available.size())
@@ -56,6 +60,8 @@ func _select(item: String) -> void:
 				GameState.count_playtime = true
 				await SceneRouter.continue_from_save()
 			_starting = false
+		"settings":
+			_settings.open()
 		"quit":
 			get_tree().quit()
 

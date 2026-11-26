@@ -11,6 +11,7 @@ func before_test() -> void:
 func _open(p: EchoPuzzle, data: Dictionary) -> EchoPuzzle:
 	auto_free(p)
 	p.pause_tree = false
+	p.use_settings = false
 	add_child(p)
 	p.solved.connect(func(id: String) -> void: _results.append("solved:" + id))
 	p.open("echo.ch1.test", data)

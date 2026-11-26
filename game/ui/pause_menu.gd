@@ -4,14 +4,15 @@ extends CanvasLayer
 ## 대사·퍼즐 중에는 열리지 않는다(그때 pause 는 그쪽이 쓴다).
 
 const DEFAULT_LAYER := 40
-const ITEMS: Array[String] = ["resume", "save", "load", "title"]
-const LABELS := {"resume": "계속", "save": "저장하기", "load": "불러오기", "title": "타이틀로"}
+const ITEMS: Array[String] = ["resume", "save", "load", "settings", "title"]
+const LABELS := {"resume": "계속", "save": "저장하기", "load": "불러오기", "settings": "설정", "title": "타이틀로"}
 const MANUAL_SLOT := 1
 
 var is_open: bool = false
 var _index: int = 0
 var _message: String = ""
 var _view: Control
+var _settings: SettingsMenu
 
 
 func _ready() -> void:
@@ -24,6 +25,8 @@ func _ready() -> void:
 	_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_view.draw.connect(_on_draw)
 	add_child(_view)
+	_settings = SettingsMenu.new()
+	add_child(_settings)
 
 
 func open() -> void:
@@ -44,6 +47,8 @@ func close() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _settings.is_open:
+		return
 	if not is_open:
 		if event.is_action_pressed(InputActions.PAUSE) and not SceneRouter.is_busy():
 			open()
@@ -77,6 +82,8 @@ func _select(item: String) -> void:
 				await SceneRouter.continue_from_save()
 			else:
 				_message = "불러오기 실패"
+		"settings":
+			_settings.open()
 		"title":
 			close()
 			get_tree().change_scene_to_file("res://game/scenes/ui/title.tscn")
