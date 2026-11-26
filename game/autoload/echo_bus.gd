@@ -8,7 +8,7 @@ extends Node
 # 잔향·색
 signal echo_sensed(echo_id: String, by_character: String)
 signal echo_collected(echo_id: String, emotion: String)
-signal color_restored(emotion: String, screen_pos: Vector2, radius: float)
+signal color_restored(emotion: String, world_pos: Vector2, radius: float)
 signal resonance_triggered(emotion: String)
 
 # 남매

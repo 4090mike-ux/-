@@ -34,43 +34,7 @@ func _draw_emotion_block(id: String, origin: Vector2) -> void:
 	var symbol_center := origin + Vector2(40, 84)
 	var c := EmotionBands.main_color(id)
 	var symbol: String = (EmotionBands.load_emotions()[id] as Dictionary)["symbol"]
-	_draw_symbol(symbol, symbol_center, c)
-
-
-func _draw_symbol(symbol: String, center: Vector2, c: Color) -> void:
-	match symbol:
-		"wave":
-			for row in 3:
-				var pts := PackedVector2Array()
-				for i in 17:
-					var px := center.x - 16 + i * 2
-					pts.append(Vector2(px, center.y - 8 + row * 8 + sin(i * 0.8) * 2.5))
-				draw_polyline(pts, c, 2.0)
-		"sun":
-			draw_circle(center, 7, c)
-			for i in 8:
-				var a := TAU * i / 8.0
-				draw_line(center + Vector2.from_angle(a) * 10, center + Vector2.from_angle(a) * 15, c, 2.0)
-		"star":
-			var pts := PackedVector2Array()
-			for i in 10:
-				var rad := 14.0 if i % 2 == 0 else 6.0
-				pts.append(center + Vector2.from_angle(-PI / 2 + TAU * i / 10.0) * rad)
-			draw_colored_polygon(pts, c)
-		"flame":
-			draw_colored_polygon(PackedVector2Array([
-				center + Vector2(0, -15), center + Vector2(8, 0), center + Vector2(6, 9),
-				center + Vector2(0, 13), center + Vector2(-6, 9), center + Vector2(-8, 0),
-			]), c)
-		"leaf":
-			var pts := PackedVector2Array()
-			for i in 24:
-				var a := TAU * i / 24.0
-				pts.append(center + Vector2(cos(a) * 7, sin(a) * 14).rotated(0.6))
-			draw_colored_polygon(pts, c)
-			draw_line(center + Vector2(-5, 11), center + Vector2(5, -11), BG, 1.0)
-		_:
-			draw_circle(center, 8, c)
+	EmotionSymbols.draw(self, symbol, symbol_center, c)
 
 
 func _draw_neutrals(origin: Vector2) -> void:

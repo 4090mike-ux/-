@@ -33,6 +33,7 @@ python tools/branch_sim.py                        # 엔딩 분기 보고서 (--c
 "$GODOT_BIN" --path . res://game/scenes/dev/color_demo.tscn -- --bench   # 셰이더 성능 측정 (60fps 미만이면 종료 코드 1)
 "$GODOT_BIN" --path . res://game/scenes/dev/color_demo.tscn -- --shot=user://shot.png   # 스크린샷 저장 후 종료
 "$GODOT_BIN" --path . res://game/scenes/dev/sibling_demo.tscn      # 이동·태그 전환 데모
+"$GODOT_BIN" --path .                                              # F5 기본: W2 잔향 프로토타입 (감지 → 공명 → 색 복원)
 
 tools/new_worktree.sh WP-12 echo-sense            # WP 작업용 워크트리 + 브랜치 wp/WP-12-echo-sense
 ```
@@ -91,8 +92,9 @@ G0~G7 게이트 판정 · 설정·엔딩·대사 최종 검수 · 아트 스타�
 
 ## 9. 현재 상태
 
-- W0(계약) 완료, W1(기반) 진행 중. canon의 [제안] 항목은 개발자 위임(2026-11-26)에 따라 **작업 기본값**으로 쓰되, G0 서명 전이므로 바뀔 수 있다.
+- W0(계약)·W1(기반) 완료, W2(프로토타입) 구현 완료 — G2 셀프 플레이·외부 3인 테스트 대기. canon의 [제안] 항목은 개발자 위임(2026-11-26)에 따라 **작업 기본값**으로 쓰되, G0 서명 전이므로 바뀔 수 있다.
 - 오토로드: `EchoBus`, `GameState`, `SaveService` (ADR-0004). 입력 액션: `InputActions` 상수 참조.
 - 엔딩 규칙: `EndingRules`(GDScript) ↔ `tools/branch_sim.py`(Python), 픽스처로 교차 검증.
+- W2 프로토타입: `EchoSensor`/`EchoObject`/`EchoHighlightLayer`(잔향), `ColorRestoreLayer`(색 복원, 씬마다 하나), `ResonancePuzzle` (ADR-0005). G2 판정 대기.
 - 에디터 플러그인(gdUnit4, Dialogue Manager)은 설치만 돼 있고 아직 켜지 않았다.
 - `project.godot`는 에디터·ProjectSettings.save()가 통째로 다시 쓰므로 주석을 넣지 않는다.

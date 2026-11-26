@@ -13,7 +13,7 @@ config_version=5
 config/name="공허의 화가: 잔향의 색"
 config/description="색을 잃은 세계에서 잔향을 모아 남매의 기억을 되찾는 2D 탐색 어드벤처"
 config/version="0.1.0"
-run/main_scene="res://game/scenes/dev/color_demo.tscn"
+run/main_scene="res://game/scenes/dev/echo_prototype.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]

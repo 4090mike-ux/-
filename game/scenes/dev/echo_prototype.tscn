@@ -1,0 +1,148 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://game/scenes/dev/echo_prototype.gd" id="1_proto"]
+[ext_resource type="Script" path="res://game/systems/sibling/sibling_character.gd" id="2_char"]
+[ext_resource type="Script" path="res://game/systems/sibling/sibling_switcher.gd" id="3_switch"]
+[ext_resource type="Script" path="res://game/systems/echo/echo_sensor.gd" id="4_sensor"]
+[ext_resource type="Script" path="res://game/systems/echo/echo_object.gd" id="5_echo"]
+[ext_resource type="Script" path="res://game/systems/color/color_restore_layer.gd" id="6_restore"]
+[ext_resource type="Script" path="res://game/systems/echo/echo_highlight_layer.gd" id="7_highlight"]
+[ext_resource type="Script" path="res://game/systems/echo/resonance_puzzle.gd" id="8_puzzle"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(12, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_h"]
+size = Vector2(480, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_v"]
+size = Vector2(16, 270)
+
+[node name="EchoPrototype" type="Node2D"]
+script = ExtResource("1_proto")
+
+[node name="Haneul" type="CharacterBody2D" parent="."]
+position = Vector2(220, 160)
+motion_mode = 1
+script = ExtResource("2_char")
+character_key = "haneul"
+
+[node name="Shape" type="CollisionShape2D" parent="Haneul"]
+position = Vector2(0, -4)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Body" type="Polygon2D" parent="Haneul"]
+color = Color(0.6, 0.588235, 0.619608, 1)
+polygon = PackedVector2Array(-6, -22, 6, -22, 6, 0, -6, 0)
+
+[node name="EchoSensor" type="Node2D" parent="Haneul"]
+position = Vector2(0, -8)
+script = ExtResource("4_sensor")
+
+[node name="Byeol" type="CharacterBody2D" parent="."]
+position = Vector2(262, 160)
+motion_mode = 1
+script = ExtResource("2_char")
+character_key = "byeol"
+
+[node name="Shape" type="CollisionShape2D" parent="Byeol"]
+position = Vector2(0, -4)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Body" type="Polygon2D" parent="Byeol"]
+color = Color(0.909804, 0.827451, 0.764706, 1)
+polygon = PackedVector2Array(-5, -18, 5, -18, 5, 0, -5, 0)
+
+[node name="EchoSensor" type="Node2D" parent="Byeol"]
+position = Vector2(0, -7)
+script = ExtResource("4_sensor")
+
+[node name="Walls" type="StaticBody2D" parent="."]
+
+[node name="Top" type="CollisionShape2D" parent="Walls"]
+position = Vector2(240, 112)
+shape = SubResource("RectangleShape2D_wall_h")
+
+[node name="Bottom" type="CollisionShape2D" parent="Walls"]
+position = Vector2(240, 262)
+shape = SubResource("RectangleShape2D_wall_h")
+
+[node name="Left" type="CollisionShape2D" parent="Walls"]
+position = Vector2(8, 135)
+shape = SubResource("RectangleShape2D_wall_v")
+
+[node name="Right" type="CollisionShape2D" parent="Walls"]
+position = Vector2(472, 135)
+shape = SubResource("RectangleShape2D_wall_v")
+
+[node name="Switcher" type="Node" parent="."]
+script = ExtResource("3_switch")
+haneul_path = NodePath("../Haneul")
+byeol_path = NodePath("../Byeol")
+force_unlocked = true
+
+[node name="EchoCurtain" type="Node2D" parent="."]
+position = Vector2(80, 128)
+script = ExtResource("5_echo")
+echo_id = "echo.ch1.proto_curtain"
+fallback_emotion = "longing"
+fallback_sensed_by = "haneul"
+outline_radius = 14.0
+restore_radius = 84.0
+
+[node name="EchoPoster" type="Node2D" parent="."]
+position = Vector2(240, 126)
+script = ExtResource("5_echo")
+echo_id = "echo.ch1.proto_poster"
+fallback_emotion = "dream"
+outline_radius = 12.0
+restore_radius = 96.0
+
+[node name="EchoLamp" type="Node2D" parent="."]
+position = Vector2(398, 136)
+script = ExtResource("5_echo")
+echo_id = "echo.ch1.proto_lamp"
+fallback_emotion = "warmth"
+fallback_sensed_by = "byeol"
+outline_radius = 12.0
+restore_radius = 84.0
+
+[node name="EchoFire" type="Node2D" parent="."]
+position = Vector2(90, 226)
+script = ExtResource("5_echo")
+echo_id = "echo.ch1.proto_fire"
+fallback_emotion = "courage"
+outline_radius = 14.0
+restore_radius = 76.0
+
+[node name="EchoPlant" type="Node2D" parent="."]
+position = Vector2(392, 238)
+script = ExtResource("5_echo")
+echo_id = "echo.ch1.proto_plant"
+fallback_emotion = "healing"
+fallback_sensed_by = "byeol"
+outline_radius = 12.0
+restore_radius = 72.0
+
+[node name="ColorRestoreLayer" type="CanvasLayer" parent="."]
+layer = 10
+script = ExtResource("6_restore")
+
+[node name="EchoHighlightLayer" type="CanvasLayer" parent="."]
+layer = 15
+script = ExtResource("7_highlight")
+
+[node name="HudLayer" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="Hud" type="Label" parent="HudLayer"]
+offset_left = 4.0
+offset_top = 2.0
+offset_right = 476.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 8
+text = "잔향 프로토타입"
+
+[node name="ResonancePuzzle" type="CanvasLayer" parent="."]
+layer = 30
+script = ExtResource("8_puzzle")
