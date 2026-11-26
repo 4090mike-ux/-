@@ -12,6 +12,7 @@ const CONTRACT := {
 	"truth_revealed": 0,
 	"event_triggered": 1,
 	"ending_reached": 1,
+	"scene_changed": 1,
 	"dialogue_started": 1,
 	"dialogue_finished": 1,
 	"game_saved": 1,

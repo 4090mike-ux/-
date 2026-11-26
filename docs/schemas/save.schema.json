@@ -152,6 +152,15 @@
           },
           "uniqueItems": true
         },
+        "seen_cues": {
+          "type": "array",
+          "description": "한 번만 재생한 대사 '<scene_id>:<cue>' (장면 진입 대사 등)",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+:[a-z0-9_]+$"
+          },
+          "uniqueItems": true
+        },
         "garden": {
           "type": "object",
           "required": [

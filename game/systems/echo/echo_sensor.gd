@@ -5,9 +5,7 @@ extends Node2D
 ## - echo_sense 를 누르고 있으면 감지 반경이 0.6초에 걸쳐 최대 반경까지 넓어진다(ease-out).
 ## - 최대 반경 = 80px + bond 보너스(2:+8, 3:+16, 4:+24). 두 사람이 40px 안 + bond ≥ 1 이면 ×1.25.
 ## - 숨김 잔향은 현재 반경의 60% 안에서만, 공명 잔향(both)은 두 사람이 64px 안에 함께 있을 때만 감지된다.
-## - 감지 중 이동 속도 ×0.6. 감지된 잔향 20px 안에서 interact → interact_requested.
-
-signal interact_requested(echo: EchoObject)
+## - 감지 중 이동 속도 ×0.6. 감지된 잔향 20px 안에서의 interact 입력은 Interactor 가 처리한다.
 
 @export var base_radius: float = 80.0
 ## bond 0~4 별 추가 반경
@@ -71,15 +69,6 @@ func _process(delta: float) -> void:
 		return
 	update_sense(delta, Input.is_action_pressed(InputActions.ECHO_SENSE))
 	queue_redraw()
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if not is_active() or not event.is_action_pressed(InputActions.INTERACT):
-		return
-	var echo := nearest_interactable()
-	if echo != null:
-		get_viewport().set_input_as_handled()
-		interact_requested.emit(echo)
 
 
 ## 한 프레임 감지 갱신 (테스트에서 직접 부른다)

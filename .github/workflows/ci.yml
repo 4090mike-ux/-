@@ -30,6 +30,8 @@ jobs:
         run: python tools/lint_names.py
       - name: 스키마·교차 검사·팔레트
         run: python tools/validate_data.py
+      - name: 장면 파일 생성 상태
+        run: python tools/gen_scene_files.py --check
       - name: 분기 시뮬레이터 (엔딩 도달성·픽스처)
         run: |
           python tools/branch_sim.py --self-test

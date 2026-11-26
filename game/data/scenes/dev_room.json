@@ -1,0 +1,14 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "dev_room",
+  "background": "dev_room",
+  "dialogue": "res://game/dialogue/dev/dev_room.dialogue",
+  "characters": ["haneul", "byeol"],
+  "active": "haneul",
+  "switch_unlocked": true,
+  "walkable": [[16, 120], [464, 120], [464, 254], [16, 254]],
+  "spawns": {"default": [200, 190], "from_b": [420, 190]},
+  "inspectables": [{"id": "box", "at": [240, 150]}],
+  "exits": [{"rect": [448, 150, 16, 60], "to": "dev_room_b", "requires": {"flags": ["flag.ch1.met_in_square"]}}],
+  "notes": "WP-19 장면 뼈대 테스트용. 배경 그림 없음(회색)."
+}

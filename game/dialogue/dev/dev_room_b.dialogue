@@ -1,0 +1,6 @@
+# scene: dev_room_b
+# wp: WP-19
+
+~ start
+haneul: 두 번째 방이다.
+=> END

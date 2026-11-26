@@ -1,0 +1,271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://void-painter.local/schemas/scene.schema.json",
+  "title": "장면 정의 (game/data/scenes/<scene_id>.json)",
+  "description": "ChapterScene 이 읽어 장면을 만든다. 좌표는 480×270 픽셀. 배경 메타데이터(game/art/bg/<background>.json)의 walkable/blockers/spawns/exits/props 를 기본으로 쓰고, 여기 값이 있으면 덮어쓴다/더한다.",
+  "type": "object",
+  "required": [
+    "scene_id",
+    "background",
+    "characters"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "scene_id": {
+      "type": "string",
+      "pattern": "^(prologue|ch[1-5]|end|dev)_[a-z0-9_]+$"
+    },
+    "background": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "dialogue": {
+      "type": "string",
+      "pattern": "^res://game/dialogue/.+\\.dialogue$"
+    },
+    "enter_cue": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "enter_cue_repeat": {
+      "type": "boolean",
+      "description": "true 면 들어올 때마다 진입 대사를 재생"
+    },
+    "characters": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "haneul",
+          "byeol"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true
+    },
+    "active": {
+      "enum": [
+        "haneul",
+        "byeol"
+      ]
+    },
+    "switch_unlocked": {
+      "type": "boolean",
+      "description": "flag.ch1.met_in_square 와 상관없이 태그 전환 허용"
+    },
+    "global_saturation": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "walkable": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        },
+        "minItems": 2,
+        "maxItems": 2
+      },
+      "minItems": 3
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        },
+        "minItems": 4,
+        "maxItems": 4
+      }
+    },
+    "spawns": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        },
+        "minItems": 2,
+        "maxItems": 2
+      }
+    },
+    "echoes": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          {
+            "type": "object",
+            "required": [
+              "slug"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "slug": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "at": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "restore_radius": {
+                "type": "number",
+                "minimum": 8,
+                "maximum": 200
+              },
+              "outline_radius": {
+                "type": "number",
+                "minimum": 4,
+                "maximum": 40
+              }
+            }
+          }
+        ]
+      }
+    },
+    "inspectables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "cue": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "at": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "radius": {
+            "type": "number",
+            "minimum": 8,
+            "maximum": 64
+          }
+        }
+      }
+    },
+    "npcs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "speaker",
+          "at"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "speaker": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "sprite": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "at": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "cue": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "face_level": {
+            "enum": [
+              0,
+              1,
+              2
+            ]
+          }
+        }
+      }
+    },
+    "exits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "to"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "exit": {
+            "type": "string"
+          },
+          "rect": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "to": {
+            "type": "string",
+            "pattern": "^(prologue|ch[1-5]|end|dev|ui)_[a-z0-9_]+$"
+          },
+          "spawn": {
+            "type": "string"
+          },
+          "blocked_cue": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "requires": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "flags": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^flag\\.(prologue|ch[1-5]|endings|global)\\.[a-z][a-z0-9_]*$"
+                }
+              },
+              "echoes": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^echo\\.(prologue|ch[1-5])\\.[a-z][a-z0-9_]*$"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

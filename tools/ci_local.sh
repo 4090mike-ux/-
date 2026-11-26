@@ -21,8 +21,9 @@ step "[1/6] lint_names (R-NAME·대사 규약·i18n)"
 "$PY" tools/lint_names.py --self-test >/dev/null || { echo "린터 자체 테스트 실패"; fail=1; }
 "$PY" tools/lint_names.py || fail=1
 
-step "[2/6] validate_data (스키마·교차 검사·팔레트)"
+step "[2/6] validate_data (스키마·교차 검사·팔레트) + 장면 파일"
 "$PY" tools/validate_data.py || fail=1
+"$PY" tools/gen_scene_files.py --check || fail=1
 
 step "[3/6] branch_sim (엔딩 도달성·픽스처)"
 "$PY" tools/branch_sim.py --self-test >/dev/null || { echo "branch_sim 자체 테스트 실패"; fail=1; }

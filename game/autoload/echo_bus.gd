@@ -21,6 +21,9 @@ signal truth_revealed()
 signal event_triggered(event_id: String)
 signal ending_reached(ending_id: String)
 
+# 장면
+signal scene_changed(scene_id: String)
+
 # 대사
 signal dialogue_started(scene_id: String)
 signal dialogue_finished(scene_id: String)

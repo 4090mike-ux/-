@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://game/scenes/dev/echo_prototype.gd" id="1_proto"]
 [ext_resource type="Script" path="res://game/systems/sibling/sibling_character.gd" id="2_char"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://game/systems/color/color_restore_layer.gd" id="6_restore"]
 [ext_resource type="Script" path="res://game/systems/echo/echo_highlight_layer.gd" id="7_highlight"]
 [ext_resource type="Script" path="res://game/systems/echo/resonance_puzzle.gd" id="8_puzzle"]
+[ext_resource type="Script" path="res://game/systems/scene/interactor.gd" id="9_interactor"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(12, 8)
@@ -39,6 +40,9 @@ polygon = PackedVector2Array(-6, -22, 6, -22, 6, 0, -6, 0)
 position = Vector2(0, -8)
 script = ExtResource("4_sensor")
 
+[node name="Interactor" type="Node" parent="Haneul"]
+script = ExtResource("9_interactor")
+
 [node name="Byeol" type="CharacterBody2D" parent="."]
 position = Vector2(262, 160)
 motion_mode = 1
@@ -56,6 +60,9 @@ polygon = PackedVector2Array(-5, -18, 5, -18, 5, 0, -5, 0)
 [node name="EchoSensor" type="Node2D" parent="Byeol"]
 position = Vector2(0, -7)
 script = ExtResource("4_sensor")
+
+[node name="Interactor" type="Node" parent="Byeol"]
+script = ExtResource("9_interactor")
 
 [node name="Walls" type="StaticBody2D" parent="."]
 

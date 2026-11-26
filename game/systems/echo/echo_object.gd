@@ -12,6 +12,7 @@ const GROUP := &"echo_objects"
 @export_enum("longing", "warmth", "dream", "courage", "healing") var fallback_emotion: String = "longing"
 @export_enum("haneul", "byeol", "both") var fallback_sensed_by: String = "both"
 @export var fallback_hidden: bool = false
+@export_enum("color_match", "memory_order", "none") var fallback_puzzle: String = "color_match"
 ## 윤곽 원 반지름 (오브젝트 크기에 맞춘다)
 @export var outline_radius: float = 12.0
 ## 모았을 때 색이 돌아오는 반경 (GDD 기본 48px, 큰 소품은 씬에서 키운다)
@@ -57,9 +58,23 @@ func is_hidden() -> bool:
 	return str(def.get("kind", "")) == "hidden" if not def.is_empty() else fallback_hidden
 
 
+func puzzle_type() -> String:
+	var puzzle: Dictionary = definition().get("puzzle", {})
+	return str(puzzle.get("type", fallback_puzzle))
+
+
+## requires: {flags: [...], bond_min: n} 를 모두 만족하는가
+func requirements_met() -> bool:
+	var req: Dictionary = definition().get("requires", {})
+	for f: Variant in req.get("flags", []):
+		if GameState.flag(str(f)) != true:
+			return false
+	return GameState.bond >= int(req.get("bond_min", 0))
+
+
 ## sensed_by: haneul/byeol = 그 사람만, both(공명 잔향) = 두 사람이 함께 있을 때만 (docs/gdd/echo.md §2-2)
 func can_be_sensed_by(character_key: String, together: bool = false) -> bool:
-	if is_collected():
+	if is_collected() or not requirements_met():
 		return false
 	var who := sensed_by()
 	if who == "both":

@@ -1,0 +1,15 @@
+# scene: dev_room
+# wp: WP-19
+
+~ start
+haneul: [#portrait=neutral] 장면 뼈대 테스트 방이다.
+byeol: [#emotion=warmth] Tab 으로 바꿀 수 있어.
+=> END
+
+~ inspect_box
+낡은 상자다\: 안은 비어 있다.
+=> END
+
+~ exit_blocked
+haneul: 아직은 나갈 수 없어.
+=> END

@@ -13,7 +13,7 @@ config_version=5
 config/name="공허의 화가: 잔향의 색"
 config/description="색을 잃은 세계에서 잔향을 모아 남매의 기억을 되찾는 2D 탐색 어드벤처"
 config/version="0.1.0"
-run/main_scene="res://game/scenes/dev/echo_prototype.tscn"
+run/main_scene="res://game/scenes/ui/title.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]
@@ -21,6 +21,8 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 EchoBus="*res://game/autoload/echo_bus.gd"
 GameState="*res://game/autoload/game_state.gd"
 SaveService="*res://game/autoload/save_service.gd"
+DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
+SceneRouter="*res://game/autoload/scene_router.gd"
 
 [debug]
 
@@ -37,6 +39,14 @@ window/size/window_width_override=1440
 window/size/window_height_override=810
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg", "res://addons/gdUnit4/plugin.cfg")
+
+[gui]
+
+theme/custom="res://game/ui/theme.tres"
 
 [input]
 
@@ -106,6 +116,7 @@ pause={
 [internationalization]
 
 locale/translations=PackedStringArray("res://game/i18n/ui.ko.translation", "res://game/i18n/ui.en.translation")
+locale/translations_pot_files=PackedStringArray("res://game/dialogue/dev/dev_room.dialogue", "res://game/dialogue/dev/dev_room_b.dialogue")
 locale/fallback="ko"
 
 [rendering]

@@ -152,6 +152,7 @@ func test_save_state_round_trip() -> void:
 	GameState.set_flag("flag.ch1.met_in_square", true)
 	GameState.collect_echo("echo.ch1.atelier_easel")
 	GameState.record_choice("ch2_cafe_01")
+	GameState.mark_cue_seen("ch2_cafe:start")
 	GameState.chapter = "ch2"
 	GameState.scene_path = "res://game/scenes/ch2/cafe.tscn"
 	GameState.switch_character("byeol")
@@ -166,6 +167,7 @@ func test_save_state_round_trip() -> void:
 	assert_bool(GameState.flag("flag.ch1.met_in_square")).is_true()
 	assert_bool(GameState.has_echo("echo.ch1.atelier_easel")).is_true()
 	assert_bool(GameState.has_chosen("ch2_cafe_01")).is_true()
+	assert_bool(GameState.has_seen_cue("ch2_cafe:start")).is_true()
 	assert_str(GameState.chapter).is_equal("ch2")
 	assert_str(GameState.active_character).is_equal("byeol")
 	assert_float(GameState.playtime_sec).is_equal(42.0)

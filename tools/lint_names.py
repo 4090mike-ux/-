@@ -24,7 +24,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-PRE_SECTIONS = {"prologue", "ch1", "ch2", "ch3"}
+PRE_SECTIONS = {"prologue", "ch1", "ch2", "ch3", "dev"}
 POST_SECTIONS = {"ch5", "endings"}
 HEADER_SECTIONS = {"ch4"}
 ALL_SECTIONS = PRE_SECTIONS | POST_SECTIONS | HEADER_SECTIONS

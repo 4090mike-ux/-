@@ -93,6 +93,7 @@ var _flags: Dictionary = {}          # 기본값과 다른 플래그만
 var _echoes: Array[String] = []
 var _reunited: Array[String] = []
 var _choices: Array[String] = []
+var _seen_cues: Array[String] = []   # "<scene_id>:<cue>" — 한 번만 나오는 대사
 var _garden: Dictionary = {"plots": [], "bloomed": []}
 
 
@@ -110,6 +111,7 @@ func reset() -> void:
 	_echoes.clear()
 	_reunited.clear()
 	_choices.clear()
+	_seen_cues.clear()
 	_garden = {"plots": [], "bloomed": []}
 	active_character = "haneul"
 	chapter = "prologue"
@@ -172,6 +174,16 @@ func record_choice(choice_id: String) -> void:
 
 func has_chosen(choice_id: String) -> bool:
 	return _choices.has(choice_id)
+
+
+## 한 번만 재생할 대사(장면 진입 대사 등) 기록. key = "<scene_id>:<cue>"
+func mark_cue_seen(key: String) -> void:
+	if not _seen_cues.has(key):
+		_seen_cues.append(key)
+
+
+func has_seen_cue(key: String) -> bool:
+	return _seen_cues.has(key)
 
 
 ## "protect" / "heal" / "balanced" (차이 2 이하). 정원 꽃 비율·대사 변형용.
@@ -320,6 +332,7 @@ func to_save_state() -> Dictionary:
 		"echoes_collected": _echoes.duplicate(),
 		"reunited_families": _reunited.duplicate(),
 		"choices_made": _choices.duplicate(),
+		"seen_cues": _seen_cues.duplicate(),
 		"garden": garden_state(),
 	}
 
@@ -351,6 +364,7 @@ func apply_save(location: Dictionary, state: Dictionary, playtime: float) -> voi
 	_echoes.assign(state.get("echoes_collected", []))
 	_reunited.assign(state.get("reunited_families", []))
 	_choices.assign(state.get("choices_made", []))
+	_seen_cues.assign(state.get("seen_cues", []))
 	set_garden_state(state.get("garden", {}))
 	chapter = str(location.get("chapter", "prologue"))
 	scene_path = str(location.get("scene", ""))

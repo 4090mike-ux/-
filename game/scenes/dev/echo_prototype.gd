@@ -23,8 +23,8 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
-	for sensor: EchoSensor in [$Haneul/EchoSensor, $Byeol/EchoSensor]:
-		sensor.interact_requested.connect(_on_interact_requested)
+	for interactor: Interactor in [$Haneul/Interactor, $Byeol/Interactor]:
+		interactor.echo_requested.connect(_on_interact_requested)
 	_puzzle.solved.connect(_on_solved)
 	_puzzle.cancelled.connect(_on_cancelled)
 	EchoBus.character_switched.connect(func(_k: String) -> void: _update_hud())

@@ -1,0 +1,9 @@
+{
+  "$schema": "../../../docs/schemas/scene.schema.json",
+  "scene_id": "dev_room_b",
+  "background": "dev_room",
+  "dialogue": "res://game/dialogue/dev/dev_room_b.dialogue",
+  "characters": ["haneul"],
+  "walkable": [[16, 120], [464, 120], [464, 254], [16, 254]],
+  "exits": [{"rect": [16, 150, 16, 60], "to": "dev_room", "spawn": "from_b"}]
+}

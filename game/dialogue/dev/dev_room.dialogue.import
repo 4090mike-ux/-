@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://btexgiai5vjb5"
+path="res://.godot/imported/dev_room.dialogue-b6fb2d12ac0dd721e2847cd2d57ca8f4.tres"
+
+[deps]
+
+source_file="res://game/dialogue/dev/dev_room.dialogue"
+dest_files=["res://.godot/imported/dev_room.dialogue-b6fb2d12ac0dd721e2847cd2d57ca8f4.tres"]
+
+[params]
+
+defaults=true

@@ -237,12 +237,134 @@ def check_generated(schemas: dict[str, dict], flag_ids: set[str], folder: Path) 
     notes.append(f"게임이 만든 파일 {found}개 검사 ({folder.as_posix()})")
 
 
+CUE_LINE = re.compile(r"^~\s+([A-Za-z0-9_]+)\s*$", re.M)
+
+
+def dialogue_cues(res_path: str) -> set[str] | None:
+    path = ROOT / res_path.removeprefix("res://")
+    if not path.exists():
+        return None
+    return set(CUE_LINE.findall(path.read_text(encoding="utf-8")))
+
+
+def load_echo_ids() -> dict[str, dict]:
+    result: dict[str, dict] = {}
+    folder = DATA / "echoes"
+    if folder.exists():
+        for path in folder.glob("*.json"):
+            try:
+                for e in json.loads(path.read_text(encoding="utf-8")).get("echoes", []):
+                    result[e["id"]] = e
+            except (json.JSONDecodeError, KeyError):
+                pass
+    return result
+
+
+def check_scenes(schemas: dict[str, dict], flag_ids: set[str], echo_ids: dict[str, dict]) -> None:
+    """game/data/scenes/*.json: 스키마 + 장면 파일·대사 cue·출구·잔향·NPC 교차 검사"""
+    folder = DATA / "scenes"
+    if not folder.exists():
+        notes.append("장면 정의 없음 (game/data/scenes/)")
+        return
+    speakers: set[str] = set()
+    sp = DATA / "speakers.json"
+    if sp.exists():
+        speakers = {x["key"] for x in json.loads(sp.read_text(encoding="utf-8"))["speakers"]}
+    scene_ids = {p.stem for p in folder.glob("*.json")}
+    count = 0
+    for path in sorted(folder.glob("*.json")):
+        data = validate(path, schemas["scene"])
+        if not isinstance(data, dict):
+            continue
+        count += 1
+        where = rel(path)
+        sid = str(data.get("scene_id"))
+        if sid != path.stem:
+            err(where, f"scene_id '{sid}' 가 파일 이름과 다름")
+        section = sid.split("_")[0]
+        section = "endings" if section == "end" else section
+        tscn = ROOT / "game/scenes" / section / f"{sid}.tscn"
+        if not tscn.exists():
+            err(where, f"장면 파일 없음 {rel(tscn)} → python tools/gen_scene_files.py")
+        bg = data.get("background", "")
+        if section != "dev" and not (ROOT / f"game/art/bg/{bg}.png").exists():
+            notes.append(f"{sid}: 배경 그림 game/art/bg/{bg}.png 아직 없음")
+        cues: set[str] = set()
+        if "dialogue" in data:
+            found = dialogue_cues(data["dialogue"])
+            if found is None:
+                err(where, f"대사 파일 없음 {data['dialogue']}")
+            else:
+                cues = found
+
+        def need_cue(cue: str, why: str) -> None:
+            if "dialogue" in data and cue not in cues:
+                err(where, f"{why}: cue '{cue}' 가 {data['dialogue']} 에 없음")
+
+        need_cue(data.get("enter_cue", "start"), "진입 대사")
+        for it in data.get("inspectables", []):
+            need_cue(it.get("cue", "inspect_" + it["id"]), f"조사 대상 {it['id']}")
+        for npc in data.get("npcs", []):
+            if npc["speaker"] not in speakers:
+                err(where, f"NPC 화자 '{npc['speaker']}' 가 speakers.json 에 없음")
+            need_cue(npc.get("cue", "inspect_" + npc["speaker"]), f"NPC {npc['speaker']}")
+        for ex in data.get("exits", []):
+            to = ex["to"]
+            if not to.startswith("ui_") and to not in scene_ids:
+                err(where, f"출구 대상 장면 '{to}' 정의 없음")
+            req = ex.get("requires", {})
+            if req:
+                need_cue(ex.get("blocked_cue", "exit_blocked"), f"출구 {to} 막힘")
+            for f in req.get("flags", []):
+                if f not in flag_ids:
+                    err(where, f"출구 조건 플래그 {f} 가 flags.json 에 없음")
+            for e in req.get("echoes", []):
+                if e not in echo_ids:
+                    err(where, f"출구 조건 잔향 {e} 정의 없음")
+        for entry in data.get("echoes", []):
+            slug = entry if isinstance(entry, str) else entry["slug"]
+            eid = f"echo.{section}.{slug}"
+            if eid not in echo_ids:
+                err(where, f"잔향 {eid} 가 game/data/echoes/{section}.json 에 없음")
+            elif echo_ids[eid].get("location", {}).get("scene", "").split("/")[-1] != f"{sid}.tscn":
+                err(where, f"잔향 {eid} 의 location.scene 이 이 장면이 아님")
+    notes.append(f"장면 정의 {count}개")
+
+
+def check_puzzles(schemas: dict[str, dict], echo_ids: dict[str, dict]) -> None:
+    """game/data/puzzles/*.json: 스키마 + 잔향 정의와 type 일치 + 퍼즐이 필요한 잔향마다 파일 존재"""
+    folder = DATA / "puzzles"
+    have: dict[str, dict] = {}
+    if folder.exists():
+        for path in sorted(folder.glob("*.json")):
+            data = validate(path, schemas["puzzle"])
+            if not isinstance(data, dict):
+                continue
+            eid = str(data.get("echo_id", ""))
+            have[eid] = data
+            if path.stem != eid.split(".")[-1]:
+                err(rel(path), f"파일 이름은 잔향 slug 와 같아야 한다 ({eid})")
+            echo = echo_ids.get(eid)
+            if echo is None:
+                err(rel(path), f"잔향 {eid} 정의 없음")
+                continue
+            if echo["puzzle"]["type"] != data["type"]:
+                err(rel(path), f"퍼즐 type {data['type']} ≠ 잔향 정의 {echo['puzzle']['type']}")
+            if data["type"] == "color_match" and not set(data["slots"]) <= set(data["palette"]):
+                err(rel(path), "slots 의 감정이 모두 palette 에 있어야 풀 수 있다")
+    for eid, echo in echo_ids.items():
+        if echo["puzzle"]["type"] != "none" and eid not in have:
+            err("game/data/puzzles", f"{eid} 의 퍼즐 내용 파일이 없음 ({eid.split('.')[-1]}.json)")
+    if have:
+        notes.append(f"퍼즐 {len(have)}개")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="데이터 계약 검증기")
     parser.add_argument("--generated", type=Path, help="게임이 만든 세이브 파일 폴더 (예: tests/out)")
     args = parser.parse_args()
     schemas = load_schemas()
-    for required in ("flags", "echo", "save", "persist", "emotions"):
+    for required in ("flags", "echo", "save", "persist", "emotions", "scene", "puzzle"):
         if required not in schemas:
             err("docs/schemas", f"{required}.schema.json 이 없거나 잘못됨")
     if errors:
@@ -276,6 +398,9 @@ def main() -> int:
             if f not in flag_ids:
                 err("docs/schemas/examples/save.example.json", f"플래그 {f} 가 flags.json 에 없음")
     validate(EXAMPLES / "persist.example.json", schemas["persist"])
+    echo_ids = load_echo_ids()
+    check_scenes(schemas, flag_ids, echo_ids)
+    check_puzzles(schemas, echo_ids)
     if args.generated is not None:
         folder = args.generated if args.generated.is_absolute() else ROOT / args.generated
         check_generated(schemas, flag_ids, folder)

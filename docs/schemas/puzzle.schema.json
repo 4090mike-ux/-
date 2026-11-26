@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://void-painter.local/schemas/puzzle.schema.json",
+  "title": "공명 퍼즐 내용 (game/data/puzzles/<echo slug>.json)",
+  "description": "docs/gdd/echo.md §3. 기호만으로 풀려야 한다. memory_order 의 순서 단서는 카드 내용뿐(색·기호 금지).",
+  "type": "object",
+  "required": [
+    "echo_id",
+    "type",
+    "difficulty"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "echo_id": {
+      "type": "string",
+      "pattern": "^echo\\.(prologue|ch[1-5])\\.[a-z][a-z0-9_]*$"
+    },
+    "type": {
+      "enum": [
+        "color_match",
+        "memory_order"
+      ]
+    },
+    "difficulty": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "caption": {
+      "type": "string"
+    },
+    "time_limit_sec": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 120
+    },
+    "slots": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "longing",
+          "warmth",
+          "dream",
+          "courage",
+          "healing"
+        ]
+      },
+      "minItems": 2,
+      "maxItems": 8
+    },
+    "palette": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "longing",
+          "warmth",
+          "dream",
+          "courage",
+          "healing"
+        ]
+      },
+      "minItems": 2,
+      "maxItems": 5,
+      "uniqueItems": true
+    },
+    "intro_cue": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "cards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "caption"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "caption": {
+            "type": "string"
+          },
+          "sketch": {
+            "type": "string"
+          }
+        }
+      },
+      "minItems": 2,
+      "maxItems": 6
+    },
+    "decoy": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "id",
+            "caption"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]+$"
+            },
+            "caption": {
+              "type": "string"
+            },
+            "sketch": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "color_match"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "slots",
+          "palette"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "memory_order"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "cards"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}
