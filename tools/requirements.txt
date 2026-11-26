@@ -2,3 +2,4 @@
 jsonschema>=4.23,<5
 numpy>=2
 soundfile>=0.12
+Pillow>=11
