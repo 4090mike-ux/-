@@ -195,6 +195,7 @@
 | `sting` 스팅어 | 8 | 챕터 제목, 발견, 위화감, 폭풍 고조, 진실 공개, 엔딩 진입, 미수집 안내, 성향 확인 대화 시작 | 0 |
 | **계** | **110** | | **30** |
 
+- 이야기용 효과음 3개를 110개 안에서 추가한다(story_bible C11, ADR-0009): `sting_clock_bell`(시계탑 종 — 챕터 5 광장, 가족·기적 엔딩), `sting_fireworks`(불꽃놀이 — 등불 축제), `misc_dog_bark`(개 짖음 — `family_street`, 새 분류 `misc`). 개수를 맞추려고 `ui`의 슬라이더·토글을 `ui_toggle` 하나로 합치고, `sting` 8개 중 `sting_unfound`(미수집 안내)를 `ui_page`로 대신한다.
 - 환경음은 길이가 길어서 OGG로 만들고 Ambience 버스로 보낸다(파일 `game/audio/sfx/amb/amb_<장소>.ogg`).
 - VS 30개는 WP-22 완료 기준("SFX 30")과 같다.
 

@@ -24,9 +24,9 @@
 | T2 엔진 코어 | `game/autoload/`(통합 세션), `game/systems/core/`, `tests/unit/core/` | |
 | T3 게임플레이 시스템 | `game/systems/{echo,garden,sibling}/`, `tests/unit/systems/`, `tests/flow/` | 시스템 간 통신은 `EchoBus` 시그널로만 |
 | T3 챕터 통합 | `game/scenes/{prologue,ch1,ch2,ch3,ch4,ch5,endings}/` | 챕터 통합 WP(WP-19, 25, 28, 31, 34)만 |
-| T4 아트 | `game/art/{bg,char,ui}/`, `docs/style/`(가이드 수정은 개발자 승인) | 바이너리는 LFS |
+| T4 아트 | `game/art/{bg,char,ui,props,memory}/`, `tools/pixelart/`, `docs/style/`(가이드 수정은 개발자 승인) | 배경은 코드로 생성(`tools/pixelart/build_all.py`). 챕터 배경 담당: 챕터 2 WP-24, 챕터 3 WP-27, 챕터 4 WP-30, 챕터 5·엔딩 WP-34 (story_bible §10) |
 | T5 VFX/셰이더 | `game/shaders/`, `game/art/vfx/`, `game/systems/color/`, `game/scenes/dev/`, `tests/unit/color/` | 감정 대역 수치는 emotions.json(공유) |
-| T6 오디오 | `game/audio/{bgm,sfx}/` | |
+| T6 오디오 | `game/audio/{bgm,sfx}/`, `tools/audio/`, `docs/audio/` | 오디오는 코드로 합성(`tools/audio/build_audio.py`) |
 | T7 대사·분기 데이터 | `game/dialogue/`, `game/data/echoes/`, `game/i18n/` | 새 화자·플래그는 공유 데이터 PR 먼저 |
 | T8 UI/UX | `game/scenes/ui/`, `game/ui/` | 문자열은 전부 `tr()` 키 |
 | T9 QA/테스트 | `tests/`, `tools/lint_names.py`, `tools/validate_data.py`, `tools/branch_sim.py` | 다른 트랙 테스트 폴더는 그 트랙과 공동 |
